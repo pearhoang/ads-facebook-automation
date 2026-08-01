@@ -24,7 +24,7 @@ class HermesConfigManager:
         if not provider:
             return False
         canonical = json.dumps(
-            {"schema_version": 4, "provider": provider},
+            {"schema_version": 5, "provider": provider},
             sort_keys=True,
             ensure_ascii=False,
         ).encode("utf-8")
@@ -139,6 +139,16 @@ class HermesConfigManager:
             "port": 8642,
             "key": self._ensure_api_key(self.home),
             "model_name": "ads-copilot",
+            # Native API sessions persist ``model_name`` on the session row.
+            # Without a matching route, Hermes treats that virtual name as a
+            # raw model and re-resolves the normalized ``custom`` provider,
+            # losing the named provider credentials on later chat turns.
+            "model_routes": {
+                "ads-copilot": {
+                    "model": str(provider["model"]),
+                    "provider": f"custom:{provider_name}",
+                }
+            },
         }
 
         self._write_env("ADS_LUSH_PROVIDER_API_KEY", str(provider.get("api_key") or ""))

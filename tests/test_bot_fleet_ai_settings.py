@@ -315,6 +315,13 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: P
     assert "không publish" in manager.soul_path.read_text(encoding="utf-8")
     assert config["gateway"]["api_server"]["host"] == "127.0.0.1"
     assert config["gateway"]["api_server"]["port"] == 8642
+    assert config["gateway"]["api_server"]["model_name"] == "ads-copilot"
+    assert config["gateway"]["api_server"]["model_routes"] == {
+        "ads-copilot": {
+            "model": "deepseek-v4-flash",
+            "provider": "custom:ads-lush",
+        }
+    }
     assert manager.api_key_path.exists()
     assert config["gateway"]["api_server"]["key"] == manager.api_key_path.read_text(encoding="utf-8")
     service = Path("infra/systemd/meta-ads-copilot-hermes.service").read_text(encoding="utf-8")
