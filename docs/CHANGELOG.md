@@ -134,3 +134,10 @@
 - Changed: Forward rõ ràng `CONTROL_PLANE_URL`, `WORKER_DATA_DIR` và `WORKER_CREDENTIAL_FILE` vào MCP subprocess; tăng managed config schema để mọi worker tự refresh.
 - Verified: Hermes `mcp test` kết nối trong 415 ms và khám phá đủ 5 tools; Telegram gateway/outbound message đạt, config không chứa raw node credential.
 - Safety: Chỉ forward ba biến tối thiểu; raw credential tiếp tục nằm trong file quyền `0600`.
+
+### 2026-08-01 - Phase 10 Ads Copilot và one-shot Add Bot
+
+- Changed: Biến AI Copilot thành chat Meta Ads natural-first dùng exact Hermes session chung với Telegram; tách provider sang Hermes Agents; Add Bot nhận đủ Git checkout, provider, Telegram token và allowlist để tự bootstrap worker/noVNC/Hermes.
+- Affected: agent conversation/job backend, outbound Hermes API bridge, AI Copilot/Hermes Agents/Bot VPS UI, migration `20260801_0008`, bootstrap installer, tests và project memory.
+- Verified: `47 passed`, Python compile, JavaScript và installer syntax sạch; production migration `20260801_0008 (head)`, web/worker/Hermes active, public health `ok`, Hermes API chỉ bind `127.0.0.1:8642`, có 1 Telegram session và không có error log sau deploy.
+- Safety: Không có VPS Copilot; không gửi tin nhắn/publish/budget action trong smoke test. Telegram token đi qua file tạm SSH `0600`, không nằm trong command line/database/audit/response; backup tại `/var/backups/meta-ads-copilot/20260801T140223Z`.
