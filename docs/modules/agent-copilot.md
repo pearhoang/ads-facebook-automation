@@ -39,3 +39,4 @@
 - Workspace khóa page scroll, chỉ message/session list được scroll; đổi session dùng request guard để response cũ không ghi đè selection mới.
 - Composer có attachment queue và command palette chỉ hiện khi gõ `/`; DeepSeek V4 text-only nên chưa nhận image/PDF.
 - Hermes systemd nạp cả `/etc/meta-ads-copilot/worker.env` và Hermes home `.env`, bảo đảm API Server thấy custom provider credential.
+- Virtual model `ads-copilot` phải có `gateway.api_server.extra.model_routes` trỏ tới exact named provider/model của worker; không để session persist alias rồi Hermes tái phân giải thành bare `custom`.

@@ -155,3 +155,10 @@
 - Affected: Hermes service/worker bridge, Copilot message contract/service/UI, tests và project memory.
 - Verified: `51 passed`, Python compile, JavaScript syntax, UTF-8 guard và local browser verification đạt; palette chỉ hiện khi gõ `/`, attachment queue không gây page scroll và console không lỗi.
 - Safety: Không giả hỗ trợ image/PDF; binary không persist, attachment được đánh dấu untrusted data và giới hạn 3 tệp/256 KB tổng. Production verification được ghi sau deploy.
+
+### 2026-08-01 - Sửa provider route của Hermes Web session
+
+- Changed: Ánh xạ virtual model `ads-copilot` qua `gateway.api_server.extra.model_routes` tới exact named provider/model của worker; tăng managed Hermes config schema để mọi worker tự áp dụng.
+- Affected: `workers/agent/hermes_config.py`, provider regression test và project memory.
+- Verified: `51 passed`, compile/diff sạch; production Hermes session tạo với model `ads-copilot` và chat trả `200`, session smoke được xóa; web/worker/Hermes active, public health `200`, current Hermes invocation có `0` provider/runtime error và Alembic không có drift.
+- Safety: Không tạo campaign, không publish, không giữ session smoke; production không có active agent job hoặc browser session khi deploy.

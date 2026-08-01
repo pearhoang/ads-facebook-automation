@@ -158,3 +158,4 @@
 - Không tích hợp VPS Copilot vào sản phẩm Ads. Chat quản trị máy chủ nằm ngoài scope SaaS hiện tại.
 - Hermes API Server bind localhost, bearer key chỉ nằm trên worker; control-plane/JavaScript không nhận key.
 - Provider credential nằm trong Hermes home `.env` và phải được systemd nạp cùng worker env để Telegram và API Server dùng chung provider runtime.
+- Hermes API Server giữ virtual model `ads-copilot`, nhưng route này phải nằm trong `gateway.api_server.extra.model_routes` và trỏ tới exact named provider/model của từng worker.
