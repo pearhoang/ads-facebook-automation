@@ -110,6 +110,7 @@ def send_message(
         role=principal.role,
         conversation_id=conversation_id,
         content=payload.content,
+        attachments=[item.model_dump() for item in payload.attachments],
     )
 
 

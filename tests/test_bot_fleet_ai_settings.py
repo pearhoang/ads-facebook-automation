@@ -317,6 +317,8 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: P
     assert config["gateway"]["api_server"]["port"] == 8642
     assert manager.api_key_path.exists()
     assert config["gateway"]["api_server"]["key"] == manager.api_key_path.read_text(encoding="utf-8")
+    service = Path("infra/systemd/meta-ads-copilot-hermes.service").read_text(encoding="utf-8")
+    assert "EnvironmentFile=-/opt/meta-ads-copilot-runtime/worker-data/hermes/.env" in service
 
 
 def test_mcp_bridge_lists_only_ads_typed_tools():

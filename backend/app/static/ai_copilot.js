@@ -6,6 +6,10 @@ const messageList = document.getElementById("message-list");
 const composer = document.getElementById("composer-form");
 const composerInput = document.getElementById("composer-input");
 const sendButton = document.getElementById("send-message");
+const attachButton = document.getElementById("attach-file");
+const attachmentInput = document.getElementById("attachment-input");
+const attachmentQueue = document.getElementById("attachment-queue");
+const commandPalette = document.getElementById("command-palette");
 const notice = document.getElementById("copilot-notice");
 
 let conversations = [];
@@ -13,6 +17,12 @@ let currentConversation = null;
 let activeJobId = null;
 let conversationLoadRequest = 0;
 let conversationOpenRequest = 0;
+let pendingAttachments = [];
+
+const allowedAttachmentExtensions = new Set(["txt", "md", "csv", "json", "yaml", "yml"]);
+const maxAttachmentBytes = 128 * 1024;
+const maxAttachmentTotalBytes = 256 * 1024;
+const webCommands = new Set(["/help", "/new", "/sync", "/status"]);
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>'\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '\"': "&quot;" }[char]));
@@ -175,6 +185,7 @@ function setChatHeader(conversation) {
   badge.textContent = conversation ? `${sourceLabel(conversation.source)} · Ads` : "Hermes";
   badge.classList.toggle("telegram", sourceLabel(conversation?.source) === "Telegram");
   composerInput.disabled = !conversation;
+  attachButton.disabled = !conversation || Boolean(activeJobId);
   sendButton.disabled = !conversation || Boolean(activeJobId);
 }
 
@@ -196,6 +207,21 @@ function messageElement(message) {
   content.className = "message-content";
   renderMarkdown(content, message.content);
   body.append(meta, content);
+
+  const attachments = Array.isArray(message.metadata_json?.attachments)
+    ? message.metadata_json.attachments
+    : [];
+  if (attachments.length) {
+    const files = document.createElement("div");
+    files.className = "message-attachments";
+    attachments.forEach((attachment) => {
+      const item = document.createElement("span");
+      item.className = "message-attachment";
+      item.textContent = `${attachment.name} · ${formatBytes(attachment.size_bytes)}`;
+      files.append(item);
+    });
+    body.append(files);
+  }
 
   const shortcuts = Array.isArray(message.metadata_json?.shortcuts)
     ? message.metadata_json.shortcuts.slice(0, 2)
@@ -273,6 +299,7 @@ function setBusy(busy, text = "Hermes đang xử lý…") {
   document.getElementById("chat-status").textContent = busy ? "Đang xử lý" : "Sẵn sàng";
   document.getElementById("chat-status").className = `status ${busy ? "warning" : "success"}`;
   sendButton.disabled = busy || !currentConversation;
+  attachButton.disabled = busy || !currentConversation;
   const existing = document.getElementById("thinking-row");
   if (busy && !existing) {
     const row = document.createElement("div");
@@ -342,17 +369,117 @@ async function createConversation() {
   await openConversation(conversation.id);
 }
 
-async function sendNaturalMessage(content) {
-  const normalized = String(content || "").trim();
-  if (!normalized || !currentConversation || activeJobId) return;
-  const conversationId = currentConversation.id;
+function formatBytes(value) {
+  const bytes = Number(value || 0);
+  if (bytes < 1024) return `${bytes} B`;
+  return `${Math.round(bytes / 1024)} KB`;
+}
+
+function renderPendingAttachments() {
+  attachmentQueue.hidden = pendingAttachments.length === 0;
+  attachmentQueue.innerHTML = pendingAttachments.map((attachment, index) => (
+    `<span class="attachment-item"><span>${escapeHtml(attachment.name)} · ${escapeHtml(formatBytes(attachment.size))}</span><button type="button" data-remove-attachment="${index}" aria-label="Bỏ tệp ${escapeHtml(attachment.name)}">×</button></span>`
+  )).join("");
+}
+
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+  }
+  return btoa(binary);
+}
+
+async function addAttachments(fileList) {
+  const files = Array.from(fileList || []);
+  for (const file of files) {
+    const extension = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "";
+    if (!allowedAttachmentExtensions.has(extension)) {
+      showNotice(`Không hỗ trợ ${file.name}. Chỉ dùng TXT, MD, CSV, JSON hoặc YAML.`);
+      continue;
+    }
+    if (!file.size || file.size > maxAttachmentBytes) {
+      showNotice(`${file.name} phải có dung lượng từ 1 B đến 128 KB.`);
+      continue;
+    }
+    if (pendingAttachments.some((item) => item.name === file.name && item.size === file.size)) continue;
+    const nextTotal = pendingAttachments.reduce((sum, item) => sum + item.size, 0) + file.size;
+    if (pendingAttachments.length >= 3 || nextTotal > maxAttachmentTotalBytes) {
+      showNotice("Chỉ được đính kèm tối đa 3 tệp và tổng dung lượng 256 KB.");
+      break;
+    }
+    pendingAttachments.push({
+      name: file.name,
+      media_type: file.type || "text/plain",
+      size: file.size,
+      content_base64: arrayBufferToBase64(await file.arrayBuffer()),
+    });
+  }
+  attachmentInput.value = "";
+  renderPendingAttachments();
+}
+
+function updateCommandPalette() {
+  const value = composerInput.value.trimStart();
+  const isCommandSearch = value.startsWith("/") && !value.includes(" ") && !value.includes("\n");
+  let visible = 0;
+  commandPalette.querySelectorAll("[data-command]").forEach((button) => {
+    const matches = isCommandSearch && button.dataset.command.startsWith(value.toLowerCase());
+    button.hidden = !matches;
+    if (matches) visible += 1;
+  });
+  commandPalette.hidden = visible === 0;
+}
+
+async function handleWebCommand(content) {
+  const command = content.split(/\s+/, 1)[0].toLowerCase();
+  if (!webCommands.has(command)) {
+    showNotice("Web Copilot không có lệnh này. Gõ /help để xem các shortcut đang hỗ trợ.");
+    return true;
+  }
+  if (pendingAttachments.length) {
+    showNotice("Hãy bỏ tệp đính kèm trước khi chạy slash shortcut.");
+    return true;
+  }
   composerInput.value = "";
   resizeComposer();
+  updateCommandPalette();
+  if (command === "/new") {
+    await createConversation();
+    showNotice("Đã tạo cuộc trò chuyện Web mới.", true);
+  } else if (command === "/sync") {
+    await syncSessions();
+  } else if (command === "/status") {
+    const workerName = workerSelect.options[workerSelect.selectedIndex]?.text || "Chưa có Bot VPS";
+    const sessionName = currentConversation?.title || "Chưa chọn session";
+    showNotice(`${workerName} · ${sessionName} · ${activeJobId ? "Hermes đang xử lý" : "Sẵn sàng"}`, true);
+  } else {
+    showNotice("Shortcut Web: /new tạo chat mới · /sync đồng bộ Telegram · /status xem session. Bạn vẫn có thể nhắn tự nhiên như bình thường.", true);
+  }
+  return true;
+}
+
+async function sendNaturalMessage(content) {
+  const normalized = String(content || "").trim();
+  if ((!normalized && !pendingAttachments.length) || !currentConversation || activeJobId) return;
+  if (normalized.startsWith("/")) {
+    await handleWebCommand(normalized);
+    return;
+  }
+  const conversationId = currentConversation.id;
   try {
     const job = await api(`/api/ai-copilot/conversations/${encodeURIComponent(conversationId)}/messages`, {
       method: "POST",
-      body: JSON.stringify({ content: normalized }),
+      body: JSON.stringify({
+        content: normalized,
+        attachments: pendingAttachments.map(({ name, media_type, content_base64 }) => ({ name, media_type, content_base64 })),
+      }),
     });
+    composerInput.value = "";
+    pendingAttachments = [];
+    resizeComposer();
+    renderPendingAttachments();
     const optimistic = await api(`/api/ai-copilot/conversations/${encodeURIComponent(conversationId)}/messages`);
     if (currentConversation?.id === conversationId) renderMessages(optimistic);
     await waitForJob(job.id);
@@ -390,12 +517,27 @@ document.getElementById("new-conversation").addEventListener("click", () => crea
 document.getElementById("sync-sessions").addEventListener("click", () => syncSessions().catch((error) => showNotice(error.message)));
 workerSelect.addEventListener("change", () => { currentConversation = null; loadConversations().then(() => syncSessions({ quiet: true })).catch((error) => showNotice(error.message)); });
 composer.addEventListener("submit", (event) => { event.preventDefault(); sendNaturalMessage(composerInput.value); });
-composerInput.addEventListener("input", resizeComposer);
+composerInput.addEventListener("input", () => { resizeComposer(); updateCommandPalette(); });
 composerInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     composer.requestSubmit();
   }
+});
+attachButton.addEventListener("click", () => attachmentInput.click());
+attachmentInput.addEventListener("change", () => addAttachments(attachmentInput.files).catch((error) => showNotice(error.message)));
+attachmentQueue.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-remove-attachment]");
+  if (!button) return;
+  pendingAttachments.splice(Number(button.dataset.removeAttachment), 1);
+  renderPendingAttachments();
+});
+commandPalette.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-command]");
+  if (!button) return;
+  composerInput.value = button.dataset.command;
+  updateCommandPalette();
+  composerInput.focus({ preventScroll: true });
 });
 document.querySelectorAll(".prompt-examples span").forEach((item) => item.addEventListener("click", () => {
   if (!currentConversation) return;

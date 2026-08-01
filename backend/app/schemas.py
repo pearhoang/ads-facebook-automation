@@ -220,16 +220,26 @@ class AgentConversationView(ORMModel):
     updated_at: datetime
 
 
+class AgentTextAttachmentRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=160)
+    media_type: str = Field(default="text/plain", min_length=1, max_length=100)
+    content_base64: str = Field(min_length=1, max_length=180000)
+
+
 class AgentMessageCreateRequest(BaseModel):
-    content: str = Field(min_length=1, max_length=24000)
+    content: str = Field(default="", max_length=24000)
+    attachments: list[AgentTextAttachmentRequest] = Field(default_factory=list, max_length=3)
 
     @field_validator("content")
     @classmethod
     def normalize_content(cls, value: str) -> str:
-        normalized = value.strip()
-        if not normalized:
-            raise ValueError("Tin nhắn không được để trống.")
-        return normalized
+        return value.strip()
+
+    @model_validator(mode="after")
+    def require_visible_payload(self):
+        if not self.content and not self.attachments:
+            raise ValueError("Tin nhắn hoặc tệp đính kèm không được để trống.")
+        return self
 
 
 class AgentMessageView(ORMModel):
@@ -264,6 +274,16 @@ class AgentJobView(ORMModel):
     started_at: datetime | None
     completed_at: datetime | None
     updated_at: datetime
+
+    @field_validator("last_error", mode="before")
+    @classmethod
+    def hide_internal_hermes_error(cls, value):
+        if not value:
+            return value
+        text = str(value)
+        if "127.0.0.1" in text or "Server error '500" in text:
+            return "Hermes chưa thể xử lý yêu cầu. Hãy kiểm tra cấu hình provider trong Hermes Agents rồi thử lại."
+        return text
 
 
 class WorkerAgentJobItem(AgentJobView):

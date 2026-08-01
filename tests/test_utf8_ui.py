@@ -10,6 +10,9 @@ UI_FILES = (
     Path("backend/app/templates/reports.html"),
     Path("backend/app/static/reports.js"),
     Path("backend/app/static/reports.css"),
+    Path("backend/app/templates/ai_copilot.html"),
+    Path("backend/app/static/ai_copilot.js"),
+    Path("backend/app/static/copilot.css"),
 )
 
 
@@ -29,3 +32,5 @@ def test_campaign_ui_files_are_utf8_without_mojibake_markers():
     assert "Múi giờ" in combined
     assert "Thu thập KPI" in combined
     assert "Chỉ đọc Ads Manager" in combined
+    assert "Đính kèm tệp văn bản" in combined
+    assert "Gõ / để xem shortcut" in combined

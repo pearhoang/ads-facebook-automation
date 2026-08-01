@@ -8,6 +8,7 @@ ConditionPathExists=/opt/meta-ads-copilot-runtime/worker-data/hermes/config.yaml
 Type=simple
 Environment=HERMES_HOME=/opt/meta-ads-copilot-runtime/worker-data/hermes
 EnvironmentFile=-/etc/meta-ads-copilot/worker.env
+EnvironmentFile=-/opt/meta-ads-copilot-runtime/worker-data/hermes/.env
 ExecStart=/usr/local/bin/hermes gateway
 Restart=on-failure
 RestartSec=8

@@ -148,3 +148,10 @@
 - Affected: Copilot message API, chat JavaScript/CSS/template, tests và project memory.
 - Verified: `47 passed`, Python/JavaScript sạch; local UI giữ 2/2 session sau chuyển, `window.scrollY=0`, Markdown table/list/bold render đúng và console không lỗi. Production trả public role đúng `assistant,user`, technical message bằng `0`, web/worker/Hermes active và health `ok`.
 - Safety: Không xóa transcript cũ; tool message lịch sử chỉ bị ẩn khỏi user API. Không restart worker/Hermes, không gửi chat, không tạo campaign; backup tại `/var/backups/meta-ads-copilot/20260801T142205Z-copilot-ui`.
+
+### 2026-08-01 - Khôi phục Web chat và thêm attachment/slash shortcut
+
+- Changed: Nạp Hermes provider `.env` vào systemd, che lỗi localhost khỏi public API, thêm attachment text/data UTF-8 và command palette `/help|/new|/sync|/status` cho AI Copilot.
+- Affected: Hermes service/worker bridge, Copilot message contract/service/UI, tests và project memory.
+- Verified: `51 passed`, Python compile, JavaScript syntax, UTF-8 guard và local browser verification đạt; palette chỉ hiện khi gõ `/`, attachment queue không gây page scroll và console không lỗi.
+- Safety: Không giả hỗ trợ image/PDF; binary không persist, attachment được đánh dấu untrusted data và giới hạn 3 tệp/256 KB tổng. Production verification được ghi sau deploy.

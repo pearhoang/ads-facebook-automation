@@ -1,12 +1,20 @@
 from __future__ import annotations
 
 from pathlib import Path
+import sys
 
 import httpx
 
 from .config import WorkerConfig
 from .contracts import AgentJobAssignment
 from .control_plane import ControlPlaneClient
+
+
+class HermesApiError(RuntimeError):
+    def __init__(self, public_message: str, diagnostic: str):
+        super().__init__(public_message)
+        self.public_message = public_message
+        self.diagnostic = diagnostic
 
 
 class HermesApiClient:
@@ -26,9 +34,27 @@ class HermesApiClient:
     def close(self) -> None:
         self.http.close()
 
+    @staticmethod
+    def _ensure_success(response: httpx.Response, operation: str) -> None:
+        if response.is_success:
+            return
+        diagnostic = (
+            f"Hermes API {operation} failed with HTTP {response.status_code}: "
+            f"{response.text[:1200]}"
+        )
+        if response.status_code == 429:
+            public = "Provider AI đang giới hạn tần suất. Hãy chờ một lát rồi thử lại."
+        elif response.status_code in {401, 403}:
+            public = "Hermes chưa xác thực được provider AI. Hãy kiểm tra Hermes Agents."
+        elif response.status_code >= 500:
+            public = "Hermes chưa thể xử lý yêu cầu. Hãy kiểm tra cấu hình provider trong Hermes Agents rồi thử lại."
+        else:
+            public = "Hermes từ chối yêu cầu này. Hãy kiểm tra nội dung rồi thử lại."
+        raise HermesApiError(public, diagnostic)
+
     def sessions(self, *, session_limit: int, message_limit: int) -> list[dict]:
         response = self.http.get("/api/sessions", params={"limit": session_limit})
-        response.raise_for_status()
+        self._ensure_success(response, "list sessions")
         payload = response.json()
         sessions = payload.get("data") if isinstance(payload, dict) else payload
         output: list[dict] = []
@@ -42,7 +68,7 @@ class HermesApiClient:
                 f"/api/sessions/{session_id}/messages",
                 params={"limit": message_limit},
             )
-            messages_response.raise_for_status()
+            self._ensure_success(messages_response, "list messages")
             messages_payload = messages_response.json()
             messages = (
                 messages_payload.get("data")
@@ -70,7 +96,7 @@ class HermesApiClient:
 
     def create_session(self, title: str) -> str:
         response = self.http.post("/api/sessions", json={"title": title})
-        response.raise_for_status()
+        self._ensure_success(response, "create session")
         payload = response.json()
         session = payload.get("session") if isinstance(payload, dict) else None
         session = session if isinstance(session, dict) else payload
@@ -84,7 +110,7 @@ class HermesApiClient:
             f"/api/sessions/{session_id}/chat",
             json={"message": message},
         )
-        response.raise_for_status()
+        self._ensure_success(response, "chat")
         payload = response.json()
         if not isinstance(payload, dict):
             raise RuntimeError("Hermes trả về chat payload không hợp lệ.")
@@ -118,7 +144,21 @@ class AgentJobSupervisor:
                 status="succeeded",
                 result_json=result,
             )
+        except HermesApiError as exc:
+            print(
+                f"[worker] agent job {assignment.job_id} failed: {exc.diagnostic}",
+                file=sys.stderr,
+            )
+            self.control_plane.sync_agent_job(
+                assignment.job_id,
+                status="failed",
+                last_error=exc.public_message,
+            )
         except (httpx.HTTPError, OSError, RuntimeError, ValueError) as exc:
+            print(
+                f"[worker] agent job {assignment.job_id} failed: {type(exc).__name__}: {exc}",
+                file=sys.stderr,
+            )
             self.control_plane.sync_agent_job(
                 assignment.job_id,
                 status="failed",

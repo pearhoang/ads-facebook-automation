@@ -54,6 +54,8 @@
 - Conversation list phân biệt Web/Telegram; chọn Telegram phải tiếp tục exact Hermes session, không tạo context mới.
 - AI Copilot không hiển thị raw MCP schema, tool result hoặc `session_meta`; nội dung assistant render safe Markdown cho bold, list, table và code.
 - Chat workspace phải giữ topbar/session list cố định trong viewport; focus composer không được cuộn cả page và response đổi session cũ không được ghi đè session mới.
+- Composer AI Copilot chỉ mở slash palette khi user gõ `/`; hỗ trợ `/help`, `/new`, `/sync`, `/status` như shortcut Web, không ngụ ý mọi Hermes messaging command đều chạy trên web.
+- Attachment queue nằm sát composer, hiện tên/kích thước và cho bỏ từng tệp. Copy phải nói rõ chỉ hỗ trợ tối đa ba tệp text/data UTF-8, 128 KB/tệp; không hiện image/PDF khi chưa có pipeline thật.
 
 ## Consistency Rules
 

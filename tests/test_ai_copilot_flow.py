@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -189,3 +190,155 @@ def test_sync_imports_existing_telegram_session(tmp_path: Path):
             "Camp nào CPA cao?",
             "Tôi sẽ kiểm tra KPI.",
         ]
+
+
+def test_web_chat_accepts_utf8_data_attachment_and_preserves_clean_transcript(tmp_path: Path):
+    with build_client(tmp_path) as client:
+        csrf, worker_headers, worker = provision(client)
+        conversation = client.post(
+            "/api/ai-copilot/conversations",
+            headers=csrf,
+            json={"worker_id": worker["id"], "profile": "ads", "title": "Đọc báo cáo"},
+        ).json()
+        csv_bytes = "campaign,spend\nCamp A,125000\n".encode("utf-8")
+        queued = client.post(
+            f"/api/ai-copilot/conversations/{conversation['id']}/messages",
+            headers=csrf,
+            json={
+                "content": "Phân tích chi phí trong tệp này",
+                "attachments": [
+                    {
+                        "name": "bao-cao.csv",
+                        "media_type": "text/csv",
+                        "content_base64": base64.b64encode(csv_bytes).decode("ascii"),
+                    }
+                ],
+            },
+        )
+        assert queued.status_code == 202, queued.text
+        job_id = queued.json()["id"]
+        assignment = client.post(
+            f"/api/workers/{worker['id']}/agent-jobs/poll",
+            headers=worker_headers,
+        ).json()
+        hermes_message = assignment["payload_json"]["message"]
+        assert f"ads-lush-message:{job_id}" in hermes_message
+        assert "<user_attachment" in hermes_message
+        assert "Camp A,125000" in hermes_message
+        assert assignment["payload_json"]["attachments"][0]["name"] == "bao-cao.csv"
+
+        messages = client.get(
+            f"/api/ai-copilot/conversations/{conversation['id']}/messages"
+        ).json()
+        assert len(messages) == 1
+        assert messages[0]["content"] == "Phân tích chi phí trong tệp này"
+        assert messages[0]["metadata_json"]["attachments"][0]["size_bytes"] == len(csv_bytes)
+
+        client.post(
+            f"/api/workers/{worker['id']}/agent-jobs/{job_id}/sync",
+            headers=worker_headers,
+            json={
+                "status": "succeeded",
+                "result_json": {
+                    "session_id": "api_attachment_session",
+                    "message": {"role": "assistant", "content": "Đã đọc báo cáo."},
+                },
+            },
+        )
+        sync = client.post(
+            "/api/ai-copilot/sync",
+            headers=csrf,
+            json={"worker_id": worker["id"], "profile": "ads"},
+        ).json()
+        client.post(f"/api/workers/{worker['id']}/agent-jobs/poll", headers=worker_headers)
+        synced = client.post(
+            f"/api/workers/{worker['id']}/agent-jobs/{sync['id']}/sync",
+            headers=worker_headers,
+            json={
+                "status": "succeeded",
+                "result_json": {
+                    "sessions": [
+                        {
+                            "id": "api_attachment_session",
+                            "title": "Đọc báo cáo",
+                            "source": "api_server",
+                            "messages": [
+                                {"id": "hm1", "role": "user", "content": hermes_message},
+                                {"id": "hm2", "role": "assistant", "content": "Đã đọc báo cáo."},
+                            ],
+                        }
+                    ]
+                },
+            },
+        )
+        assert synced.status_code == 200, synced.text
+        messages = client.get(
+            f"/api/ai-copilot/conversations/{conversation['id']}/messages"
+        ).json()
+        assert [item["content"] for item in messages] == [
+            "Phân tích chi phí trong tệp này",
+            "Đã đọc báo cáo.",
+        ]
+
+
+def test_web_chat_rejects_unsupported_or_invalid_attachment(tmp_path: Path):
+    with build_client(tmp_path) as client:
+        csrf, _worker_headers, worker = provision(client)
+        conversation = client.post(
+            "/api/ai-copilot/conversations",
+            headers=csrf,
+            json={"worker_id": worker["id"], "profile": "ads", "title": "Tệp lỗi"},
+        ).json()
+        unsupported = client.post(
+            f"/api/ai-copilot/conversations/{conversation['id']}/messages",
+            headers=csrf,
+            json={
+                "content": "Đọc tệp",
+                "attachments": [
+                    {"name": "report.pdf", "media_type": "application/pdf", "content_base64": "eA=="}
+                ],
+            },
+        )
+        assert unsupported.status_code == 422
+        assert "TXT" in unsupported.json()["detail"]
+
+        invalid = client.post(
+            f"/api/ai-copilot/conversations/{conversation['id']}/messages",
+            headers=csrf,
+            json={
+                "content": "Đọc tệp",
+                "attachments": [
+                    {"name": "report.csv", "media_type": "text/csv", "content_base64": "not-base64"}
+                ],
+            },
+        )
+        assert invalid.status_code == 422
+        assert "không có dữ liệu hợp lệ" in invalid.json()["detail"]
+
+
+def test_agent_job_view_never_exposes_local_hermes_url(tmp_path: Path):
+    with build_client(tmp_path) as client:
+        csrf, worker_headers, worker = provision(client)
+        conversation = client.post(
+            "/api/ai-copilot/conversations",
+            headers=csrf,
+            json={"worker_id": worker["id"], "profile": "ads", "title": "Lỗi Hermes"},
+        ).json()
+        queued = client.post(
+            f"/api/ai-copilot/conversations/{conversation['id']}/messages",
+            headers=csrf,
+            json={"content": "Xin chào"},
+        ).json()
+        client.post(f"/api/workers/{worker['id']}/agent-jobs/poll", headers=worker_headers)
+        client.post(
+            f"/api/workers/{worker['id']}/agent-jobs/{queued['id']}/sync",
+            headers=worker_headers,
+            json={
+                "status": "failed",
+                "last_error": "Server error '500 Internal Server Error' for url 'http://127.0.0.1:8642/api/sessions/test/chat'",
+            },
+        )
+        public_job = client.get(f"/api/ai-copilot/jobs/{queued['id']}")
+        assert public_job.status_code == 200
+        assert "127.0.0.1" not in public_job.text
+        assert "Hermes Agents" in public_job.json()["last_error"]
