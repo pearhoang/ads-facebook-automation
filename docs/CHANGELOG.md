@@ -189,5 +189,6 @@
 
 - Changed: Thêm action `Đổi mật khẩu` tại footer `Lush Media`, dialog dùng chung và endpoint xác minh mật khẩu hiện tại trước khi cập nhật Argon2 hash.
 - Affected: auth schema/service/API, năm trang control-plane, shared UI/JavaScript, auth tests và project memory.
-- Verified: Auth regression xác nhận CSRF bắt buộc, mật khẩu cũ bị vô hiệu hóa, phiên hiện tại được giữ và các phiên khác bị revoke.
+- Verified: `55 passed`, Python compile, JavaScript syntax và diff check sạch. Production health/login/static asset đều trả `200`; route live có endpoint password và worker poll tiếp tục `200` sau restart.
+- Deploy: Commit `d7f73de`; chỉ restart `meta-ads-copilot-web.service`, không restart worker/Hermes/noVNC. Backup tại `/var/backups/meta-ads-copilot/20260801T175642Z-control-plane-password`.
 - Safety: Password không ghi vào database/log dưới dạng plaintext; form xóa secret sau response và không có public reset/recovery flow.
