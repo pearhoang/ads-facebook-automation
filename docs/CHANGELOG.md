@@ -205,4 +205,6 @@
 
 - Changed: Login UI dùng `Tài khoản` thay cho `Email`, chấp nhận username text, cho phép password từ 4 ký tự và đổi production owner identifier thành `admin` mà không phá field API legacy.
 - Affected: auth copy/template, auth regression và project memory.
+- Verified: `58 passed`, Python compile, JavaScript syntax, UTF-8/diff check sạch. Production login `admin` trả `200`, identifier email cũ trả `401`, `/api/auth/me` trả `admin` và logout smoke trả `204`.
+- Deploy: Commit `339dc44`; chỉ restart web control-plane, sau đó cập nhật exact owner và revoke phiên cũ. Verified source/database backup tại `/var/backups/meta-ads-copilot/20260801T183742Z-username-login`.
 - Safety: Giữ Argon2 hash, CSRF, secure session cookie, tenant/role và API contract; các phiên cũ được thu hồi khi cập nhật credential production.
