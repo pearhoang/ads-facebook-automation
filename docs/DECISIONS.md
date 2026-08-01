@@ -159,3 +159,11 @@
 - Hermes API Server bind localhost, bearer key chỉ nằm trên worker; control-plane/JavaScript không nhận key.
 - Provider credential nằm trong Hermes home `.env` và phải được systemd nạp cùng worker env để Telegram và API Server dùng chung provider runtime.
 - Hermes API Server giữ virtual model `ads-copilot`, nhưng route này phải nằm trong `gateway.api_server.extra.model_routes` và trỏ tới exact named provider/model của từng worker.
+
+## DEC-024 — Hermes permission mode theo worker và opt-in Experimental Full Access
+
+- `agent_permission_mode=ads_safe` là mặc định cho worker mới và giữ terminal, file, browser, code execution, delegation cùng computer use trong `agent.disabled_toolsets`.
+- Owner có thể bật `experimental_full` riêng cho một worker tại `Hermes Agents`; worker gỡ đúng sáu block do Ads Lush quản lý và có thể đảo ngược về `Ads Safe`.
+- Full access nhằm thử nghiệm khả năng tạo artifact, chạy code, dùng browser/computer và tự xây skill sau khi kiểm thử. Nó không cấp typed tool submit approval, publish hoặc tăng budget và không được dùng quyền hệ thống để đi vòng safety boundary của Meta Ads.
+- API key, Telegram token và worker credential tiếp tục là secret; thao tác phá hủy, thay đổi hệ thống, cài package toàn cục hoặc gửi dữ liệu ra ngoài phải có xác nhận rõ ràng.
+- Thay đổi toolset áp dụng cho session mới hoặc sau `/reset`; web/Telegram vẫn dùng chung Hermes runtime của worker.

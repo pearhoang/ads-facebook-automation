@@ -32,6 +32,7 @@ function renderSummary(config) {
   setText("summary-model", config.model);
   setText("summary-thinking", config.thinking_mode);
   setText("summary-reasoning", config.reasoning_effort);
+  setText("summary-permission", config.agent_permission_mode === "experimental_full" ? "Experimental Full Access" : "Ads Safe");
   setText("summary-endpoint", config.base_url);
   setText("summary-key", config.api_key_masked);
   setText("summary-scope", config.execution_scope === "worker" ? "Bot VPS" : config.execution_scope);
@@ -50,6 +51,7 @@ async function load() {
     document.getElementById("provider-model").value = config.model || "";
     document.getElementById("provider-thinking-mode").value = config.thinking_mode || "auto";
     document.getElementById("provider-reasoning-effort").value = config.reasoning_effort || "provider_default";
+    document.getElementById("provider-permission-mode").value = config.agent_permission_mode || "ads_safe";
     if (config.worker_id) workerSelect.value = config.worker_id;
   }
   renderSummary(config);
@@ -64,6 +66,9 @@ async function loadSelectedWorkerConfig() {
     document.getElementById("provider-model").value = config.model || "";
     document.getElementById("provider-thinking-mode").value = config.thinking_mode || "auto";
     document.getElementById("provider-reasoning-effort").value = config.reasoning_effort || "provider_default";
+    document.getElementById("provider-permission-mode").value = config.agent_permission_mode || "ads_safe";
+  } else {
+    document.getElementById("provider-permission-mode").value = "ads_safe";
   }
   document.getElementById("provider-api-key").value = "";
   renderSummary(config);
@@ -78,6 +83,11 @@ function toggleReasoning() {
     : "DeepSeek V4 mặc định bật thinking ở mức High; Low/Medium được DeepSeek ánh xạ lên High.";
 }
 
+function togglePermissionWarning() {
+  document.getElementById("permission-warning").hidden =
+    document.getElementById("provider-permission-mode").value !== "experimental_full";
+}
+
 document.getElementById("provider-preset").addEventListener("change", (event) => {
   const preset = presets[event.target.value];
   document.getElementById("provider-name").value = preset.name;
@@ -85,12 +95,13 @@ document.getElementById("provider-preset").addEventListener("change", (event) =>
   if (preset.model) document.getElementById("provider-model").value = preset.model;
 });
 document.getElementById("provider-thinking-mode").addEventListener("change", toggleReasoning);
-document.getElementById("provider-worker").addEventListener("change", () => loadSelectedWorkerConfig().catch((error) => showNotice(error.message)));
+document.getElementById("provider-permission-mode").addEventListener("change", togglePermissionWarning);
+document.getElementById("provider-worker").addEventListener("change", () => loadSelectedWorkerConfig().then(togglePermissionWarning).catch((error) => showNotice(error.message)));
 
 document.getElementById("provider-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    const config = await api("/api/ai-provider", { method: "PUT", body: JSON.stringify({ provider_type: "openai_compatible", provider_name: document.getElementById("provider-name").value.trim(), base_url: document.getElementById("provider-base-url").value.trim(), model: document.getElementById("provider-model").value.trim(), thinking_mode: document.getElementById("provider-thinking-mode").value, reasoning_effort: document.getElementById("provider-reasoning-effort").value, api_key: document.getElementById("provider-api-key").value.trim() || null, execution_scope: "worker", worker_id: document.getElementById("provider-worker").value }) });
+    const config = await api("/api/ai-provider", { method: "PUT", body: JSON.stringify({ provider_type: "openai_compatible", provider_name: document.getElementById("provider-name").value.trim(), base_url: document.getElementById("provider-base-url").value.trim(), model: document.getElementById("provider-model").value.trim(), thinking_mode: document.getElementById("provider-thinking-mode").value, reasoning_effort: document.getElementById("provider-reasoning-effort").value, agent_permission_mode: document.getElementById("provider-permission-mode").value, api_key: document.getElementById("provider-api-key").value.trim() || null, execution_scope: "worker", worker_id: document.getElementById("provider-worker").value }) });
     document.getElementById("provider-api-key").value = "";
     renderSummary(config);
     showNotice("Đã lưu. Worker sẽ đồng bộ Hermes trong tối đa một phút.", true);
@@ -103,4 +114,4 @@ document.getElementById("test-provider").addEventListener("click", async () => {
   catch (error) { showNotice(error.message); }
 });
 
-load().then(toggleReasoning).catch((error) => showNotice(error.message));
+load().then(() => { toggleReasoning(); togglePermissionWarning(); }).catch((error) => showNotice(error.message));

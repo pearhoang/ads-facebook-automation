@@ -172,6 +172,7 @@ def run_install(
                 model=provider_model,
                 thinking_mode=provider_thinking_mode,
                 reasoning_effort=provider_reasoning_effort,
+                agent_permission_mode="ads_safe",
                 api_key=provider_api_key,
                 execution_scope="worker",
                 worker_id=worker.id,

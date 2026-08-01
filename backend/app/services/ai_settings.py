@@ -90,6 +90,7 @@ def serialize_config(config: AIProviderConfig | None) -> dict:
         "model": config.model,
         "thinking_mode": config.thinking_mode,
         "reasoning_effort": config.reasoning_effort,
+        "agent_permission_mode": config.agent_permission_mode,
         "api_key_masked": _masked(config.api_key_hint),
         "execution_scope": config.execution_scope,
         "worker_id": config.worker_id,
@@ -112,6 +113,7 @@ def upsert_config(
     model: str,
     thinking_mode: str,
     reasoning_effort: str,
+    agent_permission_mode: str,
     api_key: str | None,
     execution_scope: str,
     worker_id: str | None,
@@ -148,6 +150,7 @@ def upsert_config(
     config.model = model
     config.thinking_mode = thinking_mode
     config.reasoning_effort = reasoning_effort
+    config.agent_permission_mode = agent_permission_mode
     config.execution_scope = execution_scope
     config.worker_id = worker_id
     config.status = "configured"
@@ -167,6 +170,7 @@ def upsert_config(
             "model": model,
             "thinking_mode": thinking_mode,
             "reasoning_effort": reasoning_effort,
+            "agent_permission_mode": agent_permission_mode,
             "execution_scope": execution_scope,
             "worker_id": worker_id,
             "api_key_changed": bool(api_key and api_key.strip()),
@@ -199,6 +203,7 @@ def runtime_config_for_worker(
         "model": config.model,
         "thinking_mode": config.thinking_mode,
         "reasoning_effort": config.reasoning_effort,
+        "agent_permission_mode": config.agent_permission_mode,
         "api_key": _decrypt(encryption_key, config.api_key_ciphertext),
     }
 

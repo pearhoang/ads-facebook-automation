@@ -37,4 +37,4 @@
 
 - Hai process cùng poll `getUpdates` trên một bot token sẽ xung đột; chỉ Hermes gateway được poll, reporter chỉ gọi `sendMessage`.
 - DeepSeek thinking tool-call loop phải giữ `reasoning_content`; giao việc này cho Hermes runtime thay vì tự viết agent loop.
-- Không bật full `hermes-telegram` terminal toolset cho production ads bot.
+- Không bật full toolset theo mặc định. Chỉ worker được owner chọn `Experimental Full Access` mới gỡ các block terminal/file/code/browser/computer/delegation; quyết định này có cảnh báo, audit và đảo ngược được về `Ads Safe`.

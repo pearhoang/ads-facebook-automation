@@ -151,6 +151,10 @@ class AIProviderConfigUpdateRequest(BaseModel):
         default="provider_default",
         pattern=r"^(provider_default|minimal|low|medium|high|xhigh|max|ultra)$",
     )
+    agent_permission_mode: str = Field(
+        default="ads_safe",
+        pattern=r"^(ads_safe|experimental_full)$",
+    )
     api_key: str | None = Field(default=None, max_length=4096)
     execution_scope: str = Field(default="worker", pattern=r"^worker$")
     worker_id: str | None = None
@@ -178,6 +182,7 @@ class AIProviderConfigView(BaseModel):
     model: str | None = None
     thinking_mode: str | None = None
     reasoning_effort: str | None = None
+    agent_permission_mode: str | None = None
     api_key_masked: str | None = None
     execution_scope: str | None = None
     worker_id: str | None = None
@@ -195,6 +200,7 @@ class WorkerAIProviderRuntimeView(BaseModel):
     model: str
     thinking_mode: str
     reasoning_effort: str
+    agent_permission_mode: str
     api_key: str | None
 
 

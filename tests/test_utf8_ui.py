@@ -13,6 +13,8 @@ UI_FILES = (
     Path("backend/app/templates/ai_copilot.html"),
     Path("backend/app/static/ai_copilot.js"),
     Path("backend/app/static/copilot.css"),
+    Path("backend/app/templates/hermes_agents.html"),
+    Path("backend/app/static/hermes_agents.js"),
 )
 
 
@@ -34,6 +36,8 @@ def test_campaign_ui_files_are_utf8_without_mojibake_markers():
     assert "Chỉ đọc Ads Manager" in combined
     assert "Đính kèm tệp văn bản" in combined
     assert "Gõ / để xem shortcut" in combined
+    assert "Experimental Full Access" in combined
+    assert "Quyền Agent" in combined
 
 
 def test_copilot_attachment_trigger_is_compact_and_inside_composer_input():

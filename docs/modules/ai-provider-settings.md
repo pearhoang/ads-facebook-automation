@@ -2,7 +2,7 @@
 
 ## Responsibility
 
-- Lưu OpenAI-compatible provider, thinking/reasoning cho từng worker và đồng bộ sang Hermes.
+- Lưu OpenAI-compatible provider, thinking/reasoning và permission mode cho từng worker rồi đồng bộ sang Hermes.
 - Hỗ trợ provider trực tiếp, 9router, OpenRouter hoặc CLIProxyAPI thông qua `base_url`, `model`, `api_key`.
 - Nạp Telegram conversational gateway, localhost Hermes API Server và MCP bridge tới typed tools của control-plane.
 
@@ -24,6 +24,8 @@
 - Telegram Bot Token chỉ được bootstrap vào worker env mode `0600`; không lưu trong database, audit, operation response hoặc command line.
 - Agent tools chỉ nhận per-node credential và chỉ thấy ad account thuộc worker đó.
 - `ads_create_campaign_draft` chỉ tạo control-plane `DRAFT`; không submit/publish.
+- `agent_permission_mode=ads_safe` là mặc định. `experimental_full` chỉ được bật chủ động theo từng worker và chỉ gỡ sáu toolset block do Ads Lush quản lý.
+- Experimental Full Access không mở thêm typed tool publish/budget và không thay approval boundary của control-plane.
 
 ## Current State
 
@@ -31,4 +33,5 @@
 - Preset mặc định hiển thị DeepSeek V4 Flash 0731; OpenAI-compatible endpoint là `https://api.deepseek.com` và API model ID canonical là `deepseek-v4-flash`.
 - Production API key đã lưu encrypted; `/models` và Chat Completions đều trả `200`, Hermes gateway đang active.
 - UI hỗ trợ `auto|enabled|disabled` và effort `provider_default|minimal|low|medium|high|xhigh|max|ultra`.
+- UI hỗ trợ `Ads Safe` và `Experimental Full Access`; cảnh báo rõ quyền terminal/file/code/browser/computer/delegation của service trên VPS và yêu cầu session mới hoặc `/reset`.
 - Provider/model có một canonical UI tại `Hermes Agents`; popup sửa Bot VPS chỉ sửa identity/SSH, còn popup cài mới vẫn nhận initial provider bootstrap.

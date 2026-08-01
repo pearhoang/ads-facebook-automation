@@ -175,6 +175,7 @@ def test_ai_key_is_masked_encrypted_and_scoped_to_selected_worker(tmp_path: Path
                 "api_key": raw_key,
                 "thinking_mode": "enabled",
                 "reasoning_effort": "high",
+                "agent_permission_mode": "experimental_full",
                 "execution_scope": "worker",
                 "worker_id": worker["id"],
             },
@@ -191,6 +192,7 @@ def test_ai_key_is_masked_encrypted_and_scoped_to_selected_worker(tmp_path: Path
         assert runtime.json()["api_key"] == raw_key
         assert runtime.json()["thinking_mode"] == "enabled"
         assert runtime.json()["reasoning_effort"] == "high"
+        assert runtime.json()["agent_permission_mode"] == "experimental_full"
 
         context = client.get(
             f"/api/workers/{worker['id']}/agent-tools/context",
@@ -284,7 +286,7 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
             assert telegram_allowed_users not in persisted
 
 
-def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: Path, monkeypatch):
+def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal_by_default(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("workers.agent.hermes_config.subprocess.run", lambda *args, **kwargs: None)
     manager = HermesConfigManager(tmp_path / "hermes")
     changed = manager.apply(
@@ -326,6 +328,43 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: P
     assert config["gateway"]["api_server"]["key"] == manager.api_key_path.read_text(encoding="utf-8")
     service = Path("infra/systemd/meta-ads-copilot-hermes.service").read_text(encoding="utf-8")
     assert "EnvironmentFile=-/opt/meta-ads-copilot-runtime/worker-data/hermes/.env" in service
+
+
+def test_hermes_experimental_full_access_removes_managed_toolset_blocks(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("workers.agent.hermes_config.subprocess.run", lambda *args, **kwargs: None)
+    manager = HermesConfigManager(tmp_path / "hermes")
+    base_provider = {
+        "provider_name": "deepseek",
+        "base_url": "https://api.deepseek.com",
+        "model": "deepseek-v4-flash",
+        "thinking_mode": "enabled",
+        "reasoning_effort": "high",
+        "api_key": "sk-test-only",
+    }
+    assert manager.apply(base_provider) is True
+    full_provider = {**base_provider, "agent_permission_mode": "experimental_full"}
+    assert manager.apply(full_provider) is True
+
+    config = __import__("yaml").safe_load(manager.config_path.read_text(encoding="utf-8"))
+    managed_toolsets = {
+        "terminal",
+        "file",
+        "browser",
+        "code_execution",
+        "delegation",
+        "computer_use",
+    }
+    assert managed_toolsets.isdisjoint(config["agent"]["disabled_toolsets"])
+    assert "ads_create_campaign_draft" in config["mcp_servers"]["ads_control_plane"]["tools"]["include"]
+    soul = manager.soul_path.read_text(encoding="utf-8")
+    assert "Experimental Full Access" in soul
+    assert "không tự sửa source production" in soul
+    assert "Không dùng quyền hệ thống hoặc browser để đi vòng" in soul
+
+    assert manager.apply({**base_provider, "agent_permission_mode": "ads_safe"}) is True
+    safe_config = __import__("yaml").safe_load(manager.config_path.read_text(encoding="utf-8"))
+    assert managed_toolsets.issubset(set(safe_config["agent"]["disabled_toolsets"]))
+    assert "Chế độ `Ads Safe`" in manager.soul_path.read_text(encoding="utf-8")
 
 
 def test_mcp_bridge_lists_only_ads_typed_tools():

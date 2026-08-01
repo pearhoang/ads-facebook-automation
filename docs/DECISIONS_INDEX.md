@@ -25,3 +25,4 @@
 | DEC-021 | Source/worker bootstrap dùng public GitHub checkout tracking main | Active | repo/infra/worker | High |
 | DEC-022 | Telegram dùng Hermes conversational gateway và MCP typed tools scope theo worker | Active | agent/backend/worker | High |
 | DEC-023 | AI Copilot dùng Hermes session bridge, natural-first với shortcut/attachment giới hạn và chỉ phục vụ Meta Ads | Active | backend/UI/worker/agent | High |
+| DEC-024 | Hermes permission mode theo worker, safe mặc định và experimental full chỉ opt-in | Active | backend/UI/worker/agent | High |

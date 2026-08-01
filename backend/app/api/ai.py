@@ -39,6 +39,7 @@ def save_provider_config(
         model=payload.model,
         thinking_mode=payload.thinking_mode,
         reasoning_effort=payload.reasoning_effort,
+        agent_permission_mode=payload.agent_permission_mode,
         api_key=payload.api_key,
         execution_scope=payload.execution_scope,
         worker_id=payload.worker_id,

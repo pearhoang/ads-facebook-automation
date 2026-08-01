@@ -168,3 +168,10 @@
 - Changed: Đổi nút chữ `Đính kèm` thành dấu `+` nằm trong mép trái ô chat, giữ tooltip, accessible label và attachment queue hiện có.
 - Affected: AI Copilot template/CSS, UTF-8 UI regression test và UI system memory.
 - Safety: Không đổi upload API, loại tệp, giới hạn dung lượng hoặc Hermes message flow.
+
+### 2026-08-01 - Experimental Full Access theo từng Hermes Agent
+
+- Changed: Thêm `agent_permission_mode` theo worker, UI `Ads Safe | Experimental Full Access`, audit/runtime contract và worker sync có thể gỡ/khôi phục sáu toolset block terminal/file/code/browser/computer/delegation.
+- Affected: AI provider schema/API/UI, Alembic `20260801_0009`, Hermes config/SOUL, tests và project memory.
+- Verified: `53 passed`, Python compile, JavaScript syntax, UTF-8 guard và Alembic `20260801_0009 (head)` sạch; production verification được ghi sau deploy.
+- Safety: Worker mới vẫn mặc định `Ads Safe`; full access không thêm typed tool publish/budget và không thay DRAFT/approval boundary của control-plane.

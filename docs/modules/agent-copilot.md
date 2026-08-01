@@ -26,7 +26,7 @@
 - Attachment Web chỉ nhận tối đa ba tệp TXT/MD/CSV/JSON/YAML UTF-8, 128 KB/tệp và 256 KB tổng. Binary không persist; transcript chỉ giữ metadata, còn nội dung gửi Hermes được đánh dấu untrusted reference data.
 - Transcript user API/UI chỉ trả `user|assistant`; message Hermes role `tool|session_meta` là runtime nội bộ và không được render như câu trả lời.
 - Assistant content render Markdown theo safe DOM subset; không đưa raw HTML từ model vào DOM.
-- Agent vẫn chỉ có typed Ads tools. Action tiêu tiền giữ DRAFT/approval boundary của control-plane.
+- Agent mặc định chỉ có typed Ads tools. Worker được owner bật `Experimental Full Access` có thêm tool hệ thống để tạo artifact, kiểm thử và giải quyết tác vụ, nhưng action Meta tiêu tiền vẫn giữ DRAFT/approval boundary của control-plane.
 - Một conversation chỉ có một active `chat_turn`; job có lease, retry/outbox theo worker contract.
 - Public job error không lộ localhost URL hoặc response nội bộ; chẩn đoán chi tiết chỉ ghi worker journal.
 
