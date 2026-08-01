@@ -34,7 +34,7 @@
 - Meta resource và creative asset phải theo tenant/ad account; approved snapshot giữ exact resource metadata và SHA-256 của asset.
 - Worker chỉ tải asset qua authenticated job contract, xác minh digest và dừng `awaiting_user` khi resource chưa verified hoặc Meta cần thao tác thủ công.
 - Reporting dùng job contract riêng và snapshot bất biến; browser collector chỉ đọc Ads Manager, không dùng campaign execution approval làm report state.
-- Lịch báo cáo dùng ngày đã hoàn tất theo timezone ad account; Telegram token chỉ nằm ở worker environment.
+- Lịch báo cáo dùng ngày đã hoàn tất theo timezone ad account; Telegram token chỉ nằm ở worker environment và được truyền one-shot khi Add Bot.
 - Thao tác publish, tăng budget hoặc thay đổi rủi ro cao phải qua preview, guardrail và approval.
 - Agent không phải source of truth và không được sửa production trực tiếp.
 - AI Copilot chỉ phục vụ Meta Ads, dùng exact Hermes session chung với Telegram qua outbound worker job; Hermes API không public.

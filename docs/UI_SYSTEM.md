@@ -42,7 +42,8 @@
 - Manual report dialog luôn yêu cầu `THU THẬP KPI`; schedule nói rõ timezone, lookback và Telegram token không được nhập trên UI.
 - Report job tách trạng thái thu thập khỏi trạng thái Telegram để lỗi gửi tin không làm mất snapshot.
 - Trang `Bot VPS` dùng một table duy nhất; mỗi worker có action `Sửa`, `Drain/Kích hoạt`, `Gỡ khỏi VPS`, `Xóa kết nối`, và action rủi ro luôn mở popup xác nhận.
-- Popup cài worker nhóm rõ `SSH`, `Source` và `Hermes Agent`; password/API key dùng password input, không render lại sau submit và operation chỉ hiển thị tiến độ không chứa secret.
+- Popup cài worker nhóm rõ `SSH`, `Source`, `Hermes Agent` và `Telegram`; password/API key/token dùng password input, không render lại sau submit và operation chỉ hiển thị tiến độ không chứa secret.
+- Add Bot yêu cầu Telegram Bot Token cùng allowlist user ID; copy phải nói rõ token chỉ truyền một lần, nhiều user ID phân tách bằng dấu phẩy và không có chế độ allow-all.
 - Trang `Hermes Agents` bắt buộc chọn worker trước khi sửa provider; API key luôn masked và để trống nghĩa là giữ key hiện tại.
 - Popup cài worker điền sẵn canonical GitHub repo nhưng vẫn là input sửa được; DeepSeek V4 Flash 0731 là preset đầu tiên, còn model API canonical giữ `deepseek-v4-flash`.
 - Hermes Agents và popup cài Bot VPS dùng cùng hai control `Thinking` và `Reasoning effort`; popup sửa Bot VPS không lặp lại provider settings.

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator, model_validator
@@ -67,6 +68,8 @@ class BotNodeRemoteInstallRequest(BaseModel):
         pattern=r"^(provider_default|minimal|low|medium|high|xhigh|max|ultra)$",
     )
     provider_api_key: SecretStr | None = Field(default=None, max_length=4096)
+    telegram_bot_token: SecretStr = Field(min_length=20, max_length=256)
+    telegram_allowed_users: str = Field(min_length=1, max_length=512)
 
     @field_validator("provider_base_url")
     @classmethod
@@ -75,6 +78,22 @@ class BotNodeRemoteInstallRequest(BaseModel):
         if not normalized.startswith(("https://", "http://127.0.0.1", "http://localhost")):
             raise ValueError("Base URL phải dùng HTTPS, trừ endpoint localhost.")
         return normalized
+
+    @field_validator("telegram_bot_token")
+    @classmethod
+    def validate_telegram_bot_token(cls, value: SecretStr) -> SecretStr:
+        token = value.get_secret_value().strip()
+        if not re.fullmatch(r"[0-9]{5,20}:[A-Za-z0-9_-]{20,}", token):
+            raise ValueError("Telegram Bot Token không đúng định dạng BotFather.")
+        return SecretStr(token)
+
+    @field_validator("telegram_allowed_users")
+    @classmethod
+    def validate_telegram_allowed_users(cls, value: str) -> str:
+        user_ids = [item.strip() for item in value.split(",") if item.strip()]
+        if not user_ids or any(not re.fullmatch(r"[1-9][0-9]{3,19}", item) for item in user_ids):
+            raise ValueError("Telegram user ID phải là số, nhiều ID cách nhau bằng dấu phẩy.")
+        return ",".join(dict.fromkeys(user_ids))
 
 
 class BotNodeEditRequest(BaseModel):

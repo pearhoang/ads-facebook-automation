@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import json
 import shlex
 import time
 from collections.abc import Callable
@@ -108,11 +109,25 @@ def run_install(
     provider_thinking_mode: str,
     provider_reasoning_effort: str,
     provider_api_key: str | None,
+    telegram_bot_token: str,
+    telegram_allowed_users: str,
 ) -> None:
     operation = _set_operation(session_factory, operation_id, status="running", started=True)
     client: paramiko.SSHClient | None = None
+    remote_secrets_path = f"/tmp/ads-lush-install-secrets-{operation_id}.json"
     try:
         client, fingerprint = _connect(operation.host, operation.ssh_user, ssh_password)
+        with client.open_sftp() as sftp:
+            with sftp.file(remote_secrets_path, "w") as secret_file:
+                secret_file.write(
+                    json.dumps(
+                        {
+                            "telegram_bot_token": telegram_bot_token,
+                            "telegram_allowed_users": telegram_allowed_users,
+                        }
+                    )
+                )
+            sftp.chmod(remote_secrets_path, 0o600)
         script_url = f"{settings.app_origin}/api/bot-nodes/bootstrap.sh"
         script = " ".join(
             [
@@ -125,6 +140,8 @@ def run_install(
                 shlex.quote(repo_url),
                 "--branch",
                 shlex.quote(repo_branch),
+                "--secrets-file",
+                shlex.quote(remote_secrets_path),
             ]
         )
         operator_script, stdin_text = _operator_command(operation.ssh_user, ssh_password, script)
@@ -177,6 +194,11 @@ def run_install(
         )
     finally:
         if client is not None:
+            try:
+                with client.open_sftp() as sftp:
+                    sftp.remove(remote_secrets_path)
+            except OSError:
+                pass
             client.close()
 
 

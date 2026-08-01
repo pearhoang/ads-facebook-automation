@@ -127,6 +127,7 @@
 - Popup install/decommission nhận SSH password nhưng chỉ truyền vào background job trong RAM; không ghi DB, operation message, response hoặc audit.
 - Lần cài đầu ghi SSH host fingerprint; decommission từ xa phải khớp fingerprint đã lưu nếu có.
 - AI API key mã hóa bằng `SECRET_ENCRYPTION_KEY`; UI/API chỉ trả masked hint, còn raw key chỉ được giải mã cho đúng worker credential.
+- Add Bot nhận Telegram Bot Token và allowlist trong cùng request. Token chỉ đi qua file tạm SSH mode `0600`, được ghi vào worker env mode `0600`, rồi file tạm bị xóa; control-plane không lưu token/allowlist trong DB, audit, response hay command line.
 - Hermes service không tự chạy chỉ vì đã cài; worker chỉ enable/start sau khi nhận provider base URL, model và key hợp lệ.
 
 ## DEC-021 — Public Git checkout là source bootstrap canonical

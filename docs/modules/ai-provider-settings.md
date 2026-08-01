@@ -20,7 +20,8 @@
 - Remote non-localhost endpoint cần API key; localhost proxy được phép để trống.
 - Hermes config và managed hash có mode `0600`; service chỉ start sau lần sync config hợp lệ.
 - Hermes API Server chỉ bind `127.0.0.1:8642`; bearer key riêng nằm trên worker mode `0600` và không đi qua browser/control-plane.
-- Telegram phải có `TELEGRAM_ALLOWED_USERS`; không dùng `GATEWAY_ALLOW_ALL_USERS`.
+- Telegram phải có `TELEGRAM_ALLOWED_USERS`; không dùng `GATEWAY_ALLOW_ALL_USERS`. Add Bot yêu cầu token và allowlist ngay từ đầu để gateway dùng được mà không cần SSH cấu hình tay.
+- Telegram Bot Token chỉ được bootstrap vào worker env mode `0600`; không lưu trong database, audit, operation response hoặc command line.
 - Agent tools chỉ nhận per-node credential và chỉ thấy ad account thuộc worker đó.
 - `ads_create_campaign_draft` chỉ tạo control-plane `DRAFT`; không submit/publish.
 

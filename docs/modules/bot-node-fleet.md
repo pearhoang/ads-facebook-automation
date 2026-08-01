@@ -14,7 +14,8 @@
 
 ## Invariants
 
-- SSH password không được persist; operation chỉ lưu host, user, status và message đã scrub.
+- SSH password và Telegram Bot Token không được persist; operation chỉ lưu host, user, status và message đã scrub.
+- Remote install chuyển Telegram token/allowlist bằng file tạm `0600`, xóa ở cả installer và control-plane cleanup; secret không nằm trong process arguments.
 - Enrollment token one-time chỉ lưu digest; worker credential cũng chỉ lưu digest ở control-plane.
 - Decommission yêu cầu worker đã `draining`; nếu có fingerprint thì SSH host key phải khớp.
 - Không hard-delete worker row hoặc browser profile từ UI mặc định.
@@ -24,4 +25,5 @@
 
 - Production migration mục tiêu `20260801_0007`; một worker hiện hữu đã gắn host và trạng thái installed.
 - Canonical public repo là `https://github.com/pearhoang/ads-facebook-automation.git`, branch `main`; popup điền sẵn và cho phép thay bằng fork khác.
+- Popup Add Bot là one-shot setup: SSH, Git checkout, initial Hermes provider, Telegram Bot Token và allowlist user ID; worker tự cài browser/noVNC/Hermes rồi kết nối control-plane.
 - Production source là Git checkout sạch tracking `origin/main`.

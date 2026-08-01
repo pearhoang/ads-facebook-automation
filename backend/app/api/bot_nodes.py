@@ -136,6 +136,8 @@ def install_node(
         payload.provider_thinking_mode,
         payload.provider_reasoning_effort,
         payload.provider_api_key.get_secret_value() if payload.provider_api_key else None,
+        payload.telegram_bot_token.get_secret_value(),
+        payload.telegram_allowed_users,
     )
     return operation
 

@@ -27,6 +27,7 @@
 - [x] Thêm worker bridge tới Hermes API Server và session sync.
 - [x] Tách trang Hermes Agents khỏi AI Copilot/Bot VPS.
 - [x] Xây AI Copilot UI natural-first và resume Telegram session.
+- [x] Biến Add Bot thành one-shot bootstrap gồm Hermes provider, Telegram token và allowlist mà không persist token tại control-plane.
 - [x] Kiểm thử contract, tenant boundary, UI/API và worker bridge.
 - [ ] Deploy, migrate và smoke test production.
 

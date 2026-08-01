@@ -141,9 +141,12 @@ document.getElementById("enrollment-form").addEventListener("submit", async (eve
       provider_thinking_mode: document.getElementById("install-provider-thinking-mode").value,
       provider_reasoning_effort: document.getElementById("install-provider-reasoning-effort").value,
       provider_api_key: document.getElementById("install-provider-api-key").value || null,
+      telegram_bot_token: document.getElementById("install-telegram-bot-token").value,
+      telegram_allowed_users: document.getElementById("install-telegram-allowed-users").value.trim(),
     }) });
     document.getElementById("node-ssh-password").value = "";
     document.getElementById("install-provider-api-key").value = "";
+    document.getElementById("install-telegram-bot-token").value = "";
     enrollmentDialog.close();
     showNotice(`Đã bắt đầu cài ${operation.ssh_user}@${operation.host}. Theo dõi ở bảng thao tác.`, true);
     await loadAll();

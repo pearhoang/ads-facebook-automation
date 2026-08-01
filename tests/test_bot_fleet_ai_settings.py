@@ -234,10 +234,14 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
             "Gỡ worker khỏi VPS",
             "DeepSeek V4 Flash 0731",
             "deepseek-v4-flash",
+            "Telegram Bot Token",
+            "Telegram user ID được phép",
         ):
             assert copy in page.text
         ssh_password = "temporary-ssh-password"
         provider_api_key = "sk-provider-secret"
+        telegram_bot_token = "123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcd"
+        telegram_allowed_users = "123456789,987654321"
         response = client.post(
             "/api/bot-nodes/install",
             headers=headers,
@@ -253,13 +257,18 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
                 "provider_base_url": "https://router.example.test/v1",
                 "provider_model": "test-model",
                 "provider_api_key": provider_api_key,
+                "telegram_bot_token": telegram_bot_token,
+                "telegram_allowed_users": telegram_allowed_users,
             },
         )
         assert response.status_code == 202, response.text
         assert ssh_password not in response.text
         assert provider_api_key not in response.text
-        assert captured["args"][-7] == ssh_password
-        assert captured["args"][-1] == provider_api_key
+        assert telegram_bot_token not in response.text
+        assert captured["args"][-9] == ssh_password
+        assert captured["args"][-3] == provider_api_key
+        assert captured["args"][-2] == telegram_bot_token
+        assert captured["args"][-1] == telegram_allowed_users
 
         with client.app.state.database.session_factory() as db:
             operation = db.query(WorkerOperation).one()
@@ -271,6 +280,8 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
             )
             assert ssh_password not in persisted
             assert provider_api_key not in persisted
+            assert telegram_bot_token not in persisted
+            assert telegram_allowed_users not in persisted
 
 
 def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: Path, monkeypatch):

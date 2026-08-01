@@ -8,6 +8,7 @@ REPO_BRANCH="main"
 APP_DIR="/opt/meta-ads-copilot"
 RUNTIME_DIR="/opt/meta-ads-copilot-runtime"
 ENV_DIR="/etc/meta-ads-copilot"
+SECRETS_FILE=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -17,6 +18,7 @@ while [[ $# -gt 0 ]]; do
     --branch) REPO_BRANCH="$2"; shift 2 ;;
     --app-dir) APP_DIR="$2"; shift 2 ;;
     --runtime-dir) RUNTIME_DIR="$2"; shift 2 ;;
+    --secrets-file) SECRETS_FILE="$2"; shift 2 ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
   esac
 done
@@ -29,12 +31,20 @@ if [[ "$(id -u)" -ne 0 ]]; then
   echo "Run this installer with sudo/root." >&2
   exit 1
 fi
+if [[ -z "$SECRETS_FILE" || ! -f "$SECRETS_FILE" ]]; then
+  echo "Required: --secrets-file with Telegram bootstrap values" >&2
+  exit 2
+fi
+trap 'rm -f "$SECRETS_FILE" /tmp/hermes-agent-install.sh; [[ -z "${ENROLL_RESPONSE:-}" ]] || rm -f "$ENROLL_RESPONSE"' EXIT
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends \
   ca-certificates curl git jq xz-utils python3 python3-venv python3-pip \
   xvfb openbox x11vnc novnc websockify ffmpeg snapd sqlite3
+
+TELEGRAM_BOT_TOKEN="$(jq -er '.telegram_bot_token' "$SECRETS_FILE")"
+TELEGRAM_ALLOWED_USERS="$(jq -er '.telegram_allowed_users' "$SECRETS_FILE")"
 
 if ! command -v chromium >/dev/null 2>&1 && [[ ! -x /snap/chromium/current/usr/lib/chromium-browser/chrome ]]; then
   snap install chromium
@@ -58,7 +68,6 @@ python3 -m venv "$RUNTIME_DIR/.venv"
 "$RUNTIME_DIR/.venv/bin/python" -m pip install -e "$APP_DIR"
 
 ENROLL_RESPONSE="$(mktemp)"
-trap 'rm -f "$ENROLL_RESPONSE" /tmp/hermes-agent-install.sh' EXIT
 curl -fsS "$CONTROL_PLANE/api/bot-nodes/enroll" \
   -H 'Content-Type: application/json' \
   --data "$(jq -cn --arg token "$ENROLLMENT_TOKEN" '{enrollment_token:$token,runtime_version:"0.2.0",agent_version:"managed",capabilities:{browser:true,novnc:true,execution:true,hermes:true,durable_outbox:true}}')" \
@@ -102,8 +111,8 @@ BROWSER_SESSION_VIEWPORT=1440,900
 EXECUTION_PREFLIGHT_ENABLED=true
 EXECUTION_PREFLIGHT_DEBUG_PORT=19350
 EXECUTION_PREFLIGHT_TIMEOUT_SECONDS=45
-TELEGRAM_BOT_TOKEN=
-TELEGRAM_ALLOWED_USERS=
+TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
+TELEGRAM_ALLOWED_USERS=$TELEGRAM_ALLOWED_USERS
 EOF
 chmod 600 "$ENV_DIR/worker.env"
 
