@@ -1,4 +1,5 @@
-.copilot-main { height: 100vh; overflow: hidden; background: #eeede9; }
+.copilot-page { height: 100dvh; overflow: hidden; }
+.copilot-main { height: 100dvh; min-height: 0; overflow: hidden; background: #eeede9; }
 .copilot-topbar { min-height: 76px; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; background: var(--surface); border-bottom: 1px solid var(--border); }
 .copilot-topbar h1 { font-size: 19px; }
 .copilot-topbar p { margin-top: 4px; color: var(--muted); font-size: 11px; }
@@ -7,14 +8,14 @@
 .copilot-controls label span { display: block; margin-bottom: 5px; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
 .copilot-controls select { min-height: 34px; margin: 0; padding: 5px 28px 5px 9px; font-size: 12px; }
 .copilot-profile-label { min-height: 34px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 7px; background: #f7f6f3; color: var(--muted); font-size: 11px; font-weight: 600; }
-.copilot-shell { height: calc(100vh - 76px); display: grid; grid-template-columns: 286px minmax(0, 1fr); margin: 0; border: 0; }
-.conversation-panel { min-width: 0; background: #f8f7f4; border-right: 1px solid var(--border); overflow: hidden; }
+.copilot-shell { height: calc(100dvh - 76px); min-height: 0; display: grid; grid-template-columns: 286px minmax(0, 1fr); margin: 0; border: 0; }
+.conversation-panel { min-width: 0; min-height: 0; display: grid; grid-template-rows: 62px minmax(0, 1fr); background: #f8f7f4; border-right: 1px solid var(--border); overflow: hidden; }
 .conversation-toolbar { height: 62px; padding: 12px 14px 12px 17px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
 .conversation-toolbar strong, .conversation-toolbar small { display: block; }
 .conversation-toolbar strong { font-size: 12px; }
 .conversation-toolbar small { margin-top: 3px; color: var(--muted); font-size: 10px; }
 .new-chat-button { width: 31px; height: 31px; border: 1px solid var(--border-strong); border-radius: 7px; background: white; color: var(--text); font-size: 18px; line-height: 1; }
-.conversation-list { height: calc(100% - 62px); padding: 8px; overflow-y: auto; }
+.conversation-list { min-height: 0; padding: 8px; overflow-y: auto; }
 .conversation-item { width: 100%; padding: 10px; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 9px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: inherit; text-align: left; }
 .conversation-item:hover { background: #efeeea; }
 .conversation-item.is-active { border-color: var(--border); background: white; box-shadow: 0 1px 2px rgba(28,25,23,.04); }
@@ -24,16 +25,16 @@
 .conversation-copy strong, .conversation-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .conversation-copy strong { font-size: 11px; font-weight: 600; }
 .conversation-copy small { margin-top: 4px; color: var(--muted); font-size: 9px; }
-.conversation-empty { padding: 42px 24px; color: var(--muted); text-align: center; font-size: 11px; line-height: 1.6; }
+.conversation-empty { grid-row: 2; padding: 42px 24px; color: var(--muted); text-align: center; font-size: 11px; line-height: 1.6; }
 .conversation-empty strong { display: block; color: var(--text); font-size: 12px; }
 .conversation-empty p { margin-top: 7px; }
-.chat-panel { min-width: 0; display: grid; grid-template-rows: 62px minmax(0, 1fr) auto; background: #fff; }
+.chat-panel { min-width: 0; min-height: 0; height: 100%; display: grid; grid-template-rows: 62px minmax(0, 1fr) auto; background: #fff; overflow: hidden; }
 .chat-context { padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
 .chat-context > div { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .chat-context h2 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
 .source-badge { padding: 4px 7px; border-radius: 5px; background: #efefed; color: var(--muted); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
 .source-badge.telegram { background: #e5f2f8; color: #287495; }
-.message-list { padding: 26px max(24px, calc((100% - 780px) / 2)); overflow-y: auto; scroll-behavior: smooth; }
+.message-list { min-height: 0; padding: 26px max(24px, calc((100% - 780px) / 2)); overflow-y: auto; overscroll-behavior: contain; scroll-behavior: smooth; }
 .welcome-state { max-width: 620px; margin: 10vh auto 0; text-align: center; }
 .welcome-mark { display: grid; place-items: center; width: 38px; height: 38px; margin: 0 auto 16px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 700; }
 .welcome-state h2 { font-size: 18px; }
@@ -45,7 +46,18 @@
 .message.user .message-avatar { background: #ece9e3; color: #5e5851; }
 .message-body { min-width: 0; padding-top: 3px; }
 .message-meta { margin-bottom: 6px; display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 9px; }
-.message-content { color: #292622; font-size: 13px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+.message-content { color: #292622; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.message-content p + p, .message-content p + ol, .message-content p + ul, .message-content p + table, .message-content ol + p, .message-content ul + p, .message-content table + p { margin-top: 10px; }
+.message-content ol, .message-content ul { margin: 8px 0 0; padding-left: 22px; }
+.message-content li + li { margin-top: 4px; }
+.message-content code { padding: 1px 4px; border-radius: 4px; background: #f0efec; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .92em; }
+.message-content pre { margin: 10px 0 0; padding: 12px; overflow-x: auto; border: 1px solid var(--border); border-radius: 7px; background: #f7f6f3; white-space: pre; }
+.message-content pre code { padding: 0; background: transparent; }
+.message-content table { width: 100%; margin-top: 10px; border: 1px solid var(--border); border-collapse: collapse; font-size: 12px; }
+.message-content th, .message-content td { padding: 7px 9px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: left; }
+.message-content th:last-child, .message-content td:last-child { border-right: 0; }
+.message-content tbody tr:last-child td { border-bottom: 0; }
+.message-content h3, .message-content h4, .message-content h5, .message-content h6 { margin: 12px 0 6px; font-size: 13px; }
 .message-shortcuts { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
 .shortcut-chip { min-height: 29px; padding: 5px 9px; border: 1px solid var(--border-strong); border-radius: 7px; background: white; color: var(--text); font-size: 10px; font-weight: 600; }
 .thinking-row { max-width: 780px; margin: 0 auto 20px; padding-left: 41px; color: var(--muted); font-size: 11px; }
@@ -57,5 +69,5 @@
 .composer button { position: absolute; top: 20px; right: max(32px, calc((100% - 764px) / 2)); min-height: 34px; padding: 7px 13px; border: 0; border-radius: 7px; background: var(--accent); color: white; font-size: 11px; font-weight: 700; }
 .composer button:disabled { opacity: .42; cursor: not-allowed; }
 .composer p { margin-top: 7px; color: var(--muted); font-size: 9px; }
-@media (max-width: 900px) { .copilot-main { height: auto; overflow: visible; } .copilot-topbar { align-items: flex-start; flex-direction: column; } .copilot-controls { width: 100%; flex-wrap: wrap; } .copilot-controls label { flex: 1; min-width: 140px; } .copilot-shell { height: calc(100vh - 190px); grid-template-columns: 220px minmax(0, 1fr); } .message-list, .composer { padding-right: 16px; padding-left: 16px; } .composer button { right: 24px; } }
+@media (max-width: 900px) { .copilot-page { height: auto; overflow: auto; } .copilot-main { height: auto; overflow: visible; } .copilot-topbar { align-items: flex-start; flex-direction: column; } .copilot-controls { width: 100%; flex-wrap: wrap; } .copilot-controls label { flex: 1; min-width: 140px; } .copilot-shell { height: calc(100vh - 190px); grid-template-columns: 220px minmax(0, 1fr); } .message-list, .composer { padding-right: 16px; padding-left: 16px; } .composer button { right: 24px; } }
 @media (max-width: 640px) { .copilot-shell { height: auto; grid-template-columns: 1fr; } .conversation-panel { height: 210px; border-right: 0; border-bottom: 1px solid var(--border); } .chat-panel { height: calc(100vh - 270px); min-height: 520px; } }

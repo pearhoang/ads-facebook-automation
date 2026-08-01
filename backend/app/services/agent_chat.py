@@ -169,6 +169,7 @@ def list_messages(
             .where(
                 AgentMessage.tenant_id == tenant_id,
                 AgentMessage.conversation_id == conversation_id,
+                AgentMessage.role.in_({"user", "assistant"}),
             )
             .order_by(AgentMessage.created_at.desc())
             .limit(limit)
@@ -365,6 +366,8 @@ def _upsert_message(
     source: str,
 ) -> None:
     role = str(payload.get("role") or "assistant")[:24]
+    if role not in {"user", "assistant"}:
+        return
     content = _message_content(payload.get("content"))
     if not content:
         return

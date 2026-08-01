@@ -11,6 +11,8 @@ const notice = document.getElementById("copilot-notice");
 let conversations = [];
 let currentConversation = null;
 let activeJobId = null;
+let conversationLoadRequest = 0;
+let conversationOpenRequest = 0;
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>'\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '\"': "&quot;" }[char]));
@@ -55,6 +57,110 @@ function sourceLabel(source) {
   return String(source || "hermes").toLowerCase().includes("telegram") ? "Telegram" : "Web";
 }
 
+function appendInlineMarkdown(container, value) {
+  const text = String(value || "");
+  const pattern = /(\*\*[^*]+\*\*|`[^`]+`)/g;
+  let cursor = 0;
+  for (const match of text.matchAll(pattern)) {
+    if (match.index > cursor) container.append(document.createTextNode(text.slice(cursor, match.index)));
+    const token = match[0];
+    const node = document.createElement(token.startsWith("**") ? "strong" : "code");
+    node.textContent = token.startsWith("**") ? token.slice(2, -2) : token.slice(1, -1);
+    container.append(node);
+    cursor = match.index + token.length;
+  }
+  if (cursor < text.length) container.append(document.createTextNode(text.slice(cursor)));
+}
+
+function markdownCells(line) {
+  return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
+}
+
+function renderMarkdown(container, value) {
+  const lines = String(value || "").replace(/\r\n?/g, "\n").split("\n");
+  const tableDivider = /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/;
+  let index = 0;
+  while (index < lines.length) {
+    const line = lines[index];
+    if (!line.trim()) { index += 1; continue; }
+
+    if (line.trim().startsWith("```")) {
+      const codeLines = [];
+      index += 1;
+      while (index < lines.length && !lines[index].trim().startsWith("```")) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) index += 1;
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      code.textContent = codeLines.join("\n");
+      pre.append(code);
+      container.append(pre);
+      continue;
+    }
+
+    if (index + 1 < lines.length && line.includes("|") && tableDivider.test(lines[index + 1])) {
+      const table = document.createElement("table");
+      const head = document.createElement("thead");
+      const headRow = document.createElement("tr");
+      markdownCells(line).forEach((cell) => {
+        const th = document.createElement("th");
+        appendInlineMarkdown(th, cell);
+        headRow.append(th);
+      });
+      head.append(headRow);
+      table.append(head);
+      const body = document.createElement("tbody");
+      index += 2;
+      while (index < lines.length && lines[index].includes("|") && lines[index].trim()) {
+        const row = document.createElement("tr");
+        markdownCells(lines[index]).forEach((cell) => {
+          const td = document.createElement("td");
+          appendInlineMarkdown(td, cell);
+          row.append(td);
+        });
+        body.append(row);
+        index += 1;
+      }
+      table.append(body);
+      container.append(table);
+      continue;
+    }
+
+    const ordered = line.match(/^\s*\d+\.\s+(.+)$/);
+    const unordered = line.match(/^\s*[-*]\s+(.+)$/);
+    if (ordered || unordered) {
+      const list = document.createElement(ordered ? "ol" : "ul");
+      const matcher = ordered ? /^\s*\d+\.\s+(.+)$/ : /^\s*[-*]\s+(.+)$/;
+      while (index < lines.length) {
+        const itemMatch = lines[index].match(matcher);
+        if (!itemMatch) break;
+        const item = document.createElement("li");
+        appendInlineMarkdown(item, itemMatch[1]);
+        list.append(item);
+        index += 1;
+      }
+      container.append(list);
+      continue;
+    }
+
+    const heading = line.match(/^\s*(#{1,4})\s+(.+)$/);
+    if (heading) {
+      const title = document.createElement(`h${Math.min(heading[1].length + 2, 6)}`);
+      appendInlineMarkdown(title, heading[2]);
+      container.append(title);
+      index += 1;
+      continue;
+    }
+
+    const paragraph = document.createElement("p");
+    appendInlineMarkdown(paragraph, line);
+    container.append(paragraph);
+    index += 1;
+  }
+}
+
 function renderConversations() {
   conversationEmpty.hidden = conversations.length > 0;
   conversationList.innerHTML = conversations.map((conversation) => {
@@ -88,7 +194,7 @@ function messageElement(message) {
   meta.textContent = `${role === "user" ? "Bạn" : "Hermes"} · ${formatWhen(message.created_at)}`;
   const content = document.createElement("div");
   content.className = "message-content";
-  content.textContent = message.content;
+  renderMarkdown(content, message.content);
   body.append(meta, content);
 
   const shortcuts = Array.isArray(message.metadata_json?.shortcuts)
@@ -129,10 +235,17 @@ function renderMessages(messages) {
 
 async function loadConversations({ keepSelection = true } = {}) {
   if (!workerSelect.value) return;
-  const query = new URLSearchParams({ worker_id: workerSelect.value, profile: "ads" });
-  conversations = await api(`/api/ai-copilot/conversations?${query}`);
-  if (keepSelection && currentConversation) {
-    currentConversation = conversations.find((item) => item.id === currentConversation.id) || null;
+  const requestId = ++conversationLoadRequest;
+  const workerId = workerSelect.value;
+  const selectedId = keepSelection ? currentConversation?.id : null;
+  const query = new URLSearchParams({ worker_id: workerId, profile: "ads" });
+  const loaded = await api(`/api/ai-copilot/conversations?${query}`);
+  if (requestId !== conversationLoadRequest || workerId !== workerSelect.value) return;
+  conversations = loaded;
+  if (selectedId) {
+    currentConversation = conversations.find((item) => item.id === selectedId) || null;
+  } else if (!keepSelection) {
+    currentConversation = null;
   }
   renderConversations();
   if (!currentConversation && conversations.length) await openConversation(conversations[0].id);
@@ -144,13 +257,15 @@ async function loadConversations({ keepSelection = true } = {}) {
 }
 
 async function openConversation(conversationId) {
+  const requestId = ++conversationOpenRequest;
   currentConversation = conversations.find((item) => item.id === conversationId) || null;
   if (!currentConversation) return;
   renderConversations();
   setChatHeader(currentConversation);
   const messages = await api(`/api/ai-copilot/conversations/${encodeURIComponent(conversationId)}/messages`);
+  if (requestId !== conversationOpenRequest || currentConversation?.id !== conversationId) return;
   renderMessages(messages);
-  composerInput.focus();
+  composerInput.focus({ preventScroll: true });
 }
 
 function setBusy(busy, text = "Hermes đang xử lý…") {
@@ -201,12 +316,14 @@ async function waitForJob(jobId, { showBusy = true, maxAttempts = 600 } = {}) {
 
 async function syncSessions({ quiet = false } = {}) {
   if (!workerSelect.value) return;
+  const workerId = workerSelect.value;
   const job = await api("/api/ai-copilot/sync", {
     method: "POST",
-    body: JSON.stringify({ worker_id: workerSelect.value, profile: "ads" }),
+    body: JSON.stringify({ worker_id: workerId, profile: "ads" }),
   });
   if (!quiet) showNotice("Đang lấy session trực tiếp từ Hermes trên Bot VPS…", true);
   await waitForJob(job.id, { showBusy: false, maxAttempts: 45 });
+  if (workerId !== workerSelect.value) return;
   await loadConversations();
   if (!quiet) showNotice("Đã đồng bộ session Web và Telegram.", true);
 }
@@ -228,18 +345,19 @@ async function createConversation() {
 async function sendNaturalMessage(content) {
   const normalized = String(content || "").trim();
   if (!normalized || !currentConversation || activeJobId) return;
+  const conversationId = currentConversation.id;
   composerInput.value = "";
   resizeComposer();
   try {
-    const job = await api(`/api/ai-copilot/conversations/${encodeURIComponent(currentConversation.id)}/messages`, {
+    const job = await api(`/api/ai-copilot/conversations/${encodeURIComponent(conversationId)}/messages`, {
       method: "POST",
       body: JSON.stringify({ content: normalized }),
     });
-    const optimistic = await api(`/api/ai-copilot/conversations/${encodeURIComponent(currentConversation.id)}/messages`);
-    renderMessages(optimistic);
+    const optimistic = await api(`/api/ai-copilot/conversations/${encodeURIComponent(conversationId)}/messages`);
+    if (currentConversation?.id === conversationId) renderMessages(optimistic);
     await waitForJob(job.id);
     await loadConversations();
-    await openConversation(currentConversation.id);
+    if (currentConversation?.id === conversationId) await openConversation(conversationId);
     hideNotice();
   } catch (error) {
     showNotice(error.message);

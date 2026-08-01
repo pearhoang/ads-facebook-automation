@@ -151,6 +151,7 @@
 - AI Copilot không tự xây inference/chat engine; worker gọi Hermes API Server local và control-plane chỉ giữ tenant-scoped mirror cùng outbound job state.
 - Web và Telegram tiếp tục cùng exact `hermes_session_id`, nên lịch sử/ngữ cảnh không bị tách thành hai trợ lý.
 - Natural language là luồng mặc định. Shortcut chỉ là tối đa hai tiện ích cho action preview/resource cụ thể và không vô hiệu composer.
+- Transcript public chỉ gồm `user|assistant`; `tool|session_meta`, raw MCP schema và untrusted tool result là runtime nội bộ. Assistant Markdown được render bằng safe DOM subset, không chấp nhận raw HTML.
 - Provider/model settings có canonical surface riêng `Hermes Agents`; popup sửa Bot VPS không lặp lại cấu hình này.
 - Không tích hợp VPS Copilot vào sản phẩm Ads. Chat quản trị máy chủ nằm ngoài scope SaaS hiện tại.
 - Hermes API Server bind localhost, bearer key chỉ nằm trên worker; control-plane/JavaScript không nhận key.

@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from backend.app.config import Settings
 from backend.app.main import create_app
+from backend.app.models import AgentMessage
 from backend.app.services import auth
 
 
@@ -155,6 +156,9 @@ def test_sync_imports_existing_telegram_session(tmp_path: Path):
                             "source": "telegram",
                             "messages": [
                                 {"id": "m1", "role": "user", "content": "Camp nào CPA cao?"},
+                                {"id": "m-tool-1", "role": "tool", "content": "{\"name\":\"mcp__ads_control_plane__ads_latest_kpi\"}"},
+                                {"id": "m-tool-2", "role": "tool", "content": "<untrusted_tool_result>raw KPI</untrusted_tool_result>"},
+                                {"id": "m-meta", "role": "session_meta", "content": "internal"},
                                 {"id": "m2", "role": "assistant", "content": "Tôi sẽ kiểm tra KPI."},
                             ],
                         }
@@ -167,6 +171,17 @@ def test_sync_imports_existing_telegram_session(tmp_path: Path):
             f"/api/ai-copilot/conversations?worker_id={worker['id']}&profile=ads"
         ).json()
         assert conversations[0]["source"] == "telegram"
+        with client.app.state.database.session_factory() as db:
+            db.add(
+                AgentMessage(
+                    tenant_id=TENANT_ID,
+                    conversation_id=conversations[0]["id"],
+                    role="tool",
+                    source="telegram",
+                    content="legacy raw tool result",
+                )
+            )
+            db.commit()
         messages = client.get(
             f"/api/ai-copilot/conversations/{conversations[0]['id']}/messages"
         ).json()
