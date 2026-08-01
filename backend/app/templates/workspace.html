@@ -26,7 +26,7 @@
     </nav>
     <div class="sidebar-footer">
       <span class="environment-dot"></span>
-      <span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Account Session</small></span>
+      <span class="sidebar-footer-copy"><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Account Session</small><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span>
     </div>
   </aside>
 
@@ -117,6 +117,8 @@
     </div>
   </dialog>
 
+  {% include "_password_dialog.html" %}
   <script src="/static/workspace.js" defer></script>
+  <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from ..config import Settings
 from ..dependencies import get_current_principal, get_db, get_settings, verify_csrf
-from ..schemas import AuthLoginRequest, AuthView
+from ..schemas import AuthLoginRequest, AuthPasswordChangeRequest, AuthView
 from ..services import auth
 
 
@@ -73,6 +73,21 @@ def login(
 @router.get("/me", response_model=AuthView)
 def me(principal: auth.AuthPrincipal = Depends(get_current_principal)):
     return _auth_view(principal)
+
+
+@router.post("/password", status_code=204, dependencies=[Depends(verify_csrf)])
+def change_password(
+    payload: AuthPasswordChangeRequest,
+    principal: auth.AuthPrincipal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+):
+    auth.change_password(
+        db,
+        user_id=principal.user_id,
+        current_session_id=principal.session_id,
+        current_password=payload.current_password.get_secret_value(),
+        new_password=payload.new_password.get_secret_value(),
+    )
 
 
 @router.post("/logout", status_code=204, dependencies=[Depends(verify_csrf)])

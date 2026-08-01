@@ -22,7 +22,7 @@
       <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
       <a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
     </nav>
-    <div class="sidebar-footer"><span class="environment-dot"></span><span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Fleet control</small></span></div>
+    <div class="sidebar-footer"><span class="environment-dot"></span><span class="sidebar-footer-copy"><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Fleet control</small><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span></div>
   </aside>
   <main class="main">
     <header class="topbar">
@@ -89,6 +89,8 @@
     <div class="dialog-header"><div><h2 id="confirm-title">Xác nhận thao tác</h2><p id="confirm-message"></p></div><button class="icon-button" type="button" data-close-confirm aria-label="Đóng">×</button></div>
     <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-confirm>Hủy</button><button id="confirm-node-action" class="button button-danger" type="button">Xác nhận</button></div>
   </dialog>
+  {% include "_password_dialog.html" %}
   <script src="/static/bot_nodes.js" defer></script>
+  <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

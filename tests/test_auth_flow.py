@@ -84,6 +84,15 @@ def test_login_cookie_csrf_logout_and_workspace_guard():
         assert "Quản trị viên" in workspace.text
         assert "Lush Media" in workspace.text
         assert "Hermes Dashboard" in workspace.text
+        assert "data-open-password-dialog" in workspace.text
+        assert 'id="password-dialog"' in workspace.text
+        assert '/static/account_settings.js' in workspace.text
+        for page_path in ("/campaigns", "/reports", "/bot-nodes", "/hermes-agents"):
+            page = client.get(page_path)
+            assert page.status_code == 200
+            assert "data-open-password-dialog" in page.text
+            assert 'id="password-dialog"' in page.text
+            assert '/static/account_settings.js' in page.text
         dashboard = client.get("/ai-copilot", follow_redirects=False)
         assert dashboard.status_code == 303
         assert dashboard.headers["location"] == "https://hermes.ads.lushmedia.net"
@@ -118,3 +127,78 @@ def test_login_cookie_csrf_logout_and_workspace_guard():
         )
         assert logged_out.status_code == 204
         assert client.get("/api/auth/me").status_code == 401
+
+
+def test_change_password_requires_csrf_keeps_current_session_and_revokes_others():
+    new_password = "A-different-production-password-2026"
+    with build_production_client() as client:
+        provision(client)
+        secondary = TestClient(client.app, base_url="https://testserver")
+        try:
+            for session_client in (client, secondary):
+                logged_in = session_client.post(
+                    "/api/auth/login",
+                    headers={"Origin": "https://testserver"},
+                    json={"email": "admin@lushmedia.test", "password": PASSWORD},
+                )
+                assert logged_in.status_code == 200
+
+            payload = {
+                "current_password": PASSWORD,
+                "new_password": new_password,
+                "new_password_confirmation": new_password,
+            }
+            assert client.post("/api/auth/password", json=payload).status_code == 403
+
+            csrf_token = client.cookies.get("ads_lush_csrf")
+            wrong_current = client.post(
+                "/api/auth/password",
+                headers={"X-CSRF-Token": csrf_token},
+                json={**payload, "current_password": "not-the-current-password"},
+            )
+            assert wrong_current.status_code == 400
+            assert wrong_current.json()["detail"] == "Mật khẩu hiện tại không đúng."
+
+            mismatched = client.post(
+                "/api/auth/password",
+                headers={"X-CSRF-Token": csrf_token},
+                json={**payload, "new_password_confirmation": "Another-password-confirmation-2026"},
+            )
+            assert mismatched.status_code == 422
+
+            unchanged = client.post(
+                "/api/auth/password",
+                headers={"X-CSRF-Token": csrf_token},
+                json={
+                    "current_password": PASSWORD,
+                    "new_password": PASSWORD,
+                    "new_password_confirmation": PASSWORD,
+                },
+            )
+            assert unchanged.status_code == 400
+            assert unchanged.json()["detail"] == "Mật khẩu mới phải khác mật khẩu hiện tại."
+
+            changed = client.post(
+                "/api/auth/password",
+                headers={"X-CSRF-Token": csrf_token},
+                json=payload,
+            )
+            assert changed.status_code == 204
+            assert client.get("/api/auth/me").status_code == 200
+            assert secondary.get("/api/auth/me").status_code == 401
+
+            secondary.cookies.clear()
+            old_login = secondary.post(
+                "/api/auth/login",
+                headers={"Origin": "https://testserver"},
+                json={"email": "admin@lushmedia.test", "password": PASSWORD},
+            )
+            assert old_login.status_code == 401
+            new_login = secondary.post(
+                "/api/auth/login",
+                headers={"Origin": "https://testserver"},
+                json={"email": "admin@lushmedia.test", "password": new_password},
+            )
+            assert new_login.status_code == 200
+        finally:
+            secondary.close()

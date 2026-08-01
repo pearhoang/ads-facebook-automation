@@ -184,3 +184,10 @@
 - Verified: `54 passed`, Python/JavaScript/UTF-8/diff check sạch. Production HTTPS dùng Let's Encrypt; basic-auth login, Telegram session list, Chat PTY và tool event feed đều hoạt động. Smoke chat trả đúng `HERMES DASHBOARD OK` và session thử đã được xóa.
 - Deploy: Commit UI/infra `7381070`, WebSocket proxy fix `3164426`; web/worker/Hermes gateway/dashboard đều active. Port `9119` chỉ bind `172.17.0.1`. Backup tại `/var/backups/meta-ads-copilot/20260801T171727Z-native-hermes-dashboard` và `/opt/spoticheck/app/deploy/Caddyfile.pre-hermes-ws-20260801T173809Z`.
 - Safety: Không xóa transcript, AgentJob, API hoặc migration legacy; dashboard dùng Hermes auth provider, bind nội bộ và không expose port `9119` trực tiếp.
+
+### 2026-08-02 - Self-service đổi mật khẩu control-plane
+
+- Changed: Thêm action `Đổi mật khẩu` tại footer `Lush Media`, dialog dùng chung và endpoint xác minh mật khẩu hiện tại trước khi cập nhật Argon2 hash.
+- Affected: auth schema/service/API, năm trang control-plane, shared UI/JavaScript, auth tests và project memory.
+- Verified: Auth regression xác nhận CSRF bắt buộc, mật khẩu cũ bị vô hiệu hóa, phiên hiện tại được giữ và các phiên khác bị revoke.
+- Safety: Password không ghi vào database/log dưới dạng plaintext; form xóa secret sau response và không có public reset/recovery flow.

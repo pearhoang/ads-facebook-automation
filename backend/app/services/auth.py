@@ -206,3 +206,43 @@ def revoke_session(db: Session, session_id: str) -> None:
     if user_session is not None and user_session.revoked_at is None:
         user_session.revoked_at = utc_now()
         db.commit()
+
+
+def change_password(
+    db: Session,
+    *,
+    user_id: str,
+    current_session_id: str,
+    current_password: str,
+    new_password: str,
+) -> None:
+    user = db.get(User, user_id)
+    if user is None or not password_hash.verify(current_password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mật khẩu hiện tại không đúng.",
+        )
+    if len(new_password) < 12:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mật khẩu mới phải có ít nhất 12 ký tự.",
+        )
+    if password_hash.verify(new_password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mật khẩu mới phải khác mật khẩu hiện tại.",
+        )
+
+    now = utc_now()
+    user.password_hash = password_hash.hash(new_password)
+    user.updated_at = now
+    other_sessions = db.scalars(
+        select(UserSession).where(
+            UserSession.user_id == user_id,
+            UserSession.id != current_session_id,
+            UserSession.revoked_at.is_(None),
+        )
+    )
+    for user_session in other_sessions:
+        user_session.revoked_at = now
+    db.commit()

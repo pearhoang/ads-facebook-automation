@@ -378,6 +378,18 @@ class AuthLoginRequest(BaseModel):
     tenant_id: str | None = Field(default=None, max_length=36)
 
 
+class AuthPasswordChangeRequest(BaseModel):
+    current_password: SecretStr = Field(min_length=1, max_length=1024)
+    new_password: SecretStr = Field(min_length=12, max_length=1024)
+    new_password_confirmation: SecretStr = Field(min_length=12, max_length=1024)
+
+    @model_validator(mode="after")
+    def confirm_new_password(self):
+        if self.new_password.get_secret_value() != self.new_password_confirmation.get_secret_value():
+            raise ValueError("Xác nhận mật khẩu mới không khớp.")
+        return self
+
+
 class AuthView(BaseModel):
     user_id: str
     email: str

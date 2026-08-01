@@ -29,7 +29,11 @@ nav { padding: 18px 12px; }
 .nav-item { display: block; padding: 10px 12px; margin-bottom: 3px; border-radius: 7px; color: #d2cfc9; text-decoration: none; }
 .nav-item.is-active { background: #3a3733; color: white; font-weight: 600; }
 .nav-item.is-disabled { color: #77736d; cursor: default; }
-.sidebar-footer { margin-top: auto; display: flex; gap: 10px; align-items: center; padding: 18px 20px; border-top: 1px solid #393733; }
+.sidebar-footer { margin-top: auto; display: flex; gap: 10px; align-items: flex-start; padding: 18px 20px; border-top: 1px solid #393733; }
+.sidebar-footer-copy { min-width: 0; }
+.sidebar-account-action { display: block; margin: 7px 0 0; padding: 0; border: 0; background: transparent; color: #dedbd5; font-size: 11px; line-height: 1.4; text-align: left; text-decoration: underline; text-decoration-color: #716d67; text-underline-offset: 3px; }
+.sidebar-account-action:hover { color: #fff; text-decoration-color: currentColor; }
+.sidebar-account-action:focus-visible { outline: 2px solid #f3a488; outline-offset: 4px; }
 .environment-dot { width: 9px; height: 9px; border-radius: 50%; background: #55b58a; }
 
 .main { min-height: 100vh; margin-left: 248px; }
@@ -119,6 +123,9 @@ input:focus, select:focus, textarea:focus { border-color: var(--accent); box-sha
 .mono-text { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
 .digest-text { white-space: nowrap; }
 .inline-help { margin-top: 9px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.password-status { margin-top: 14px; padding: 10px 12px; border: 1px solid; border-radius: 8px; line-height: 1.5; }
+.password-status-error { border-color: #dca9a9; background: #fff3f3; color: #8a2e2e; }
+.password-status-success { border-color: #a9d5c1; background: #edf8f3; color: var(--success); }
 
 @media (max-width: 860px) {
   .sidebar { position: static; width: 100%; height: auto; }

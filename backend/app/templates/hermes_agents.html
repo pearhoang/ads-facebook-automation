@@ -16,7 +16,7 @@
     <nav aria-label="Điều hướng chính">
       <a class="nav-item" href="/">Tài khoản Facebook</a><a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a><a class="nav-item" href="/campaigns">Campaigns</a><a class="nav-item" href="/reports">Báo cáo</a><a class="nav-item" href="/bot-nodes">Bot VPS</a><a class="nav-item is-active" href="/hermes-agents">Hermes Agents</a><a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
     </nav>
-    <div class="sidebar-footer"><span class="environment-dot"></span><span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Hermes settings</small></span></div>
+    <div class="sidebar-footer"><span class="environment-dot"></span><span class="sidebar-footer-copy"><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Hermes settings</small><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span></div>
   </aside>
   <main class="main">
     <header class="topbar"><div><h1>Hermes Agents</h1><p>Quản lý provider, model và trạng thái Hermes theo từng Bot VPS.</p></div><div class="provider-health"><span id="provider-status" class="status">Chưa cấu hình</span><a class="button button-secondary" href="{{ hermes_dashboard_url }}" target="_blank" rel="noopener">Mở Hermes Dashboard</a></div></header>
@@ -40,6 +40,8 @@
       <aside class="settings-panel provider-summary"><h2>Trạng thái hiện tại</h2><dl class="session-facts"><div><dt>Provider</dt><dd id="summary-provider">—</dd></div><div><dt>Model</dt><dd id="summary-model">—</dd></div><div><dt>Thinking</dt><dd id="summary-thinking">—</dd></div><div><dt>Reasoning</dt><dd id="summary-reasoning">—</dd></div><div><dt>Quyền Agent</dt><dd id="summary-permission">—</dd></div><div><dt>Endpoint</dt><dd id="summary-endpoint">—</dd></div><div><dt>API key</dt><dd id="summary-key">—</dd></div><div><dt>Execution</dt><dd id="summary-scope">—</dd></div><div><dt>Kiểm tra</dt><dd id="summary-test">—</dd></div></dl><p class="settings-note">Worker đồng bộ cấu hình mỗi phút. Nếu control-plane tắt, Hermes tiếp tục dùng bản local gần nhất. Session mới hoặc `/reset` sẽ nhận bộ quyền mới.</p></aside>
     </section>
   </main>
+  {% include "_password_dialog.html" %}
   <script src="/static/hermes_agents.js" defer></script>
+  <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

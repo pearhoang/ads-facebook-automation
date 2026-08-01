@@ -44,6 +44,7 @@
 
 - Password dùng Argon2; database chỉ giữ hash password và digest của session/CSRF token.
 - Secure cookie xác định user session; tenant lấy từ active membership, không nhận từ client header.
+- Self-service đổi mật khẩu giữ phiên hiện tại và revoke các phiên khác của user; endpoint bắt buộc authenticated session và matching CSRF token.
 - User mutation API yêu cầu CSRF token; browser WebSocket kiểm tra tenant và canonical origin.
 - Không mở public signup; owner được provision qua CLI admin boundary.
 
