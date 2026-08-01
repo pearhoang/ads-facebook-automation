@@ -23,15 +23,15 @@
 
 ## Current State
 
-- Hermes gateway đang active với DeepSeek V4 Flash 0731 nhưng chưa bật messaging platform.
-- Provider config đã mã hóa theo worker; chưa có reasoning fields hoặc MCP control-plane tools.
-- Reporting Telegram hiện dùng `sendMessage` deterministic và có thể dùng chung bot token với gateway polling.
+- Production đã chạy Hermes gateway với Telegram allowlist chính xác, DeepSeek V4 Flash 0731 và reasoning theo worker.
+- Hermes đã kết nối MCP stdio bridge, khám phá đủ 5 typed tools và gọi read-only `ads_workspace_context` thành công.
+- Telegram outbound smoke đạt; message thường được gateway xử lý theo session hội thoại, slash command chỉ là tiện ích.
+- Reporting Telegram vẫn dùng `sendMessage` deterministic; chỉ Hermes gateway poll inbound update.
 
 ## Next Steps
 
-- Migration và UI reasoning.
-- Typed tool facade + local MCP stdio bridge.
-- Telegram token/allowlist sync vào Hermes `.env` và smoke test hội thoại/tool discovery.
+- User trả lời tin nhắn smoke trên Telegram để xác nhận inbound session và tiếp tục kiểm thử giữ ngữ cảnh qua nhiều lượt.
+- Phase sau bổ sung conversational approval handoff và narrative KPI; vẫn không cấp tool publish hoặc budget mutation.
 
 ## Risks
 

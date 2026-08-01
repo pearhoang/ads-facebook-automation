@@ -126,5 +126,11 @@
 
 - Changed: Thêm thinking/reasoning theo worker, Telegram conversational gateway, MCP bridge và năm typed tools cho workspace/KPI/report/campaign draft.
 - Affected: AI provider schema/UI, worker Hermes config, worker API, systemd/bootstrap, tests và project memory.
-- Verified: `45 passed`, Python compile, JavaScript syntax và Alembic schema check sạch trước deploy.
+- Verified: `45 passed`, Python compile, JavaScript syntax và Alembic schema check sạch; production migration `head`, web/worker/Hermes active, MCP handshake khám phá 5 tools và natural-language one-shot đọc đúng workspace cùng 2 ad accounts.
 - Safety: Agent tools yêu cầu per-node credential; terminal/file/browser/code execution bị tắt và campaign tool chỉ tạo `DRAFT`, không submit hoặc publish.
+
+### 2026-08-01 - Sửa environment isolation của Hermes MCP
+
+- Changed: Forward rõ ràng `CONTROL_PLANE_URL`, `WORKER_DATA_DIR` và `WORKER_CREDENTIAL_FILE` vào MCP subprocess; tăng managed config schema để mọi worker tự refresh.
+- Verified: Hermes `mcp test` kết nối trong 415 ms và khám phá đủ 5 tools; Telegram gateway/outbound message đạt, config không chứa raw node credential.
+- Safety: Chỉ forward ba biến tối thiểu; raw credential tiếp tục nằm trong file quyền `0600`.
