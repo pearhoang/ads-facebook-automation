@@ -213,4 +213,6 @@
 
 - Changed: Hạ validation UI/API đổi mật khẩu native Hermes Dashboard từ 12 xuống 4 ký tự theo cấu hình single-customer.
 - Affected: Bot VPS schema, Hermes Agents dialog, fleet regression và project memory.
+- Verified: `58 passed`; đăng nhập Hermes mới `admin / 1234` trả `200`, API session đã xác thực trả `200`, mật khẩu cũ trả `401` và Dashboard health `overall=ok`.
+- Deploy: Commit `aadd2b1`; password rotation operation thành công, chỉ restart Hermes Dashboard. Source/database backup tại `/var/backups/meta-ads-copilot/20260801T184243Z-hermes-password-1234`.
 - Safety: Password at rest vẫn là scrypt hash; khi đổi vẫn xoay signing secret để thu hồi phiên Dashboard cũ và không restart gateway/Telegram/browser worker.
