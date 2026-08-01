@@ -1,6 +1,7 @@
 const csrfToken = document.body.dataset.csrfToken;
 const notice = document.getElementById("provider-notice");
 let currentConfig = null;
+let workersById = new Map();
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>'\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '\"': "&quot;" }[char]));
@@ -41,6 +42,7 @@ function renderSummary(config) {
 
 async function load() {
   const workers = await api("/api/bot-nodes");
+  workersById = new Map(workers.map((item) => [item.id, item]));
   const workerSelect = document.getElementById("provider-worker");
   const activeWorkers = workers.filter((item) => item.lifecycle_status === "active");
   workerSelect.innerHTML = activeWorkers.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.display_name)} · ${escapeHtml(item.worker_key)}</option>`).join("");
@@ -112,6 +114,89 @@ document.getElementById("test-provider").addEventListener("click", async () => {
   const workerId = document.getElementById("provider-worker").value;
   try { const config = await api(`/api/ai-provider/test?worker_id=${encodeURIComponent(workerId)}`, { method: "POST" }); renderSummary(config); showNotice(config.last_test_status === "passed" ? "Kết nối đạt." : config.last_test_error || "Đã gửi yêu cầu kiểm tra.", config.last_test_status === "passed"); }
   catch (error) { showNotice(error.message); }
+});
+
+const dashboardPasswordDialog = document.getElementById("dashboard-password-dialog");
+const dashboardPasswordForm = document.getElementById("dashboard-password-form");
+const dashboardPasswordNotice = document.getElementById("dashboard-password-notice");
+const dashboardPasswordSubmit = document.getElementById("dashboard-password-submit");
+const dashboardSshPassword = document.getElementById("dashboard-ssh-password");
+const dashboardNewPassword = document.getElementById("dashboard-new-password");
+const dashboardNewPasswordConfirmation = document.getElementById("dashboard-new-password-confirmation");
+
+function clearDashboardSecrets() {
+  dashboardSshPassword.value = "";
+  dashboardNewPassword.value = "";
+  dashboardNewPasswordConfirmation.value = "";
+}
+
+function showDashboardPasswordNotice(message, success = false) {
+  dashboardPasswordNotice.textContent = message;
+  dashboardPasswordNotice.classList.toggle("notice-success", success);
+  dashboardPasswordNotice.hidden = false;
+}
+
+async function waitForWorkerOperation(operationId) {
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    const operation = await api(`/api/bot-nodes/operations/${encodeURIComponent(operationId)}`);
+    if (operation.status === "succeeded" || operation.status === "failed") return operation;
+    await new Promise((resolve) => window.setTimeout(resolve, 1000));
+  }
+  throw new Error("Thao tác đang mất nhiều thời gian. Có thể theo dõi tiếp tại trang Bot VPS.");
+}
+
+document.getElementById("rotate-dashboard-password-button").addEventListener("click", () => {
+  const workerId = document.getElementById("provider-worker").value;
+  const worker = workersById.get(workerId);
+  if (!workerId || !worker) {
+    showNotice("Hãy chọn một Bot VPS trước khi đổi mật khẩu Dashboard.");
+    return;
+  }
+  clearDashboardSecrets();
+  dashboardPasswordNotice.hidden = true;
+  document.getElementById("dashboard-password-target").textContent = `Bot VPS: ${worker.display_name} · ${worker.host || "chưa có host"}`;
+  dashboardPasswordDialog.showModal();
+  dashboardSshPassword.focus();
+});
+
+document.querySelectorAll("[data-close-dashboard-password]").forEach((button) => {
+  button.addEventListener("click", () => {
+    clearDashboardSecrets();
+    dashboardPasswordDialog.close();
+  });
+});
+dashboardPasswordDialog.addEventListener("cancel", clearDashboardSecrets);
+
+dashboardPasswordForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const workerId = document.getElementById("provider-worker").value;
+  if (dashboardNewPassword.value !== dashboardNewPasswordConfirmation.value) {
+    showDashboardPasswordNotice("Xác nhận mật khẩu Dashboard mới không khớp.");
+    dashboardNewPasswordConfirmation.focus();
+    return;
+  }
+  const payload = {
+    ssh_password: dashboardSshPassword.value,
+    new_password: dashboardNewPassword.value,
+    new_password_confirmation: dashboardNewPasswordConfirmation.value,
+  };
+  dashboardPasswordSubmit.disabled = true;
+  try {
+    const operation = await api(`/api/bot-nodes/${encodeURIComponent(workerId)}/hermes-dashboard/password`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    clearDashboardSecrets();
+    showDashboardPasswordNotice("Đang xoay password hash và khởi động lại riêng Hermes Dashboard…");
+    const completed = await waitForWorkerOperation(operation.id);
+    if (completed.status !== "succeeded") throw new Error(completed.message || "Không thể đổi mật khẩu Dashboard.");
+    showDashboardPasswordNotice(completed.message || "Đã đổi mật khẩu Hermes Dashboard.", true);
+  } catch (error) {
+    clearDashboardSecrets();
+    showDashboardPasswordNotice(error.message);
+  } finally {
+    dashboardPasswordSubmit.disabled = false;
+  }
 });
 
 load().then(() => { toggleReasoning(); togglePermissionWarning(); }).catch((error) => showNotice(error.message));

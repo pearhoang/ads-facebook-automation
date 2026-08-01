@@ -4,6 +4,7 @@ import base64
 import hashlib
 import json
 import shlex
+import secrets
 import time
 from collections.abc import Callable
 
@@ -13,6 +14,73 @@ from sqlalchemy.orm import Session
 from ..config import Settings
 from ..models import Worker, WorkerEnrollment, WorkerOperation, utc_now
 from . import ai_settings, fleet
+
+
+_DASHBOARD_ENV_UPDATE_CODE = r'''
+import os
+import secrets
+import sys
+import tempfile
+from pathlib import Path
+
+path = Path("/etc/meta-ads-copilot/hermes-dashboard.env")
+if not path.is_file():
+    raise SystemExit("Không tìm thấy /etc/meta-ads-copilot/hermes-dashboard.env")
+password_hash = sys.stdin.readline().rstrip("\n")
+if not password_hash.startswith("scrypt$"):
+    raise SystemExit("Dashboard password hash không hợp lệ")
+
+replacements = {
+    "HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH": password_hash,
+    "HERMES_DASHBOARD_BASIC_AUTH_SECRET": secrets.token_urlsafe(48),
+}
+output = []
+seen = set()
+for line in path.read_text(encoding="utf-8").splitlines():
+    key = line.split("=", 1)[0].strip() if "=" in line else ""
+    if key == "HERMES_DASHBOARD_BASIC_AUTH_PASSWORD":
+        continue
+    if key in replacements:
+        output.append(f"{key}={replacements[key]}")
+        seen.add(key)
+    else:
+        output.append(line)
+for key, value in replacements.items():
+    if key not in seen:
+        output.append(f"{key}={value}")
+
+stat = path.stat()
+fd, temporary = tempfile.mkstemp(prefix=".hermes-dashboard.env.", dir=str(path.parent))
+try:
+    with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write("\n".join(output) + "\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.chmod(temporary, 0o600)
+    os.chown(temporary, stat.st_uid, stat.st_gid)
+    os.replace(temporary, path)
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+'''.strip()
+
+
+def hash_dashboard_password(password: str) -> str:
+    salt = secrets.token_bytes(16)
+    derived_key = hashlib.scrypt(
+        password.encode("utf-8"),
+        salt=salt,
+        n=2**14,
+        r=8,
+        p=1,
+        dklen=32,
+        maxmem=0,
+    )
+    return (
+        "scrypt$16384$8$1$"
+        f"{base64.b64encode(salt).decode('ascii')}$"
+        f"{base64.b64encode(derived_key).decode('ascii')}"
+    )
 
 
 def _set_operation(
@@ -40,9 +108,36 @@ def _set_operation(
         return operation
 
 
-def _connect(host: str, ssh_user: str, password: str) -> tuple[paramiko.SSHClient, str]:
+def _host_key_fingerprint(key: paramiko.PKey) -> str:
+    digest = hashlib.sha256(key.asbytes()).digest()
+    return "SHA256:" + base64.b64encode(digest).decode("ascii").rstrip("=")
+
+
+class _ExpectedHostKeyPolicy(paramiko.MissingHostKeyPolicy):
+    def __init__(self, expected_fingerprint: str | None):
+        self.expected_fingerprint = expected_fingerprint
+
+    def missing_host_key(
+        self,
+        client: paramiko.SSHClient,
+        hostname: str,
+        key: paramiko.PKey,
+    ) -> None:
+        fingerprint = _host_key_fingerprint(key)
+        if self.expected_fingerprint and fingerprint != self.expected_fingerprint:
+            raise paramiko.SSHException(
+                "SSH host fingerprint đã thay đổi; dừng trước khi gửi credential."
+            )
+
+
+def _connect(
+    host: str,
+    ssh_user: str,
+    password: str,
+    expected_fingerprint: str | None = None,
+) -> tuple[paramiko.SSHClient, str]:
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(_ExpectedHostKeyPolicy(expected_fingerprint))
     client.connect(
         hostname=host,
         username=ssh_user,
@@ -57,8 +152,7 @@ def _connect(host: str, ssh_user: str, password: str) -> tuple[paramiko.SSHClien
     if transport is None or transport.get_remote_server_key() is None:
         client.close()
         raise RuntimeError("Không đọc được SSH host key.")
-    digest = hashlib.sha256(transport.get_remote_server_key().asbytes()).digest()
-    fingerprint = "SHA256:" + base64.b64encode(digest).decode("ascii").rstrip("=")
+    fingerprint = _host_key_fingerprint(transport.get_remote_server_key())
     return client, fingerprint
 
 
@@ -212,12 +306,15 @@ def run_decommission(
     operation = _set_operation(session_factory, operation_id, status="running", started=True)
     client: paramiko.SSHClient | None = None
     try:
-        client, fingerprint = _connect(operation.host, operation.ssh_user, ssh_password)
         with session_factory() as db:
             expected_worker = db.get(Worker, operation.worker_id) if operation.worker_id else None
             expected_fingerprint = expected_worker.ssh_host_fingerprint if expected_worker else None
-        if expected_fingerprint and expected_fingerprint != fingerprint:
-            raise RuntimeError("SSH host fingerprint đã thay đổi; dừng gỡ để tránh thao tác nhầm VPS.")
+        client, fingerprint = _connect(
+            operation.host,
+            operation.ssh_user,
+            ssh_password,
+            expected_fingerprint,
+        )
         script_url = f"{settings.app_origin}/api/bot-nodes/decommission.sh"
         script = "bash /tmp/ads-lush-bot-decommission.sh"
         operator_script, stdin_text = _operator_command(operation.ssh_user, ssh_password, script)
@@ -242,6 +339,70 @@ def run_decommission(
             operation_id,
             status="succeeded",
             message=(output.strip().splitlines()[-1] if output.strip() else "Đã gỡ service."),
+            completed=True,
+        )
+    except Exception as exc:
+        _set_operation(
+            session_factory,
+            operation_id,
+            status="failed",
+            message=str(exc)[:2400],
+            completed=True,
+        )
+    finally:
+        if client is not None:
+            client.close()
+
+
+def run_rotate_dashboard_password(
+    session_factory: Callable[[], Session],
+    operation_id: str,
+    ssh_password: str,
+    new_password: str,
+) -> None:
+    operation = _set_operation(session_factory, operation_id, status="running", started=True)
+    client: paramiko.SSHClient | None = None
+    try:
+        with session_factory() as db:
+            expected_worker = db.get(Worker, operation.worker_id) if operation.worker_id else None
+            expected_fingerprint = expected_worker.ssh_host_fingerprint if expected_worker else None
+        client, fingerprint = _connect(
+            operation.host,
+            operation.ssh_user,
+            ssh_password,
+            expected_fingerprint,
+        )
+
+        password_digest = hash_dashboard_password(new_password)
+        script = " && ".join(
+            [
+                f"python3 -c {shlex.quote(_DASHBOARD_ENV_UPDATE_CODE)}",
+                "systemctl restart meta-ads-copilot-hermes-dashboard.service",
+                "systemctl is-active --quiet meta-ads-copilot-hermes-dashboard.service",
+            ]
+        )
+        operator_script, sudo_stdin = _operator_command(
+            operation.ssh_user,
+            ssh_password,
+            script,
+        )
+        _run_command(
+            client,
+            operator_script,
+            stdin_text=f"{sudo_stdin or ''}{password_digest}\n",
+            timeout_seconds=120,
+        )
+        with session_factory() as db:
+            current = db.get(WorkerOperation, operation_id)
+            worker = db.get(Worker, current.worker_id) if current and current.worker_id else None
+            if worker is not None:
+                worker.ssh_host_fingerprint = fingerprint
+                db.commit()
+        _set_operation(
+            session_factory,
+            operation_id,
+            status="succeeded",
+            message="Đã đổi mật khẩu và đăng xuất các phiên Hermes Dashboard cũ.",
             completed=True,
         )
     except Exception as exc:

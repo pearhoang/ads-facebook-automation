@@ -192,3 +192,10 @@
 - Verified: `55 passed`, Python compile, JavaScript syntax và diff check sạch. Production health/login/static asset đều trả `200`; route live có endpoint password và worker poll tiếp tục `200` sau restart.
 - Deploy: Commit `d7f73de`; chỉ restart `meta-ads-copilot-web.service`, không restart worker/Hermes/noVNC. Backup tại `/var/backups/meta-ads-copilot/20260801T175642Z-control-plane-password`.
 - Safety: Password không ghi vào database/log dưới dạng plaintext; form xóa secret sau response và không có public reset/recovery flow.
+
+### 2026-08-02 - Xoay mật khẩu Hermes Dashboard theo worker
+
+- Changed: Thêm action tại `Hermes Agents`, API owner/CSRF và remote operation qua SSH để thay scrypt hash cùng signing secret của native Dashboard.
+- Affected: Bot VPS schema/API/remote ops, Hermes Agents UI, fleet tests, decision và module memory.
+- Verified: `58 passed`, Python compile, JavaScript syntax và diff check sạch; scrypt contract khớp Hermes và host fingerprint mismatch bị chặn trước bước SSH authentication.
+- Safety: SSH password và Dashboard password chỉ tồn tại trong request/background memory; operation/database/audit không giữ plaintext. Chỉ dashboard service bị restart, còn Hermes gateway, Telegram và browser worker giữ nguyên.

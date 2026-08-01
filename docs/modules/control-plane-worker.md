@@ -26,6 +26,7 @@
 - Worker mất heartbeat không tự động đồng nghĩa Chrome profile bị mất.
 - User API lấy tenant từ authenticated membership; worker API tiếp tục dùng credential riêng.
 - Worker không đổi database contract trong lần SQLite → PostgreSQL cutover vì vẫn chỉ gọi HTTP API.
+- Remote Dashboard password rotation xác minh SSH host fingerprint đã lưu, truyền secret trong memory/stdin và chỉ restart `meta-ads-copilot-hermes-dashboard.service`.
 
 ## Known Pitfalls
 

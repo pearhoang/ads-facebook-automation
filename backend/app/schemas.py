@@ -106,6 +106,18 @@ class BotNodeDecommissionRequest(BaseModel):
     ssh_password: SecretStr = Field(min_length=1, max_length=1024)
 
 
+class HermesDashboardPasswordRotateRequest(BaseModel):
+    ssh_password: SecretStr = Field(min_length=1, max_length=1024)
+    new_password: SecretStr = Field(min_length=12, max_length=1024)
+    new_password_confirmation: SecretStr = Field(min_length=12, max_length=1024)
+
+    @model_validator(mode="after")
+    def confirm_new_password(self):
+        if self.new_password.get_secret_value() != self.new_password_confirmation.get_secret_value():
+            raise ValueError("Xác nhận mật khẩu Dashboard mới không khớp.")
+        return self
+
+
 class WorkerOperationView(ORMModel):
     id: str
     tenant_id: str

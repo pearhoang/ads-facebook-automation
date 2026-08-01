@@ -52,6 +52,7 @@
 - Copy DeepSeek phải nói rõ default thinking High và Low/Medium được provider ánh xạ lên High; không hứa mức suy luận mà endpoint không hỗ trợ.
 - Native Hermes Dashboard là Web chat/agent surface. Ads Lush không tái tạo chat workspace; route legacy `/ai-copilot` chỉ chuyển hướng sau khi kiểm tra đăng nhập.
 - Navigation dùng nhãn `Hermes Dashboard` mở tab mới; `Hermes Agents` có action `Mở Hermes Dashboard` cạnh trạng thái provider.
+- `Hermes Agents` có action `Đổi mật khẩu Dashboard` theo Bot VPS đang chọn. Dialog giải thích SSH password chỉ dùng một lần, xoay signing secret sẽ đăng xuất phiên cũ và gateway/Telegram/browser worker không bị restart.
 - Natural language là primary interaction. Không hiện generic menu button sau mọi câu trả lời.
 - Shortcut chỉ render khi có action preview/resource cụ thể, tối đa hai chip nhẹ; composer luôn hoạt động và user có thể trả lời bằng lời.
 - Conversation list phân biệt Web/Telegram; chọn Telegram phải tiếp tục exact Hermes session, không tạo context mới.

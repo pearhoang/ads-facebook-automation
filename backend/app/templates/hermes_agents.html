@@ -19,7 +19,7 @@
     <div class="sidebar-footer"><span class="environment-dot"></span><span class="sidebar-footer-copy"><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Hermes settings</small><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span></div>
   </aside>
   <main class="main">
-    <header class="topbar"><div><h1>Hermes Agents</h1><p>Quản lý provider, model và trạng thái Hermes theo từng Bot VPS.</p></div><div class="provider-health"><span id="provider-status" class="status">Chưa cấu hình</span><a class="button button-secondary" href="{{ hermes_dashboard_url }}" target="_blank" rel="noopener">Mở Hermes Dashboard</a></div></header>
+    <header class="topbar"><div><h1>Hermes Agents</h1><p>Quản lý provider, model và trạng thái Hermes theo từng Bot VPS.</p></div><div class="provider-health"><span id="provider-status" class="status">Chưa cấu hình</span><button id="rotate-dashboard-password-button" class="button button-secondary" type="button">Đổi mật khẩu Dashboard</button><a class="button button-secondary" href="{{ hermes_dashboard_url }}" target="_blank" rel="noopener">Mở Hermes Dashboard</a></div></header>
     <div class="safety-banner"><strong>Secret boundary:</strong> API key được mã hóa trong control-plane, chỉ trả về cho Bot VPS đã chọn qua credential của node. Trên VPS, key nằm trong Hermes config mode 0600 để agent vẫn hoạt động khi server tạm mất kết nối.</div>
     <section class="settings-layout">
       <form id="provider-form" class="settings-panel">
@@ -40,6 +40,20 @@
       <aside class="settings-panel provider-summary"><h2>Trạng thái hiện tại</h2><dl class="session-facts"><div><dt>Provider</dt><dd id="summary-provider">—</dd></div><div><dt>Model</dt><dd id="summary-model">—</dd></div><div><dt>Thinking</dt><dd id="summary-thinking">—</dd></div><div><dt>Reasoning</dt><dd id="summary-reasoning">—</dd></div><div><dt>Quyền Agent</dt><dd id="summary-permission">—</dd></div><div><dt>Endpoint</dt><dd id="summary-endpoint">—</dd></div><div><dt>API key</dt><dd id="summary-key">—</dd></div><div><dt>Execution</dt><dd id="summary-scope">—</dd></div><div><dt>Kiểm tra</dt><dd id="summary-test">—</dd></div></dl><p class="settings-note">Worker đồng bộ cấu hình mỗi phút. Nếu control-plane tắt, Hermes tiếp tục dùng bản local gần nhất. Session mới hoặc `/reset` sẽ nhận bộ quyền mới.</p></aside>
     </section>
   </main>
+  <dialog id="dashboard-password-dialog" class="wide-dialog" aria-labelledby="dashboard-password-title">
+    <form id="dashboard-password-form" method="dialog">
+      <div class="dialog-header">
+        <div><h2 id="dashboard-password-title">Đổi mật khẩu Hermes Dashboard</h2><p id="dashboard-password-target">Áp dụng cho Bot VPS đang chọn.</p></div>
+        <button class="icon-button" type="button" data-close-dashboard-password aria-label="Đóng">×</button>
+      </div>
+      <label>SSH password của Bot VPS<input id="dashboard-ssh-password" type="password" required maxlength="1024" autocomplete="current-password"></label>
+      <label>Mật khẩu Dashboard mới<input id="dashboard-new-password" type="password" required minlength="12" maxlength="1024" autocomplete="new-password"></label>
+      <label>Xác nhận mật khẩu Dashboard mới<input id="dashboard-new-password-confirmation" type="password" required minlength="12" maxlength="1024" autocomplete="new-password"></label>
+      <p class="inline-help">SSH password chỉ dùng một lần và không lưu. Dashboard password được đổi thành scrypt hash; signing secret cũng được xoay để đăng xuất mọi phiên Dashboard cũ. Hermes gateway, Telegram và browser worker không bị restart.</p>
+      <div id="dashboard-password-notice" class="notice" role="status" aria-live="polite" hidden></div>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dashboard-password>Hủy</button><button id="dashboard-password-submit" class="button button-primary" type="submit">Đổi mật khẩu</button></div>
+    </form>
+  </dialog>
   {% include "_password_dialog.html" %}
   <script src="/static/hermes_agents.js" defer></script>
   <script src="/static/account_settings.js" defer></script>

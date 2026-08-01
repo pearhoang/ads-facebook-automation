@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import base64
+import hashlib
 from pathlib import Path
 
+import paramiko
+import pytest
 from fastapi.testclient import TestClient
 
 from backend.app.config import Settings
@@ -45,6 +49,8 @@ def test_default_worker_repo_and_deepseek_flash_preset():
     assert "DeepSeek V4 Flash 0731" in template
     assert "https://api.deepseek.com" in template
     assert "deepseek-v4-flash" in template
+    assert "Đổi mật khẩu Dashboard" in template
+    assert "SSH password chỉ dùng một lần" in template
 
 
 def provision_and_login(client: TestClient) -> dict[str, str]:
@@ -284,6 +290,97 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
             assert provider_api_key not in persisted
             assert telegram_bot_token not in persisted
             assert telegram_allowed_users not in persisted
+
+
+def test_rotate_dashboard_password_is_transient_and_scoped_to_worker(tmp_path: Path, monkeypatch):
+    captured: dict[str, object] = {}
+
+    def fake_rotate(*args):
+        captured["args"] = args
+
+    monkeypatch.setattr(remote_ops, "run_rotate_dashboard_password", fake_rotate)
+    with build_client(tmp_path) as client:
+        headers = provision_and_login(client)
+        _, enrolled = enroll_node(client, headers)
+        worker = enrolled["worker"]
+        edited = client.patch(
+            f"/api/bot-nodes/{worker['id']}",
+            headers=headers,
+            json={
+                "display_name": "Dashboard worker",
+                "host": "203.0.113.30",
+                "ssh_user": "root",
+            },
+        )
+        assert edited.status_code == 200
+
+        ssh_password = "one-use-dashboard-ssh-password"
+        new_password = "New-Hermes-Dashboard-password-2026"
+        mismatched = client.post(
+            f"/api/bot-nodes/{worker['id']}/hermes-dashboard/password",
+            headers=headers,
+            json={
+                "ssh_password": ssh_password,
+                "new_password": new_password,
+                "new_password_confirmation": "Different-dashboard-password-2026",
+            },
+        )
+        assert mismatched.status_code == 422
+
+        response = client.post(
+            f"/api/bot-nodes/{worker['id']}/hermes-dashboard/password",
+            headers=headers,
+            json={
+                "ssh_password": ssh_password,
+                "new_password": new_password,
+                "new_password_confirmation": new_password,
+            },
+        )
+        assert response.status_code == 202, response.text
+        assert response.json()["operation_type"] == "rotate_dashboard_password"
+        assert ssh_password not in response.text
+        assert new_password not in response.text
+        assert captured["args"][-2] == ssh_password
+        assert captured["args"][-1] == new_password
+
+        with client.app.state.database.session_factory() as db:
+            operation = db.query(WorkerOperation).one()
+            persisted = " ".join(str(value) for value in vars(operation).values())
+            assert ssh_password not in persisted
+            assert new_password not in persisted
+
+
+def test_dashboard_password_hash_matches_hermes_scrypt_contract():
+    password = "Hash-contract-dashboard-password-2026"
+    encoded = remote_ops.hash_dashboard_password(password)
+    scheme, n_value, r_value, p_value, salt_value, digest_value = encoded.split("$")
+    assert (scheme, n_value, r_value, p_value) == ("scrypt", "16384", "8", "1")
+    salt = base64.b64decode(salt_value)
+    expected = base64.b64decode(digest_value)
+    actual = hashlib.scrypt(
+        password.encode("utf-8"),
+        salt=salt,
+        n=int(n_value),
+        r=int(r_value),
+        p=int(p_value),
+        dklen=len(expected),
+        maxmem=0,
+    )
+    assert actual == expected
+    assert password not in encoded
+
+
+def test_dashboard_rotation_rejects_changed_host_key_before_credentials():
+    key = paramiko.RSAKey.generate(1024)
+    fingerprint = remote_ops._host_key_fingerprint(key)
+    client = paramiko.SSHClient()
+    remote_ops._ExpectedHostKeyPolicy(fingerprint).missing_host_key(client, "worker", key)
+    with pytest.raises(paramiko.SSHException, match="trước khi gửi credential"):
+        remote_ops._ExpectedHostKeyPolicy("SHA256:not-the-worker").missing_host_key(
+            client,
+            "worker",
+            key,
+        )
 
 
 def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal_by_default(tmp_path: Path, monkeypatch):

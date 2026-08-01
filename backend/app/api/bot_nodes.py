@@ -16,6 +16,7 @@ from ..schemas import (
     BotNodeRemoteInstallRequest,
     BotNodeEditRequest,
     BotNodeDecommissionRequest,
+    HermesDashboardPasswordRotateRequest,
     WorkerView,
     WorkerOperationView,
 )
@@ -252,6 +253,45 @@ def decommission_node(
         settings,
         operation.id,
         payload.ssh_password.get_secret_value(),
+    )
+    return operation
+
+
+@router.post(
+    "/{worker_id}/hermes-dashboard/password",
+    response_model=WorkerOperationView,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def rotate_hermes_dashboard_password(
+    worker_id: str,
+    payload: HermesDashboardPasswordRotateRequest,
+    request: Request,
+    background_tasks: BackgroundTasks,
+    principal: auth.AuthPrincipal = Depends(require_owner),
+    _csrf: None = Depends(verify_csrf),
+    db: Session = Depends(get_db),
+):
+    worker = fleet.get_tenant_node(db, principal.tenant_id, worker_id)
+    if not worker.host or not worker.ssh_user:
+        raise HTTPException(
+            status_code=409,
+            detail="Worker chưa có host/SSH user để đổi mật khẩu Dashboard từ xa.",
+        )
+    operation = fleet.create_operation(
+        db,
+        tenant_id=principal.tenant_id,
+        user_id=principal.user_id,
+        operation_type="rotate_dashboard_password",
+        host=worker.host,
+        ssh_user=worker.ssh_user,
+        worker_id=worker.id,
+    )
+    background_tasks.add_task(
+        remote_ops.run_rotate_dashboard_password,
+        request.app.state.database.session_factory,
+        operation.id,
+        payload.ssh_password.get_secret_value(),
+        payload.new_password.get_secret_value(),
     )
     return operation
 

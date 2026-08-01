@@ -176,3 +176,4 @@
 - Route `/ai-copilot` vẫn yêu cầu Ads Lush session rồi chuyển hướng tới dashboard; legacy API, transcript và job table được giữ để rollback, không hard-delete dữ liệu.
 - Dashboard chạy service riêng từ cùng `HERMES_HOME`, bind interface nội bộ, dùng password provider chính chủ với scrypt hash + signing secret và được Caddy expose qua HTTPS subdomain.
 - `Hermes Agents` tiếp tục là canonical control-plane UI cho provider/model/thinking/permission; nó không nhúng hoặc tái tạo chat.
+- Owner xoay mật khẩu Dashboard theo worker bằng SSH credential dùng một lần; control-plane không lưu plaintext, worker thay scrypt hash và signing secret rồi chỉ restart dashboard service để thu hồi mọi phiên Dashboard cũ.
