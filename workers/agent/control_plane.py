@@ -185,6 +185,16 @@ class ControlPlaneClient:
         payload = response.json()
         return dict(payload) if payload else None
 
+    def call_agent_tool(self, path: str, payload: dict | None = None) -> dict:
+        worker_id = self._worker_id()
+        response = self.http.request(
+            "GET" if payload is None else "POST",
+            f"/api/workers/{worker_id}/agent-tools/{path.lstrip('/')}",
+            json=payload,
+        )
+        response.raise_for_status()
+        return dict(response.json())
+
     def upload_execution_artifact(self, job_id: str, kind: str, content: bytes) -> None:
         worker_id = self._worker_id()
         response = self.http.post(

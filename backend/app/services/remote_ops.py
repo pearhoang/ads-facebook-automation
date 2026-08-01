@@ -105,6 +105,8 @@ def run_install(
     provider_name: str,
     provider_base_url: str,
     provider_model: str,
+    provider_thinking_mode: str,
+    provider_reasoning_effort: str,
     provider_api_key: str | None,
 ) -> None:
     operation = _set_operation(session_factory, operation_id, status="running", started=True)
@@ -151,6 +153,8 @@ def run_install(
                 provider_name=provider_name,
                 base_url=provider_base_url,
                 model=provider_model,
+                thinking_mode=provider_thinking_mode,
+                reasoning_effort=provider_reasoning_effort,
                 api_key=provider_api_key,
                 execution_scope="worker",
                 worker_id=worker.id,

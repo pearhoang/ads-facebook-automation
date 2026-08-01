@@ -121,3 +121,10 @@
 - Changed: Đổi nhãn preset thành DeepSeek V4 Flash 0731 nhưng giữ API model ID canonical `deepseek-v4-flash` theo live `/models`.
 - Verified: DeepSeek `/models` và Chat Completions trả `200`; non-thinking smoke trả `OK`, Hermes/web/worker active.
 - Safety: Raw key không xuất hiện trong log/response; DB chỉ giữ ciphertext và masked hint.
+
+### 2026-08-01 - Phase 09 Telegram, Hermes và typed tools
+
+- Changed: Thêm thinking/reasoning theo worker, Telegram conversational gateway, MCP bridge và năm typed tools cho workspace/KPI/report/campaign draft.
+- Affected: AI provider schema/UI, worker Hermes config, worker API, systemd/bootstrap, tests và project memory.
+- Verified: `45 passed`, Python compile, JavaScript syntax và Alembic schema check sạch trước deploy.
+- Safety: Agent tools yêu cầu per-node credential; terminal/file/browser/code execution bị tắt và campaign tool chỉ tạo `DRAFT`, không submit hoặc publish.

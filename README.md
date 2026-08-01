@@ -6,15 +6,14 @@ Repository: `https://github.com/pearhoang/ads-facebook-automation`
 
 ## Phase hiện tại
 
-Phase 01 đang xây Account Session vertical slice:
+Phase 9 nối kênh hội thoại AI vào control-plane:
 
 ```text
-Facebook account
-→ worker assignment
-→ browser session request
-→ worker poll/sync
-→ noVNC login/2FA
-→ confirm/close
+Telegram chat
+→ Hermes gateway + session memory
+→ MCP typed tools
+→ control-plane draft/report/KPI
+→ deterministic worker khi có job được phép
 ```
 
 Runtime noVNC thật, outbound worker, HTTP/WebSocket proxy và UI Account Session đã hoạt động trên VPS test.
@@ -27,7 +26,7 @@ Runtime noVNC thật, outbound worker, HTTP/WebSocket proxy và UI Account Sessi
 - Owner credential được lưu ngoài repo và bàn giao riêng.
 - Services: `meta-ads-copilot-web.service`, `meta-ads-copilot-worker.service`.
 - Bot VPS mới clone branch `main` từ repository mặc định; URL có thể sửa trong popup cài worker.
-- Hermes hỗ trợ OpenAI-compatible provider; preset mặc định hiển thị DeepSeek V4 Flash 0731 và dùng API model ID `deepseek-v4-flash`.
+- Hermes hỗ trợ OpenAI-compatible provider, thinking/reasoning theo worker và Telegram chat tự nhiên; preset mặc định hiển thị DeepSeek V4 Flash 0731 và dùng API model ID `deepseek-v4-flash`.
 - Database: PostgreSQL 17.10, schema quản lý bằng Alembic.
 
 ## Local setup

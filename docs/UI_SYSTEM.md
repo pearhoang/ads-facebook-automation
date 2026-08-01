@@ -45,6 +45,8 @@
 - Popup cài worker nhóm rõ `SSH`, `Source` và `Hermes Agent`; password/API key dùng password input, không render lại sau submit và operation chỉ hiển thị tiến độ không chứa secret.
 - Trang `AI Copilot` bắt buộc chọn worker trước khi sửa provider; API key luôn masked và để trống nghĩa là giữ key hiện tại.
 - Popup cài worker điền sẵn canonical GitHub repo nhưng vẫn là input sửa được; DeepSeek V4 Flash 0731 là preset đầu tiên, còn model API canonical giữ `deepseek-v4-flash`.
+- AI Copilot và popup Bot VPS dùng cùng hai control `Thinking` và `Reasoning effort`; tắt Thinking vô hiệu hóa effort, còn provider không hỗ trợ được giữ ở provider default.
+- Copy DeepSeek phải nói rõ default thinking High và Low/Medium được provider ánh xạ lên High; không hứa mức suy luận mà endpoint không hỗ trợ.
 
 ## Consistency Rules
 

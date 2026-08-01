@@ -57,6 +57,7 @@
 
 - `docs/modules/bot-node-fleet.md`
 - `docs/modules/ai-provider-settings.md`
+- `docs/tasks/active/phase-09-telegram-hermes-tools.md`
 - `docs/DECISIONS_INDEX.md`
 
 ### Bot VPS, SSH install, drain hoặc decommission

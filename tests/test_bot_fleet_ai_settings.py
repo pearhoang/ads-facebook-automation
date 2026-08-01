@@ -8,6 +8,8 @@ from backend.app.config import Settings
 from backend.app.main import create_app
 from backend.app.models import AIProviderConfig, WorkerEnrollment, WorkerOperation
 from backend.app.services import auth, remote_ops
+from workers.agent.hermes_config import HermesConfigManager
+from workers.agent import control_plane_mcp
 
 
 TENANT_ID = "00000000-0000-0000-0000-0000000000f8"
@@ -171,6 +173,8 @@ def test_ai_key_is_masked_encrypted_and_scoped_to_selected_worker(tmp_path: Path
                 "base_url": "https://router.example.test/v1",
                 "model": "test-model",
                 "api_key": raw_key,
+                "thinking_mode": "enabled",
+                "reasoning_effort": "high",
                 "execution_scope": "worker",
                 "worker_id": worker["id"],
             },
@@ -185,6 +189,26 @@ def test_ai_key_is_masked_encrypted_and_scoped_to_selected_worker(tmp_path: Path
         )
         assert runtime.status_code == 200
         assert runtime.json()["api_key"] == raw_key
+        assert runtime.json()["thinking_mode"] == "enabled"
+        assert runtime.json()["reasoning_effort"] == "high"
+
+        context = client.get(
+            f"/api/workers/{worker['id']}/agent-tools/context",
+            headers={"X-Worker-Credential": enrolled["worker_credential"]},
+        )
+        assert context.status_code == 200
+        assert context.json()["safety"]["publish_allowed"] is False
+        assert client.get(
+            f"/api/workers/{worker['id']}/agent-tools/context",
+            headers={"X-Worker-Secret": WORKER_SECRET},
+        ).status_code == 403
+        latest = client.post(
+            f"/api/workers/{worker['id']}/agent-tools/latest-kpi",
+            headers={"X-Worker-Credential": enrolled["worker_credential"]},
+            json={"ad_account_id": None},
+        )
+        assert latest.status_code == 200
+        assert latest.json() == {"items": []}
 
         with client.app.state.database.session_factory() as db:
             config = db.query(AIProviderConfig).one()
@@ -234,7 +258,7 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
         assert response.status_code == 202, response.text
         assert ssh_password not in response.text
         assert provider_api_key not in response.text
-        assert captured["args"][-5] == ssh_password
+        assert captured["args"][-7] == ssh_password
         assert captured["args"][-1] == provider_api_key
 
         with client.app.state.database.session_factory() as db:
@@ -247,3 +271,58 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
             )
             assert ssh_password not in persisted
             assert provider_api_key not in persisted
+
+
+def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("workers.agent.hermes_config.subprocess.run", lambda *args, **kwargs: None)
+    manager = HermesConfigManager(tmp_path / "hermes")
+    changed = manager.apply(
+        {
+            "provider_name": "deepseek",
+            "base_url": "https://api.deepseek.com",
+            "model": "deepseek-v4-flash",
+            "thinking_mode": "enabled",
+            "reasoning_effort": "high",
+            "api_key": "sk-test-only",
+        }
+    )
+    assert changed is True
+    config = __import__("yaml").safe_load(manager.config_path.read_text(encoding="utf-8"))
+    assert config["model"]["provider"] == "custom:ads-lush"
+    assert config["agent"]["reasoning_effort"] == "high"
+    assert "terminal" in config["agent"]["disabled_toolsets"]
+    assert config["providers"]["ads-lush"]["extra_body"]["thinking"]["type"] == "enabled"
+    assert "ads_create_campaign_draft" in config["mcp_servers"]["ads_control_plane"]["tools"]["include"]
+    assert "sk-test-only" not in manager.config_path.read_text(encoding="utf-8")
+    assert "sk-test-only" in manager.env_path.read_text(encoding="utf-8")
+    assert "không publish" in manager.soul_path.read_text(encoding="utf-8")
+
+
+def test_mcp_bridge_lists_only_ads_typed_tools():
+    class FakeClient:
+        def call_agent_tool(self, path, payload=None):
+            return {"path": path, "payload": payload}
+
+    listed = control_plane_mcp._handle(
+        FakeClient(),
+        {"jsonrpc": "2.0", "id": 1, "method": "tools/list"},
+    )
+    names = {tool["name"] for tool in listed["result"]["tools"]}
+    assert names == {
+        "ads_workspace_context",
+        "ads_latest_kpi",
+        "ads_list_campaign_drafts",
+        "ads_request_kpi_collection",
+        "ads_create_campaign_draft",
+    }
+    called = control_plane_mcp._handle(
+        FakeClient(),
+        {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/call",
+            "params": {"name": "ads_latest_kpi", "arguments": {}},
+        },
+    )
+    assert called["result"]["isError"] is False
+    assert '"path":"latest-kpi"' in called["result"]["content"][0]["text"]

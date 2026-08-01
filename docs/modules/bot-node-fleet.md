@@ -22,6 +22,6 @@
 
 ## Current State
 
-- Production migration `20260801_0006`; một worker hiện hữu đã gắn host và trạng thái installed.
+- Production migration mục tiêu `20260801_0007`; một worker hiện hữu đã gắn host và trạng thái installed.
 - Canonical public repo là `https://github.com/pearhoang/ads-facebook-automation.git`, branch `main`; popup điền sẵn và cho phép thay bằng fork khác.
-- Production source là Git checkout sạch tracking `origin/main` từ commit `dcc47d8`.
+- Production source là Git checkout sạch tracking `origin/main`.

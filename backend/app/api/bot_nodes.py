@@ -133,6 +133,8 @@ def install_node(
         payload.provider_name,
         payload.provider_base_url,
         payload.provider_model,
+        payload.provider_thinking_mode,
+        payload.provider_reasoning_effort,
         payload.provider_api_key.get_secret_value() if payload.provider_api_key else None,
     )
     return operation

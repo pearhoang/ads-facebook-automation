@@ -8,3 +8,5 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 *.toml text eol=lf
+*.service text eol=lf
+*.example text eol=lf

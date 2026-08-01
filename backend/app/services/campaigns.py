@@ -27,6 +27,7 @@ def _audit(
     *,
     tenant_id: str,
     user_id: str,
+    actor_type: str = "user",
     action: str,
     entity_type: str,
     entity_id: str,
@@ -36,7 +37,7 @@ def _audit(
         AuditEvent(
             tenant_id=tenant_id,
             actor_user_id=user_id,
-            actor_type="user",
+            actor_type=actor_type,
             action=action,
             entity_type=entity_type,
             entity_id=entity_id,
@@ -233,6 +234,7 @@ def create_campaign(
     end_at: datetime | None,
     targeting_json: dict,
     creative_json: dict,
+    actor_type: str = "user",
 ) -> CampaignDraft:
     ad_account = get_ad_account(db, tenant_id, ad_account_id)
     _validate_schedule(start_at, end_at)
@@ -264,6 +266,7 @@ def create_campaign(
         db,
         tenant_id=tenant_id,
         user_id=user_id,
+        actor_type=actor_type,
         action="campaign_draft.created",
         entity_type="campaign_draft",
         entity_id=campaign.id,

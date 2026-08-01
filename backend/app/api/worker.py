@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
@@ -22,8 +22,12 @@ from ..schemas import (
     WorkerReportJobItem,
     WorkerHeartbeatRequest,
     WorkerAIProviderRuntimeView,
+    AgentCampaignQuery,
+    AgentKPIQuery,
+    AgentReportRequest,
+    CampaignDraftCreateRequest,
 )
-from ..services import account_sessions, ai_settings, execution_jobs, fleet, reporting, resources
+from ..services import account_sessions, agent_tools, ai_settings, execution_jobs, fleet, reporting, resources
 
 
 router = APIRouter(
@@ -31,6 +35,12 @@ router = APIRouter(
     tags=["worker"],
     dependencies=[Depends(verify_worker_secret)],
 )
+
+
+def _require_node_credential(request: Request, worker_id: str) -> None:
+    worker_auth = request.state.worker_auth
+    if worker_auth.legacy or worker_auth.worker_id != worker_id:
+        raise HTTPException(status_code=403, detail="Agent tools require per-node credential.")
 
 
 @router.post("/register", response_model=WorkerView, status_code=status.HTTP_201_CREATED)
@@ -248,3 +258,57 @@ def get_worker_ai_provider(
         worker_id=worker_id,
         encryption_key=settings.resolved_secret_encryption_key(),
     )
+
+
+@router.get("/{worker_id}/agent-tools/context")
+def get_agent_workspace_context(
+    worker_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return agent_tools.workspace_context(db, worker_id)
+
+
+@router.post("/{worker_id}/agent-tools/latest-kpi")
+def get_agent_latest_kpi(
+    worker_id: str,
+    payload: AgentKPIQuery,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return agent_tools.latest_kpi(db, worker_id, payload.ad_account_id)
+
+
+@router.post("/{worker_id}/agent-tools/campaign-drafts/query")
+def query_agent_campaign_drafts(
+    worker_id: str,
+    payload: AgentCampaignQuery,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return agent_tools.list_campaign_drafts(db, worker_id, **payload.model_dump())
+
+
+@router.post("/{worker_id}/agent-tools/campaign-drafts")
+def create_agent_campaign_draft(
+    worker_id: str,
+    payload: CampaignDraftCreateRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return agent_tools.create_campaign_draft(db, worker_id, payload.model_dump())
+
+
+@router.post("/{worker_id}/agent-tools/report-jobs")
+def create_agent_report_job(
+    worker_id: str,
+    payload: AgentReportRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return agent_tools.request_kpi_collection(db, worker_id, **payload.model_dump())

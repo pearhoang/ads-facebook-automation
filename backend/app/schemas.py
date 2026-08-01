@@ -61,6 +61,11 @@ class BotNodeRemoteInstallRequest(BaseModel):
     provider_name: str = Field(default="custom", min_length=1, max_length=80)
     provider_base_url: str = Field(min_length=8, max_length=2048)
     provider_model: str = Field(min_length=1, max_length=160)
+    provider_thinking_mode: str = Field(default="auto", pattern=r"^(auto|enabled|disabled)$")
+    provider_reasoning_effort: str = Field(
+        default="provider_default",
+        pattern=r"^(provider_default|minimal|low|medium|high|xhigh|max|ultra)$",
+    )
     provider_api_key: SecretStr | None = Field(default=None, max_length=4096)
 
     @field_validator("provider_base_url")
@@ -122,6 +127,11 @@ class AIProviderConfigUpdateRequest(BaseModel):
     provider_name: str = Field(default="custom", min_length=1, max_length=80)
     base_url: str = Field(min_length=8, max_length=2048)
     model: str = Field(min_length=1, max_length=160)
+    thinking_mode: str = Field(default="auto", pattern=r"^(auto|enabled|disabled)$")
+    reasoning_effort: str = Field(
+        default="provider_default",
+        pattern=r"^(provider_default|minimal|low|medium|high|xhigh|max|ultra)$",
+    )
     api_key: str | None = Field(default=None, max_length=4096)
     execution_scope: str = Field(default="worker", pattern=r"^(worker|control_plane)$")
     worker_id: str | None = None
@@ -149,6 +159,8 @@ class AIProviderConfigView(BaseModel):
     provider_name: str | None = None
     base_url: str | None = None
     model: str | None = None
+    thinking_mode: str | None = None
+    reasoning_effort: str | None = None
     api_key_masked: str | None = None
     execution_scope: str | None = None
     worker_id: str | None = None
@@ -164,7 +176,24 @@ class WorkerAIProviderRuntimeView(BaseModel):
     provider_name: str
     base_url: str
     model: str
+    thinking_mode: str
+    reasoning_effort: str
     api_key: str | None
+
+
+class AgentKPIQuery(BaseModel):
+    ad_account_id: str | None = Field(default=None, max_length=36)
+
+
+class AgentCampaignQuery(BaseModel):
+    ad_account_id: str | None = Field(default=None, max_length=36)
+    status: str | None = Field(default=None, max_length=32)
+    limit: int = Field(default=20, ge=1, le=100)
+
+
+class AgentReportRequest(BaseModel):
+    ad_account_id: str = Field(min_length=1, max_length=36)
+    lookback_days: int = Field(default=7, ge=1, le=90)
 
 
 class AccountCreateRequest(BaseModel):

@@ -88,6 +88,8 @@ def serialize_config(config: AIProviderConfig | None) -> dict:
         "provider_name": config.provider_name,
         "base_url": config.base_url,
         "model": config.model,
+        "thinking_mode": config.thinking_mode,
+        "reasoning_effort": config.reasoning_effort,
         "api_key_masked": _masked(config.api_key_hint),
         "execution_scope": config.execution_scope,
         "worker_id": config.worker_id,
@@ -108,6 +110,8 @@ def upsert_config(
     provider_name: str,
     base_url: str,
     model: str,
+    thinking_mode: str,
+    reasoning_effort: str,
     api_key: str | None,
     execution_scope: str,
     worker_id: str | None,
@@ -142,6 +146,8 @@ def upsert_config(
     config.provider_name = provider_name
     config.base_url = base_url
     config.model = model
+    config.thinking_mode = thinking_mode
+    config.reasoning_effort = reasoning_effort
     config.execution_scope = execution_scope
     config.worker_id = worker_id
     config.status = "configured"
@@ -159,6 +165,8 @@ def upsert_config(
             "provider_name": provider_name,
             "base_url_host": urlparse(base_url).netloc,
             "model": model,
+            "thinking_mode": thinking_mode,
+            "reasoning_effort": reasoning_effort,
             "execution_scope": execution_scope,
             "worker_id": worker_id,
             "api_key_changed": bool(api_key and api_key.strip()),
@@ -189,6 +197,8 @@ def runtime_config_for_worker(
         "provider_name": config.provider_name,
         "base_url": config.base_url,
         "model": config.model,
+        "thinking_mode": config.thinking_mode,
+        "reasoning_effort": config.reasoning_effort,
         "api_key": _decrypt(encryption_key, config.api_key_ciphertext),
     }
 

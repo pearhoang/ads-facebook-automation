@@ -168,6 +168,8 @@ class AIProviderConfig(Base):
     provider_name: Mapped[str] = mapped_column(String(80), default="custom")
     base_url: Mapped[str] = mapped_column(Text)
     model: Mapped[str] = mapped_column(String(160))
+    thinking_mode: Mapped[str] = mapped_column(String(16), default="auto")
+    reasoning_effort: Mapped[str] = mapped_column(String(16), default="provider_default")
     api_key_ciphertext: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_hint: Mapped[str | None] = mapped_column(String(24), nullable=True)
     execution_scope: Mapped[str] = mapped_column(String(24), default="worker")

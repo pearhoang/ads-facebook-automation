@@ -104,12 +104,19 @@ function applyInstallPreset() {
   if (preset.model) document.getElementById("install-provider-model").value = preset.model;
 }
 
+function toggleReasoning(prefix) {
+  const disabled = document.getElementById(`${prefix}-provider-thinking-mode`).value === "disabled";
+  document.getElementById(`${prefix}-provider-reasoning-effort`).disabled = disabled;
+}
+
 document.getElementById("add-node-button").addEventListener("click", () => {
   document.getElementById("repo-url").value = document.body.dataset.defaultRepoUrl || "";
   document.getElementById("repo-branch").value = document.body.dataset.defaultRepoBranch || "main";
   enrollmentDialog.showModal();
 });
 document.getElementById("install-provider-preset").addEventListener("change", applyInstallPreset);
+document.getElementById("install-provider-thinking-mode").addEventListener("change", () => toggleReasoning("install"));
+document.getElementById("edit-provider-thinking-mode").addEventListener("change", () => toggleReasoning("edit"));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => enrollmentDialog.close()));
 document.querySelectorAll("[data-close-edit]").forEach((button) => button.addEventListener("click", () => editDialog.close()));
 document.querySelectorAll("[data-close-decommission]").forEach((button) => button.addEventListener("click", () => decommissionDialog.close()));
@@ -132,6 +139,8 @@ document.getElementById("enrollment-form").addEventListener("submit", async (eve
       provider_name: document.getElementById("install-provider-name").value.trim(),
       provider_base_url: document.getElementById("install-provider-base-url").value.trim(),
       provider_model: document.getElementById("install-provider-model").value.trim(),
+      provider_thinking_mode: document.getElementById("install-provider-thinking-mode").value,
+      provider_reasoning_effort: document.getElementById("install-provider-reasoning-effort").value,
       provider_api_key: document.getElementById("install-provider-api-key").value || null,
     }) });
     document.getElementById("node-ssh-password").value = "";
@@ -153,6 +162,9 @@ async function openEdit(node) {
   document.getElementById("edit-provider-name").value = config.provider_name || "custom";
   document.getElementById("edit-provider-base-url").value = config.base_url || "";
   document.getElementById("edit-provider-model").value = config.model || "";
+  document.getElementById("edit-provider-thinking-mode").value = config.thinking_mode || "auto";
+  document.getElementById("edit-provider-reasoning-effort").value = config.reasoning_effort || "provider_default";
+  toggleReasoning("edit");
   document.getElementById("edit-provider-api-key").value = "";
   editDialog.showModal();
 }
@@ -169,7 +181,7 @@ document.getElementById("edit-node-form").addEventListener("submit", async (even
       if (!providerName || !providerBaseUrl || !providerModel) throw new Error("Hãy nhập đủ Provider name, Base URL và Model; hoặc để trống toàn bộ nhóm Hermes.");
     }
     await api(`/api/bot-nodes/${workerId}`, { method: "PATCH", body: JSON.stringify({ display_name: document.getElementById("edit-node-name").value.trim(), host: document.getElementById("edit-node-host").value.trim(), ssh_user: document.getElementById("edit-node-ssh-user").value.trim() }) });
-    if (providerName || providerBaseUrl || providerModel || providerApiKey) await api("/api/ai-provider", { method: "PUT", body: JSON.stringify({ provider_type: "openai_compatible", provider_name: providerName, base_url: providerBaseUrl, model: providerModel, api_key: providerApiKey || null, execution_scope: "worker", worker_id: workerId }) });
+    if (providerName || providerBaseUrl || providerModel || providerApiKey) await api("/api/ai-provider", { method: "PUT", body: JSON.stringify({ provider_type: "openai_compatible", provider_name: providerName, base_url: providerBaseUrl, model: providerModel, thinking_mode: document.getElementById("edit-provider-thinking-mode").value, reasoning_effort: document.getElementById("edit-provider-reasoning-effort").value, api_key: providerApiKey || null, execution_scope: "worker", worker_id: workerId }) });
     document.getElementById("edit-provider-api-key").value = "";
     editDialog.close();
     showNotice("Đã lưu thiết lập worker và Hermes.", true);
@@ -224,4 +236,5 @@ rows.addEventListener("click", async (event) => {
   } catch (error) { showNotice(error.message); }
 });
 
+toggleReasoning("install");
 loadAll();

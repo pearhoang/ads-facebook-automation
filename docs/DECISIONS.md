@@ -135,3 +135,12 @@
 - Repository public để worker bootstrap clone không cần lưu GitHub token/SSH key trên control-plane hoặc VPS.
 - Popup cài worker điền sẵn canonical repo nhưng cho phép owner thay URL/branch khi triển khai fork riêng.
 - Production `/opt/meta-ads-copilot` phải là checkout sạch tracking `origin/main`; runtime data, env và secret luôn nằm ngoài Git.
+
+## DEC-022 — Telegram là conversational gateway, action chỉ qua typed tools
+
+- Telegram message đi vào Hermes gateway theo session hội thoại; slash command chỉ là tiện ích, không phải giao diện chính.
+- Hermes chỉ truy cập dữ liệu Ads Lush qua MCP stdio bridge dùng per-node credential; legacy shared secret không được gọi agent tools.
+- Tool mutation duy nhất ở phase này tạo control-plane `DRAFT`; không có tool submit approval, chạy browser, tăng budget hoặc publish.
+- Telegram allowlist bắt buộc. Gateway không được bật `allow all`; token ở worker environment và không trả qua UI/API.
+- Telegram toolset production tắt terminal, file, browser, code execution, delegation và computer use; browser ads vẫn do deterministic worker state machine sở hữu.
+- Reasoning lưu theo worker. `thinking_mode=disabled` ánh xạ thành Hermes `reasoning_effort=none`; provider-specific thinking payload chỉ gửi cho endpoint đã nhận diện hỗ trợ.

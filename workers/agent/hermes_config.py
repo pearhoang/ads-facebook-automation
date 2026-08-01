@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 import yaml
@@ -13,12 +14,18 @@ class HermesConfigManager:
     def __init__(self, hermes_home: Path):
         self.home = hermes_home
         self.config_path = hermes_home / "config.yaml"
+        self.env_path = hermes_home / ".env"
+        self.soul_path = hermes_home / "SOUL.md"
         self.managed_hash_path = hermes_home / ".ads-lush-provider.sha256"
 
     def apply(self, provider: dict | None) -> bool:
         if not provider:
             return False
-        canonical = json.dumps(provider, sort_keys=True, ensure_ascii=False).encode("utf-8")
+        canonical = json.dumps(
+            {"schema_version": 2, "provider": provider},
+            sort_keys=True,
+            ensure_ascii=False,
+        ).encode("utf-8")
         digest = hashlib.sha256(canonical).hexdigest()
         if self.managed_hash_path.exists() and self.managed_hash_path.read_text(
             encoding="utf-8"
@@ -31,18 +38,90 @@ class HermesConfigManager:
             loaded = yaml.safe_load(self.config_path.read_text(encoding="utf-8"))
             if isinstance(loaded, dict):
                 config = loaded
+        provider_name = "ads-lush"
+        thinking_mode = str(provider.get("thinking_mode") or "auto")
+        reasoning_effort = str(provider.get("reasoning_effort") or "provider_default")
+        is_deepseek = "deepseek" in str(provider.get("provider_name") or "").lower() or (
+            "api.deepseek.com" in str(provider.get("base_url") or "").lower()
+        )
+
+        providers = config.get("providers")
+        if not isinstance(providers, dict):
+            providers = {}
+            config["providers"] = providers
+        managed_provider = {
+            "api": str(provider["base_url"]),
+            "transport": "chat_completions",
+            "default_model": str(provider["model"]),
+        }
+        if provider.get("api_key"):
+            managed_provider["key_env"] = "ADS_LUSH_PROVIDER_API_KEY"
+        if is_deepseek and thinking_mode in {"enabled", "disabled"}:
+            managed_provider["extra_body"] = {"thinking": {"type": thinking_mode}}
+        providers[provider_name] = managed_provider
+
         model = config.get("model")
         if not isinstance(model, dict):
             model = {}
             config["model"] = model
         model.update(
             {
-                "provider": "custom",
+                "provider": f"custom:{provider_name}",
                 "default": str(provider["model"]),
-                "base_url": str(provider["base_url"]),
-                "api_key": str(provider.get("api_key") or ""),
             }
         )
+        model.pop("base_url", None)
+        model.pop("api_key", None)
+
+        agent = config.get("agent")
+        if not isinstance(agent, dict):
+            agent = {}
+            config["agent"] = agent
+        effective_effort = "none" if thinking_mode == "disabled" else reasoning_effort
+        if effective_effort == "provider_default":
+            agent.pop("reasoning_effort", None)
+        else:
+            agent["reasoning_effort"] = effective_effort
+        disabled = set(agent.get("disabled_toolsets") or [])
+        disabled.update({"terminal", "file", "browser", "code_execution", "delegation", "computer_use"})
+        agent["disabled_toolsets"] = sorted(disabled)
+        agent["tool_use_enforcement"] = "auto"
+
+        mcp_servers = config.get("mcp_servers")
+        if not isinstance(mcp_servers, dict):
+            mcp_servers = {}
+            config["mcp_servers"] = mcp_servers
+        mcp_servers["ads_control_plane"] = {
+            "command": sys.executable,
+            "args": ["-m", "workers.agent.control_plane_mcp"],
+            "tools": {
+                "include": [
+                    "ads_workspace_context",
+                    "ads_latest_kpi",
+                    "ads_list_campaign_drafts",
+                    "ads_request_kpi_collection",
+                    "ads_create_campaign_draft",
+                ],
+                "resources": False,
+                "prompts": False,
+            },
+        }
+
+        display = config.get("display")
+        if not isinstance(display, dict):
+            display = {}
+            config["display"] = display
+        display.update(
+            {"busy_input_mode": "steer", "tool_progress": "log", "busy_ack_enabled": True}
+        )
+        gateway = config.get("gateway")
+        if not isinstance(gateway, dict):
+            gateway = {}
+            config["gateway"] = gateway
+        gateway["delivery_ledger"] = True
+
+        self._write_env("ADS_LUSH_PROVIDER_API_KEY", str(provider.get("api_key") or ""))
+        self._write_soul()
         temporary = self.config_path.with_suffix(".yaml.tmp")
         temporary.write_text(
             yaml.safe_dump(config, allow_unicode=True, sort_keys=False),
@@ -53,9 +132,49 @@ class HermesConfigManager:
         self.managed_hash_path.write_text(digest, encoding="utf-8")
         os.chmod(self.managed_hash_path, 0o600)
         subprocess.run(
-            ["systemctl", "enable", "--now", "meta-ads-copilot-hermes.service"],
+            ["systemctl", "enable", "meta-ads-copilot-hermes.service"],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        subprocess.run(
+            ["systemctl", "restart", "meta-ads-copilot-hermes.service"],
             check=False,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
         return True
+
+    def _write_env(self, key: str, value: str) -> None:
+        entries: dict[str, str] = {}
+        if self.env_path.exists():
+            for line in self.env_path.read_text(encoding="utf-8").splitlines():
+                if "=" in line and not line.lstrip().startswith("#"):
+                    name, current = line.split("=", 1)
+                    entries[name.strip()] = current
+        entries[key] = value.replace("\n", "").replace("\r", "")
+        temporary = self.env_path.with_suffix(".env.tmp")
+        temporary.write_text(
+            "".join(f"{name}={current}\n" for name, current in sorted(entries.items())),
+            encoding="utf-8",
+        )
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, self.env_path)
+
+    def _write_soul(self) -> None:
+        content = """# Ads Lush Hermes
+
+Bạn là trợ lý vận hành Meta Ads nói tiếng Việt, trò chuyện tự nhiên và ngắn gọn.
+
+- Dùng typed tools `ads_*` để lấy dữ liệu thật; không đoán KPI, account hoặc trạng thái campaign.
+- Chỉ gọi `ads_create_campaign_draft` khi người dùng yêu cầu rõ ràng tạo/lưu draft và đã cung cấp đủ dữ liệu.
+- Campaign do tool tạo luôn là control-plane DRAFT. Nói rõ nó chưa được duyệt, chưa chạy trên browser và chưa publish.
+- Không submit approval, không chạy browser, không tăng budget và không publish bằng cách khác.
+- Khi người dùng hỏi báo cáo mới, có thể gọi `ads_request_kpi_collection`; nói rõ job chạy bất đồng bộ rồi dùng `ads_latest_kpi` để đọc snapshot sau khi hoàn tất.
+- Nếu thiếu ad account, budget, objective, targeting hoặc creative, hãy hỏi lại bằng ngôn ngữ tự nhiên.
+- Không tiết lộ API key, Telegram token, worker credential, path secret hoặc nội dung reasoning riêng tư.
+"""
+        temporary = self.soul_path.with_suffix(".md.tmp")
+        temporary.write_text(content, encoding="utf-8")
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, self.soul_path)

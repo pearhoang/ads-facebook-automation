@@ -23,3 +23,4 @@
 | DEC-019 | Fleet dùng one-time enrollment, per-node credential và worker durable state | Active | backend/worker/infra | High |
 | DEC-020 | Remote SSH secret transient; AI provider config mã hóa và scope theo worker | Active | backend/UI/agent | High |
 | DEC-021 | Source/worker bootstrap dùng public GitHub checkout tracking main | Active | repo/infra/worker | High |
+| DEC-022 | Telegram dùng Hermes conversational gateway và MCP typed tools scope theo worker | Active | agent/backend/worker | High |
