@@ -115,3 +115,9 @@
 - Affected: Git bootstrap, backend config/UI, infra env example, production source và project memory.
 - Verified: `43 passed`, Python/JavaScript sạch; production checkout tracking `origin/main`, web/worker active và health `ok`.
 - Safety: `.env`, database, output, browser state và tar backup bị ignore; chưa lưu API key vì ảnh DeepSeek chỉ hiển thị masked value.
+
+### 2026-08-01 - Xác nhận DeepSeek V4 Flash 0731
+
+- Changed: Đổi nhãn preset thành DeepSeek V4 Flash 0731 nhưng giữ API model ID canonical `deepseek-v4-flash` theo live `/models`.
+- Verified: DeepSeek `/models` và Chat Completions trả `200`; non-thinking smoke trả `OK`, Hermes/web/worker active.
+- Safety: Raw key không xuất hiện trong log/response; DB chỉ giữ ciphertext và masked hint.

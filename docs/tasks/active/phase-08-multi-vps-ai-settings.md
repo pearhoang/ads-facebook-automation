@@ -42,4 +42,4 @@
 - Hermes Agent `v0.19.1` đã cài; service giữ `disabled/inactive` cho tới khi worker nhận provider config hợp lệ, sau đó worker mới `enable --now`.
 - Predeploy backup: `/opt/meta-ads-backups/20260801-125156` gồm source, env và PostgreSQL dump.
 - Canonical public Git repo: `pearhoang/ads-facebook-automation`; production tracking `origin/main` và popup worker dùng repo này mặc định.
-- DeepSeek preset dùng `https://api.deepseek.com` + `deepseek-v4-flash`; chờ raw API key để lưu encrypted và start Hermes.
+- DeepSeek V4 Flash 0731 preset dùng `https://api.deepseek.com` + API model ID `deepseek-v4-flash`; key đã encrypted, inference trả `200` và Hermes active.

@@ -40,7 +40,7 @@ def test_default_worker_repo_and_deepseek_flash_preset():
         "https://github.com/pearhoang/ads-facebook-automation.git"
     )
     template = Path("backend/app/templates/ai_copilot.html").read_text(encoding="utf-8")
-    assert "DeepSeek V4 Flash" in template
+    assert "DeepSeek V4 Flash 0731" in template
     assert "https://api.deepseek.com" in template
     assert "deepseek-v4-flash" in template
 
@@ -208,7 +208,7 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
             "SSH password",
             "Hermes Agent",
             "Gỡ worker khỏi VPS",
-            "DeepSeek V4 Flash",
+            "DeepSeek V4 Flash 0731",
             "deepseek-v4-flash",
         ):
             assert copy in page.text

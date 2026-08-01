@@ -44,7 +44,7 @@
 - Trang `Bot VPS` dùng một table duy nhất; mỗi worker có action `Sửa`, `Drain/Kích hoạt`, `Gỡ khỏi VPS`, `Xóa kết nối`, và action rủi ro luôn mở popup xác nhận.
 - Popup cài worker nhóm rõ `SSH`, `Source` và `Hermes Agent`; password/API key dùng password input, không render lại sau submit và operation chỉ hiển thị tiến độ không chứa secret.
 - Trang `AI Copilot` bắt buộc chọn worker trước khi sửa provider; API key luôn masked và để trống nghĩa là giữ key hiện tại.
-- Popup cài worker điền sẵn canonical GitHub repo nhưng vẫn là input sửa được; DeepSeek V4 Flash là preset đầu tiên với endpoint/model đã điền sẵn.
+- Popup cài worker điền sẵn canonical GitHub repo nhưng vẫn là input sửa được; DeepSeek V4 Flash 0731 là preset đầu tiên, còn model API canonical giữ `deepseek-v4-flash`.
 
 ## Consistency Rules
 

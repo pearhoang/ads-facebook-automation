@@ -27,7 +27,7 @@ Runtime noVNC thật, outbound worker, HTTP/WebSocket proxy và UI Account Sessi
 - Owner credential được lưu ngoài repo và bàn giao riêng.
 - Services: `meta-ads-copilot-web.service`, `meta-ads-copilot-worker.service`.
 - Bot VPS mới clone branch `main` từ repository mặc định; URL có thể sửa trong popup cài worker.
-- Hermes hỗ trợ OpenAI-compatible provider; preset mặc định là DeepSeek `deepseek-v4-flash`.
+- Hermes hỗ trợ OpenAI-compatible provider; preset mặc định hiển thị DeepSeek V4 Flash 0731 và dùng API model ID `deepseek-v4-flash`.
 - Database: PostgreSQL 17.10, schema quản lý bằng Alembic.
 
 ## Local setup
