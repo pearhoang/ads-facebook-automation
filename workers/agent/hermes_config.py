@@ -24,7 +24,7 @@ class HermesConfigManager:
         if not provider:
             return False
         canonical = json.dumps(
-            {"schema_version": 5, "provider": provider},
+            {"schema_version": 6, "provider": provider},
             sort_keys=True,
             ensure_ascii=False,
         ).encode("utf-8")
@@ -143,10 +143,15 @@ class HermesConfigManager:
             # Without a matching route, Hermes treats that virtual name as a
             # raw model and re-resolves the normalized ``custom`` provider,
             # losing the named provider credentials on later chat turns.
-            "model_routes": {
-                "ads-copilot": {
-                    "model": str(provider["model"]),
-                    "provider": f"custom:{provider_name}",
+            # Hermes only bridges a small fixed set of api_server keys from
+            # ``gateway.api_server`` into PlatformConfig.extra. Keep routes
+            # explicitly under ``extra`` so the adapter actually receives it.
+            "extra": {
+                "model_routes": {
+                    "ads-copilot": {
+                        "model": str(provider["model"]),
+                        "provider": f"custom:{provider_name}",
+                    }
                 }
             },
         }

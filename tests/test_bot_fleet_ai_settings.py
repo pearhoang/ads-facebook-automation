@@ -316,7 +316,7 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: P
     assert config["gateway"]["api_server"]["host"] == "127.0.0.1"
     assert config["gateway"]["api_server"]["port"] == 8642
     assert config["gateway"]["api_server"]["model_name"] == "ads-copilot"
-    assert config["gateway"]["api_server"]["model_routes"] == {
+    assert config["gateway"]["api_server"]["extra"]["model_routes"] == {
         "ads-copilot": {
             "model": "deepseek-v4-flash",
             "provider": "custom:ads-lush",
