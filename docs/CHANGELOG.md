@@ -198,4 +198,5 @@
 - Changed: Thêm action tại `Hermes Agents`, API owner/CSRF và remote operation qua SSH để thay scrypt hash cùng signing secret của native Dashboard.
 - Affected: Bot VPS schema/API/remote ops, Hermes Agents UI, fleet tests, decision và module memory.
 - Verified: `58 passed`, Python compile, JavaScript syntax và diff check sạch; scrypt contract khớp Hermes và host fingerprint mismatch bị chặn trước bước SSH authentication.
+- Deploy: Commit `c13f420`; chỉ restart web control-plane. Public health `200`, route unauthenticated trả `401`, dashboard `overall=ok`, basic auth vẫn bật và bốn service đều active. Backup tại `/var/backups/meta-ads-copilot/20260801T180712Z-hermes-dashboard-password`.
 - Safety: SSH password và Dashboard password chỉ tồn tại trong request/background memory; operation/database/audit không giữ plaintext. Chỉ dashboard service bị restart, còn Hermes gateway, Telegram và browser worker giữ nguyên.
