@@ -21,9 +21,19 @@ hermes.ads.lushmedia.net {
         X-Frame-Options DENY
     }
     encode zstd gzip
-    reverse_proxy host.docker.internal:9119 {
-        header_up Host 172.17.0.1:9119
-        header_up X-Forwarded-Host {host}
-        header_up X-Forwarded-Proto {scheme}
+    route {
+        @hermes_websocket header Upgrade websocket
+        reverse_proxy @hermes_websocket host.docker.internal:9119 {
+            # Hermes validates WebSocket Host + Origin against its private bind.
+            header_up Host 172.17.0.1:9119
+            header_up Origin http://172.17.0.1:9119
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+        reverse_proxy host.docker.internal:9119 {
+            header_up Host 172.17.0.1:9119
+            header_up X-Forwarded-Host {host}
+            header_up X-Forwarded-Proto {scheme}
+        }
     }
 }

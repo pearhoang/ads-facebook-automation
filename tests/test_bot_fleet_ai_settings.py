@@ -337,6 +337,8 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal_by_default(
     caddy = Path("infra/caddy/ads.lushmedia.net.Caddyfile").read_text(encoding="utf-8")
     assert "hermes.ads.lushmedia.net" in caddy
     assert "host.docker.internal:9119" in caddy
+    assert "@hermes_websocket header Upgrade websocket" in caddy
+    assert "header_up Origin http://172.17.0.1:9119" in caddy
 
 
 def test_hermes_experimental_full_access_removes_managed_toolset_blocks(tmp_path: Path, monkeypatch):
