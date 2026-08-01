@@ -61,8 +61,8 @@ def provision_admin(
     password: str,
 ) -> User:
     normalized_email = normalize_email(email)
-    if len(password) < 12:
-        raise ValueError("Admin password must contain at least 12 characters.")
+    if len(password) < 4:
+        raise ValueError("Admin password must contain at least 4 characters.")
 
     tenant = db.get(Tenant, tenant_id)
     if tenant is None:
@@ -115,7 +115,7 @@ def authenticate(
     if user is None or not password_valid or user.status != "active":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email hoặc mật khẩu không đúng.",
+            detail="Tài khoản hoặc mật khẩu không đúng.",
         )
 
     membership_query = select(TenantMembership, Tenant).join(
@@ -222,10 +222,10 @@ def change_password(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Mật khẩu hiện tại không đúng.",
         )
-    if len(new_password) < 12:
+    if len(new_password) < 4:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Mật khẩu mới phải có ít nhất 12 ký tự.",
+            detail="Mật khẩu mới phải có ít nhất 4 ký tự.",
         )
     if password_hash.verify(new_password, user.password_hash):
         raise HTTPException(

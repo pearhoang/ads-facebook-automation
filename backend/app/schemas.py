@@ -392,8 +392,8 @@ class AuthLoginRequest(BaseModel):
 
 class AuthPasswordChangeRequest(BaseModel):
     current_password: SecretStr = Field(min_length=1, max_length=1024)
-    new_password: SecretStr = Field(min_length=12, max_length=1024)
-    new_password_confirmation: SecretStr = Field(min_length=12, max_length=1024)
+    new_password: SecretStr = Field(min_length=4, max_length=1024)
+    new_password_confirmation: SecretStr = Field(min_length=4, max_length=1024)
 
     @model_validator(mode="after")
     def confirm_new_password(self):

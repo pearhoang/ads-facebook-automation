@@ -33,7 +33,7 @@ def provision(client: TestClient) -> None:
             db,
             tenant_id=TENANT_ID,
             tenant_name="Lush Media",
-            email="admin@lushmedia.test",
+            email="admin",
             display_name="Quản trị viên",
             password=PASSWORD,
         )
@@ -46,6 +46,10 @@ def test_login_cookie_csrf_logout_and_workspace_guard():
         unauthenticated_page = client.get("/", follow_redirects=False)
         assert unauthenticated_page.status_code == 303
         assert unauthenticated_page.headers["location"] == "/login"
+        login_page = client.get("/login")
+        assert login_page.status_code == 200
+        assert '<label for="email">Tài khoản</label>' in login_page.text
+        assert 'type="text"' in login_page.text
         unauthenticated_hermes = client.get("/ai-copilot", follow_redirects=False)
         assert unauthenticated_hermes.status_code == 303
         assert unauthenticated_hermes.headers["location"] == "/login"
@@ -54,22 +58,22 @@ def test_login_cookie_csrf_logout_and_workspace_guard():
         wrong_origin = client.post(
             "/api/auth/login",
             headers={"Origin": "https://evil.example"},
-            json={"email": "admin@lushmedia.test", "password": PASSWORD},
+            json={"email": "admin", "password": PASSWORD},
         )
         assert wrong_origin.status_code == 403
 
         wrong_password = client.post(
             "/api/auth/login",
             headers={"Origin": "https://testserver"},
-            json={"email": "admin@lushmedia.test", "password": "incorrect"},
+            json={"email": "admin", "password": "incorrect"},
         )
         assert wrong_password.status_code == 401
-        assert wrong_password.json()["detail"] == "Email hoặc mật khẩu không đúng."
+        assert wrong_password.json()["detail"] == "Tài khoản hoặc mật khẩu không đúng."
 
         logged_in = client.post(
             "/api/auth/login",
             headers={"Origin": "https://testserver"},
-            json={"email": "ADMIN@LUSHMEDIA.TEST", "password": PASSWORD},
+            json={"email": "ADMIN", "password": PASSWORD},
         )
         assert logged_in.status_code == 200
         assert logged_in.json()["tenant_id"] == TENANT_ID
@@ -130,7 +134,7 @@ def test_login_cookie_csrf_logout_and_workspace_guard():
 
 
 def test_change_password_requires_csrf_keeps_current_session_and_revokes_others():
-    new_password = "A-different-production-password-2026"
+    new_password = "1234"
     with build_production_client() as client:
         provision(client)
         secondary = TestClient(client.app, base_url="https://testserver")
@@ -139,7 +143,7 @@ def test_change_password_requires_csrf_keeps_current_session_and_revokes_others(
                 logged_in = session_client.post(
                     "/api/auth/login",
                     headers={"Origin": "https://testserver"},
-                    json={"email": "admin@lushmedia.test", "password": PASSWORD},
+                    json={"email": "admin", "password": PASSWORD},
                 )
                 assert logged_in.status_code == 200
 
@@ -191,13 +195,13 @@ def test_change_password_requires_csrf_keeps_current_session_and_revokes_others(
             old_login = secondary.post(
                 "/api/auth/login",
                 headers={"Origin": "https://testserver"},
-                json={"email": "admin@lushmedia.test", "password": PASSWORD},
+                json={"email": "admin", "password": PASSWORD},
             )
             assert old_login.status_code == 401
             new_login = secondary.post(
                 "/api/auth/login",
                 headers={"Origin": "https://testserver"},
-                json={"email": "admin@lushmedia.test", "password": new_password},
+                json={"email": "admin", "password": new_password},
             )
             assert new_login.status_code == 200
         finally:

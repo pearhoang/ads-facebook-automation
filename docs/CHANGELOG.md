@@ -200,3 +200,9 @@
 - Verified: `58 passed`, Python compile, JavaScript syntax và diff check sạch; scrypt contract khớp Hermes và host fingerprint mismatch bị chặn trước bước SSH authentication.
 - Deploy: Commit `c13f420`; chỉ restart web control-plane. Public health `200`, route unauthenticated trả `401`, dashboard `overall=ok`, basic auth vẫn bật và bốn service đều active. Backup tại `/var/backups/meta-ads-copilot/20260801T180712Z-hermes-dashboard-password`.
 - Safety: SSH password và Dashboard password chỉ tồn tại trong request/background memory; operation/database/audit không giữ plaintext. Chỉ dashboard service bị restart, còn Hermes gateway, Telegram và browser worker giữ nguyên.
+
+### 2026-08-02 - Đăng nhập control-plane bằng username
+
+- Changed: Login UI dùng `Tài khoản` thay cho `Email`, chấp nhận username text, cho phép password từ 4 ký tự và đổi production owner identifier thành `admin` mà không phá field API legacy.
+- Affected: auth copy/template, auth regression và project memory.
+- Safety: Giữ Argon2 hash, CSRF, secure session cookie, tenant/role và API contract; các phiên cũ được thu hồi khi cập nhật credential production.

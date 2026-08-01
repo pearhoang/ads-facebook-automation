@@ -22,6 +22,8 @@
 - Browser WebSocket phải đúng session tenant và `Origin` canonical ở production.
 - Không dùng `X-Dev-Tenant-ID` trong production và không có public signup.
 - Đổi mật khẩu phải xác minh mật khẩu hiện tại, giữ phiên đang thao tác và revoke mọi phiên khác của cùng user.
+- Login UI dùng nhãn `Tài khoản` và chấp nhận identifier không phải email; field API `email` được giữ để tương thích ngược.
+- Control-plane chấp nhận password từ 4 ký tự theo yêu cầu triển khai single-customer; Argon2 hash, CSRF và session revocation vẫn bắt buộc.
 
 ## Current Limits
 
