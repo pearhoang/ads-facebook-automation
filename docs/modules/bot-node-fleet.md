@@ -23,4 +23,5 @@
 ## Current State
 
 - Production migration `20260801_0006`; một worker hiện hữu đã gắn host và trạng thái installed.
-- Remote installer cần GitHub repository URL/branch thực tế do workspace production hiện không phải Git checkout.
+- Canonical public repo là `https://github.com/pearhoang/ads-facebook-automation.git`, branch `main`; popup điền sẵn và cho phép thay bằng fork khác.
+- Production source là Git checkout sạch tracking `origin/main` từ commit `dcc47d8`.

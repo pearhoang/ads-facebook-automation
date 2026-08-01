@@ -108,3 +108,10 @@
 - Affected: backend/API/UI, worker runtime, bootstrap/systemd, migration `20260801_0006`, tests và project memory.
 - Verified: `42 passed`, Python/JavaScript/migration sạch; production Alembic `head`, web/worker active, Hermes Agent `v0.19.1` đã cài và worker hiện hữu được backfill host/install state.
 - Safety: SSH password chỉ ở RAM, API key encrypted/masked, Hermes inactive tới khi có config; backup source/env/PostgreSQL tại `/opt/meta-ads-backups/20260801-125156`.
+
+### 2026-08-01 - Git checkout và DeepSeek V4 Flash preset
+
+- Changed: Tạo public repo `pearhoang/ads-facebook-automation`, đặt repo/branch mặc định cho worker và thêm preset DeepSeek `deepseek-v4-flash` vào Bot VPS/AI Copilot.
+- Affected: Git bootstrap, backend config/UI, infra env example, production source và project memory.
+- Verified: `43 passed`, Python/JavaScript sạch; production checkout tracking `origin/main`, web/worker active và health `ok`.
+- Safety: `.env`, database, output, browser state và tar backup bị ignore; chưa lưu API key vì ảnh DeepSeek chỉ hiển thị masked value.

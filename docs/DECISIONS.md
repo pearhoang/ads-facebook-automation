@@ -128,3 +128,10 @@
 - Lần cài đầu ghi SSH host fingerprint; decommission từ xa phải khớp fingerprint đã lưu nếu có.
 - AI API key mã hóa bằng `SECRET_ENCRYPTION_KEY`; UI/API chỉ trả masked hint, còn raw key chỉ được giải mã cho đúng worker credential.
 - Hermes service không tự chạy chỉ vì đã cài; worker chỉ enable/start sau khi nhận provider base URL, model và key hợp lệ.
+
+## DEC-021 — Public Git checkout là source bootstrap canonical
+
+- Canonical source là `https://github.com/pearhoang/ads-facebook-automation.git`, branch `main`.
+- Repository public để worker bootstrap clone không cần lưu GitHub token/SSH key trên control-plane hoặc VPS.
+- Popup cài worker điền sẵn canonical repo nhưng cho phép owner thay URL/branch khi triển khai fork riêng.
+- Production `/opt/meta-ads-copilot` phải là checkout sạch tracking `origin/main`; runtime data, env và secret luôn nằm ngoài Git.

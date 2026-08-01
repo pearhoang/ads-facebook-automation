@@ -2,6 +2,8 @@
 
 SaaS control plane và outbound browser worker cho Meta Ads automation.
 
+Repository: `https://github.com/pearhoang/ads-facebook-automation`
+
 ## Phase hiện tại
 
 Phase 01 đang xây Account Session vertical slice:
@@ -24,6 +26,8 @@ Runtime noVNC thật, outbound worker, HTTP/WebSocket proxy và UI Account Sessi
 - Đăng nhập bằng application account; không còn dùng Caddy Basic Auth.
 - Owner credential được lưu ngoài repo và bàn giao riêng.
 - Services: `meta-ads-copilot-web.service`, `meta-ads-copilot-worker.service`.
+- Bot VPS mới clone branch `main` từ repository mặc định; URL có thể sửa trong popup cài worker.
+- Hermes hỗ trợ OpenAI-compatible provider; preset mặc định là DeepSeek `deepseek-v4-flash`.
 - Database: PostgreSQL 17.10, schema quản lý bằng Alembic.
 
 ## Local setup

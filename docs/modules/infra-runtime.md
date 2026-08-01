@@ -58,6 +58,8 @@
 - `TELEGRAM_BOT_TOKEN` đã cấu hình trên production worker và report Telegram đã được user xác nhận nhận thành công; token không nằm trong source/database.
 - Multi-VPS fleet/AI settings đã deploy; worker hiện hữu có host `82.197.71.6`, Hermes Agent `v0.19.1` đã cài nhưng service chỉ được enable/start sau khi có provider config.
 - Phase 8 fleet predeploy backup: `/opt/meta-ads-backups/20260801-125156`.
+- Production source đã chuyển thành Git checkout sạch tracking `pearhoang/ads-facebook-automation` branch `main`; `WORKER_BOOTSTRAP_REPO_URL` trỏ cùng repo.
+- Backup trước chuyển Git checkout: `/opt/meta-ads-backups/20260801-132105-git-checkout`.
 - Auth source/database/app env backup: `/opt/meta-ads-copilot-runtime/backups/*-before-auth-20260731-184227*`.
 - Caddy auth migration backup: `/opt/spoticheck/app/deploy/Caddyfile.backup-auth-20260731-184555`.
 
@@ -81,6 +83,7 @@
 - Logs: `journalctl -u meta-ads-copilot-web.service -u meta-ads-copilot-worker.service -f`
 - Health: `curl http://172.17.0.1:8021/health`
 - Source: `/opt/meta-ads-copilot`
+- Git update: `git -C /opt/meta-ads-copilot pull --ff-only origin main`
 - Persistent data: `/opt/meta-ads-copilot-runtime`
 - Secrets: `/etc/meta-ads-copilot` mode `0600`; không copy vào repo.
 - Database status: `docker inspect -f '{{.State.Status}} {{.State.Health.Status}}' meta-ads-postgres`

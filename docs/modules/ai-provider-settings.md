@@ -21,3 +21,5 @@
 ## Current State
 
 - Hermes Agent `v0.19.1` có trên worker production hiện tại nhưng đang inactive cho tới khi cấu hình provider.
+- Preset mặc định là DeepSeek OpenAI-compatible: `https://api.deepseek.com`, model `deepseek-v4-flash`.
+- Raw DeepSeek API key chưa được cung cấp; không thể khôi phục key cũ từ masked value trên DeepSeek Platform.
