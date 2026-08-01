@@ -30,6 +30,7 @@
 - Experimental Full Access không mở thêm typed tool publish/budget và không thay approval boundary của control-plane.
 - Dashboard dùng auth provider chính chủ của Hermes; password chỉ lưu dạng scrypt hash và signing secret nằm trong env mode `0600`.
 - Đổi Dashboard password yêu cầu owner session + CSRF + SSH password dùng một lần; thao tác xoay cả signing secret để revoke phiên cũ và không restart gateway/worker.
+- Dashboard password chấp nhận từ 4 ký tự theo cấu hình single-customer; credential at rest vẫn chỉ là scrypt hash.
 - Port dashboard không bind public interface. Caddy chỉ truy cập qua Docker host interface và HTTPS subdomain.
 
 ## Current State

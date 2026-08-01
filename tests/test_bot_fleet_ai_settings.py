@@ -51,6 +51,7 @@ def test_default_worker_repo_and_deepseek_flash_preset():
     assert "deepseek-v4-flash" in template
     assert "Đổi mật khẩu Dashboard" in template
     assert "SSH password chỉ dùng một lần" in template
+    assert 'id="dashboard-new-password" type="password" required minlength="4"' in template
 
 
 def provision_and_login(client: TestClient) -> dict[str, str]:
@@ -315,7 +316,7 @@ def test_rotate_dashboard_password_is_transient_and_scoped_to_worker(tmp_path: P
         assert edited.status_code == 200
 
         ssh_password = "one-use-dashboard-ssh-password"
-        new_password = "New-Hermes-Dashboard-password-2026"
+        new_password = "1234"
         mismatched = client.post(
             f"/api/bot-nodes/{worker['id']}/hermes-dashboard/password",
             headers=headers,

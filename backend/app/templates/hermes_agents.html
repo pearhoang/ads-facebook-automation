@@ -47,9 +47,9 @@
         <button class="icon-button" type="button" data-close-dashboard-password aria-label="Đóng">×</button>
       </div>
       <label>SSH password của Bot VPS<input id="dashboard-ssh-password" type="password" required maxlength="1024" autocomplete="current-password"></label>
-      <label>Mật khẩu Dashboard mới<input id="dashboard-new-password" type="password" required minlength="12" maxlength="1024" autocomplete="new-password"></label>
-      <label>Xác nhận mật khẩu Dashboard mới<input id="dashboard-new-password-confirmation" type="password" required minlength="12" maxlength="1024" autocomplete="new-password"></label>
-      <p class="inline-help">SSH password chỉ dùng một lần và không lưu. Dashboard password được đổi thành scrypt hash; signing secret cũng được xoay để đăng xuất mọi phiên Dashboard cũ. Hermes gateway, Telegram và browser worker không bị restart.</p>
+      <label>Mật khẩu Dashboard mới<input id="dashboard-new-password" type="password" required minlength="4" maxlength="1024" autocomplete="new-password"></label>
+      <label>Xác nhận mật khẩu Dashboard mới<input id="dashboard-new-password-confirmation" type="password" required minlength="4" maxlength="1024" autocomplete="new-password"></label>
+      <p class="inline-help">Mật khẩu mới cần ít nhất 4 ký tự. SSH password chỉ dùng một lần và không lưu. Dashboard password được đổi thành scrypt hash; signing secret cũng được xoay để đăng xuất mọi phiên Dashboard cũ. Hermes gateway, Telegram và browser worker không bị restart.</p>
       <div id="dashboard-password-notice" class="notice" role="status" aria-live="polite" hidden></div>
       <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dashboard-password>Hủy</button><button id="dashboard-password-submit" class="button button-primary" type="submit">Đổi mật khẩu</button></div>
     </form>

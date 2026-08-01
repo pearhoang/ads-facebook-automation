@@ -208,3 +208,9 @@
 - Verified: `58 passed`, Python compile, JavaScript syntax, UTF-8/diff check sạch. Production login `admin` trả `200`, identifier email cũ trả `401`, `/api/auth/me` trả `admin` và logout smoke trả `204`.
 - Deploy: Commit `339dc44`; chỉ restart web control-plane, sau đó cập nhật exact owner và revoke phiên cũ. Verified source/database backup tại `/var/backups/meta-ads-copilot/20260801T183742Z-username-login`.
 - Safety: Giữ Argon2 hash, CSRF, secure session cookie, tenant/role và API contract; các phiên cũ được thu hồi khi cập nhật credential production.
+
+### 2026-08-02 - Mật khẩu Hermes Dashboard tối thiểu 4 ký tự
+
+- Changed: Hạ validation UI/API đổi mật khẩu native Hermes Dashboard từ 12 xuống 4 ký tự theo cấu hình single-customer.
+- Affected: Bot VPS schema, Hermes Agents dialog, fleet regression và project memory.
+- Safety: Password at rest vẫn là scrypt hash; khi đổi vẫn xoay signing secret để thu hồi phiên Dashboard cũ và không restart gateway/Telegram/browser worker.
