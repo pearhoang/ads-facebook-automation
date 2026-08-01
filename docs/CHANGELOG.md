@@ -141,3 +141,10 @@
 - Affected: agent conversation/job backend, outbound Hermes API bridge, AI Copilot/Hermes Agents/Bot VPS UI, migration `20260801_0008`, bootstrap installer, tests và project memory.
 - Verified: `47 passed`, Python compile, JavaScript và installer syntax sạch; production migration `20260801_0008 (head)`, web/worker/Hermes active, public health `ok`, Hermes API chỉ bind `127.0.0.1:8642`, có 1 Telegram session và không có error log sau deploy.
 - Safety: Không có VPS Copilot; không gửi tin nhắn/publish/budget action trong smoke test. Telegram token đi qua file tạm SSH `0600`, không nằm trong command line/database/audit/response; backup tại `/var/backups/meta-ads-copilot/20260801T140223Z`.
+
+### 2026-08-01 - Sửa transcript và session layout của Ads Copilot
+
+- Changed: Ẩn role Hermes nội bộ `tool|session_meta`, render assistant Markdown bằng safe DOM subset, khóa page scroll và thêm request guard khi đổi session.
+- Affected: Copilot message API, chat JavaScript/CSS/template, tests và project memory.
+- Verified: `47 passed`, Python/JavaScript sạch; local UI giữ 2/2 session sau chuyển, `window.scrollY=0`, Markdown table/list/bold render đúng và console không lỗi. Production trả public role đúng `assistant,user`, technical message bằng `0`, web/worker/Hermes active và health `ok`.
+- Safety: Không xóa transcript cũ; tool message lịch sử chỉ bị ẩn khỏi user API. Không restart worker/Hermes, không gửi chat, không tạo campaign; backup tại `/var/backups/meta-ads-copilot/20260801T142205Z-copilot-ui`.
