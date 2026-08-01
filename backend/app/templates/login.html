@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập — Ads Lush</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css">
+  <link rel="stylesheet" href="/static/auth.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-brand" aria-label="Ads Lush">
+      <div class="auth-brand-row"><span class="brand-mark">A</span><strong>Ads Lush</strong></div>
+      <p>Quản lý tài khoản Facebook, phiên đăng nhập và các tác vụ quảng cáo trong một workspace riêng.</p>
+      <ul>
+        <li>Mỗi khách hàng có dữ liệu và Chrome profile tách biệt.</li>
+        <li>Mật khẩu Facebook và mã 2FA không được lưu.</li>
+        <li>Thao tác có ngân sách sẽ cần xác nhận trước khi chạy.</li>
+      </ul>
+    </section>
+
+    <section class="auth-form-panel">
+      <div class="auth-form-heading">
+        <h1>Đăng nhập</h1>
+        <p>Dùng tài khoản đã được quản trị viên cấp cho workspace.</p>
+      </div>
+      <div id="login-error" class="notice" role="alert" hidden></div>
+      <form id="login-form">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="username" required maxlength="320" autofocus>
+        <label for="password">Mật khẩu</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024">
+        <button id="login-button" class="button button-primary auth-submit" type="submit">Đăng nhập</button>
+      </form>
+      <p class="auth-support">Chưa có tài khoản hoặc quên mật khẩu? Liên hệ quản trị viên hệ thống.</p>
+    </section>
+  </main>
+  <script src="/static/login.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ads Lush — Báo cáo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css">
+  <link rel="stylesheet" href="/static/reports.css">
+</head>
+<body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Ads Lush">
+      <span class="brand-mark">A</span>
+      <span><strong>Ads Lush</strong><small>Automation workspace</small></span>
+    </a>
+    <nav aria-label="Điều hướng chính">
+      <a class="nav-item" href="/">Tài khoản Facebook</a>
+      <a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a>
+      <a class="nav-item" href="/campaigns">Campaigns</a>
+      <a class="nav-item is-active" href="/reports">Báo cáo</a>
+      <a class="nav-item" href="/bot-nodes">Bot VPS</a>
+      <a class="nav-item" href="/ai-copilot">AI Copilot</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="environment-dot"></span>
+      <span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Reporting</small></span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Báo cáo &amp; KPI</h1>
+        <p>Snapshot read-only từ Ads Manager, không thay đổi campaign hoặc ngân sách.</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
+        <button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button>
+        <button id="collect-button" class="button button-primary" type="button">Thu thập KPI</button>
+      </div>
+    </header>
+
+    <div class="safety-banner"><strong>Chỉ đọc Ads Manager.</strong> Report job không click bộ lọc, không sửa quảng cáo và không có quyền <span class="mono-text">Đăng/Publish</span>. Dữ liệu dùng các ngày đã hoàn tất, kết thúc vào hôm qua theo múi giờ ad account.</div>
+
+    <section class="report-filter" aria-label="Bộ lọc báo cáo">
+      <label>Ad account<select id="account-filter"></select></label>
+      <button id="refresh-button" class="button button-secondary" type="button">Làm mới</button>
+    </section>
+
+    <div id="notice" class="notice page-notice" hidden></div>
+
+    <section class="summary" aria-label="KPI gần nhất">
+      <div><span>Chi tiêu</span><strong id="kpi-spend">—</strong></div>
+      <div><span>Kết quả</span><strong id="kpi-results">—</strong></div>
+      <div><span>Chi phí/kết quả</span><strong id="kpi-cost">—</strong></div>
+      <div><span>Thu thập gần nhất</span><strong id="kpi-collected" class="summary-time">Chưa có</strong></div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-toolbar">
+        <div><h2>Snapshot KPI</h2><p>Mỗi lần thu thập tạo một snapshot bất biến cho đúng ad account và khoảng ngày.</p></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Khoảng ngày</th><th>Chi tiêu</th><th>Kết quả</th><th>Chi phí/kết quả</th><th>Campaign đọc được</th><th>Trạng thái dữ liệu</th><th>Thu thập lúc</th></tr></thead>
+          <tbody id="snapshots-body"></tbody>
+        </table>
+        <div id="snapshots-empty" class="empty-state compact-empty" hidden><strong>Chưa có snapshot KPI</strong><p>Chọn ad account rồi chạy “Thu thập KPI”. Worker sẽ chỉ đọc Ads Manager và lưu kết quả ở đây.</p></div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-toolbar">
+        <div><h2>Lịch báo cáo</h2><p>Chạy hằng ngày theo múi giờ ad account. Telegram chỉ gửi khi worker có <span class="mono-text">TELEGRAM_BOT_TOKEN</span>.</p></div>
+        <button id="add-schedule-button" class="button button-secondary" type="button">Thêm lịch</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Ad account</th><th>Giờ chạy</th><th>Kỳ dữ liệu</th><th>Telegram</th><th>Lần kế tiếp</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead>
+          <tbody id="schedules-body"></tbody>
+        </table>
+        <div id="schedules-empty" class="empty-state compact-empty" hidden><strong>Chưa có lịch báo cáo</strong><p>Tạo lịch khi bạn muốn worker tự thu thập KPI hằng ngày.</p></div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-toolbar"><div><h2>Report jobs</h2><p>Lịch sử thu thập và trạng thái gửi Telegram.</p></div></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Yêu cầu lúc</th><th>Ad account</th><th>Nguồn</th><th>Khoảng ngày</th><th>Thu thập</th><th>Telegram</th><th>Lỗi</th></tr></thead>
+          <tbody id="jobs-body"></tbody>
+        </table>
+        <div id="jobs-empty" class="empty-state compact-empty" hidden><strong>Chưa có report job</strong><p>Các lần chạy thủ công và theo lịch sẽ xuất hiện tại đây.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="collect-dialog">
+    <form id="collect-form" method="dialog">
+      <div class="dialog-header"><div><h2>Thu thập KPI read-only</h2><p>Worker mở đúng Chrome profile và đọc bảng Campaigns trong Ads Manager.</p></div><button class="icon-button" type="button" data-close="collect-dialog" aria-label="Đóng">×</button></div>
+      <label>Ad account<select id="collect-account" required></select></label>
+      <label>Số ngày đã hoàn tất<select id="collect-lookback"><option value="1">Hôm qua</option><option value="7" selected>7 ngày</option><option value="30">30 ngày</option></select></label>
+      <label>Telegram chat ID <span class="optional-label">(không bắt buộc)</span><input id="collect-chat-id" maxlength="80" placeholder="Ví dụ: -1001234567890"></label>
+      <label>Xác nhận<input id="collect-confirmation" required autocomplete="off" placeholder="Nhập THU THẬP KPI"></label>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="collect-dialog">Hủy</button><button class="button button-primary" type="submit">Tạo report job</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="schedule-dialog">
+    <form id="schedule-form" method="dialog">
+      <div class="dialog-header"><div><h2>Thêm lịch báo cáo</h2><p>Lịch hằng ngày dùng múi giờ đã lưu trên ad account.</p></div><button class="icon-button" type="button" data-close="schedule-dialog" aria-label="Đóng">×</button></div>
+      <label>Ad account<select id="schedule-account" required></select></label>
+      <div class="form-grid">
+        <label>Giờ chạy<input id="schedule-time" type="time" value="08:00" required></label>
+        <label>Số ngày dữ liệu<select id="schedule-lookback"><option value="1">1 ngày</option><option value="7" selected>7 ngày</option><option value="30">30 ngày</option></select></label>
+      </div>
+      <label>Telegram chat ID <span class="optional-label">(để trống nếu chỉ xem trên web)</span><input id="schedule-chat-id" maxlength="80" placeholder="Ví dụ: -1001234567890"></label>
+      <p class="inline-help">Bot token không nhập tại đây. Token là secret và chỉ được cấu hình trong worker environment.</p>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="schedule-dialog">Hủy</button><button class="button button-primary" type="submit">Tạo lịch hằng ngày</button></div>
+    </form>
+  </dialog>
+
+  <script src="/static/reports.js" defer></script>
+</body>
+</html>

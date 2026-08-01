@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ads Lush — Bot VPS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css">
+  <link rel="stylesheet" href="/static/fleet.css">
+</head>
+<body data-csrf-token="{{ csrf_token }}" data-default-repo-url="{{ default_repo_url }}" data-default-repo-branch="{{ default_repo_branch }}">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Ads Lush"><span class="brand-mark">A</span><span><strong>Ads Lush</strong><small>Automation workspace</small></span></a>
+    <nav aria-label="Điều hướng chính">
+      <a class="nav-item" href="/">Tài khoản Facebook</a>
+      <a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a>
+      <a class="nav-item" href="/campaigns">Campaigns</a>
+      <a class="nav-item" href="/reports">Báo cáo</a>
+      <a class="nav-item is-active" href="/bot-nodes">Bot VPS</a>
+      <a class="nav-item" href="/ai-copilot">AI Copilot</a>
+    </nav>
+    <div class="sidebar-footer"><span class="environment-dot"></span><span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Fleet control</small></span></div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div><h1>Bot VPS</h1><p>Fleet browser worker tự đăng ký, tự reconnect và giữ state cục bộ.</p></div>
+      <div class="topbar-actions"><div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div><button id="add-node-button" class="button button-primary" type="button">Thêm Bot VPS</button></div>
+    </header>
+    <section class="summary" aria-label="Tổng quan fleet">
+      <div><span>Tổng node</span><strong id="node-total">0</strong></div>
+      <div><span>Online</span><strong id="node-online">0</strong></div>
+      <div><span>Đang drain</span><strong id="node-draining">0</strong></div>
+      <div><span>Outbox hỗ trợ</span><strong id="node-durable">0</strong></div>
+    </section>
+    <div class="safety-banner"><strong>Ranh giới an toàn:</strong> Drain dừng cấp việc mới. Revoke vô hiệu hóa credential nhưng giữ audit và dữ liệu profile. Chỉ gỡ service từ popup sau khi worker đã Drain; browser profile vẫn được giữ.</div>
+    <section class="content-section">
+      <div class="section-toolbar"><div><h2>Cụm Bot VPS</h2><p>Mỗi node dùng credential riêng; noVNC/CDP vẫn chỉ bind localhost.</p></div><button id="refresh-nodes" class="button button-secondary" type="button">Làm mới</button></div>
+      <div id="fleet-notice" class="notice" hidden></div>
+      <div class="table-wrap"><table><thead><tr><th>Bot VPS</th><th>Kết nối</th><th>Host / Runtime</th><th>Năng lực</th><th>Last seen</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="node-rows"></tbody></table></div>
+      <div id="node-empty" class="empty-state" hidden><strong>Chưa có Bot VPS</strong><p>Nhấn Thêm Bot VPS để cài từ xa qua SSH.</p></div>
+    </section>
+    <section class="content-section">
+      <div class="section-toolbar"><div><h2>Thao tác cài đặt gần đây</h2><p>Password và API key không xuất hiện trong operation log.</p></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Loại</th><th>Host</th><th>Trạng thái</th><th>Kết quả</th><th>Thời gian</th></tr></thead><tbody id="operation-rows"></tbody></table></div>
+      <div id="operation-empty" class="empty-state compact-empty" hidden><strong>Chưa có thao tác</strong></div>
+    </section>
+  </main>
+
+  <dialog id="enrollment-dialog" class="wide-dialog">
+    <form id="enrollment-form">
+      <div class="dialog-header"><div><h2>Thêm Bot VPS</h2><p>Control-plane dùng SSH để cài một lần; password chỉ giữ trong RAM của request.</p></div><button class="icon-button" type="button" data-close-dialog aria-label="Đóng">×</button></div>
+      <div class="form-grid"><label>IP hoặc hostname<input id="node-host" required maxlength="255" placeholder="203.0.113.10"></label><label>SSH user<input id="node-ssh-user" required maxlength="80" value="root"></label></div>
+      <label>SSH password<input id="node-ssh-password" type="password" required maxlength="1024" autocomplete="new-password"></label>
+      <div class="form-grid"><label>Tên hiển thị<input id="node-name" required maxlength="160" placeholder="Ads Worker Singapore 01"></label><label>Worker key<input id="node-key" required maxlength="120" pattern="[a-zA-Z0-9._-]+" placeholder="ads-sg-01"></label></div>
+      <label>GitHub repository URL<input id="repo-url" required maxlength="2048" placeholder="https://github.com/pearhoang/ads-facebook-automation.git"></label>
+      <label>Branch<input id="repo-branch" required maxlength="120" value="main"></label>
+      <fieldset class="form-section"><legend>Hermes Agent</legend><div class="form-grid"><label>Provider<select id="install-provider-preset"><option value="deepseek">DeepSeek V4 Flash</option><option value="custom">Custom / 9router</option><option value="openai">OpenAI trực tiếp</option><option value="openrouter">OpenRouter</option><option value="cliproxyapi">CLIProxyAPI trên VPS</option></select></label><label>Provider name<input id="install-provider-name" required value="deepseek"></label></div><div class="form-grid"><label>Base URL<input id="install-provider-base-url" required value="https://api.deepseek.com" placeholder="https://gateway.example.com/v1"></label><label>Model<input id="install-provider-model" required value="deepseek-v4-flash" placeholder="deepseek-v4-flash"></label></div><label>API key<input id="install-provider-api-key" type="password" maxlength="4096" autocomplete="new-password" placeholder="Có thể để trống với local proxy không cần key"></label></fieldset>
+      <p class="inline-help">Hệ thống sẽ tự cài browser runtime, noVNC, worker và Hermes; tiến trình có thể mất vài phút.</p>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dialog>Hủy</button><button class="button button-primary" type="submit">Bắt đầu cài VPS</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="edit-node-dialog" class="wide-dialog">
+    <form id="edit-node-form">
+      <div class="dialog-header"><div><h2>Sửa thiết lập Bot VPS</h2><p>Đổi host sẽ xóa fingerprint cũ và cần xác minh lại ở thao tác SSH tiếp theo.</p></div><button class="icon-button" type="button" data-close-edit aria-label="Đóng">×</button></div>
+      <input id="edit-node-id" type="hidden">
+      <div class="form-grid"><label>Tên hiển thị<input id="edit-node-name" required maxlength="160"></label><label>Worker key<input id="edit-node-key" disabled></label></div>
+      <div class="form-grid"><label>IP hoặc hostname<input id="edit-node-host" required maxlength="255"></label><label>SSH user<input id="edit-node-ssh-user" required maxlength="80"></label></div>
+      <fieldset class="form-section"><legend>Hermes Agent</legend><div class="form-grid"><label>Provider name<input id="edit-provider-name" maxlength="80"></label><label>Model<input id="edit-provider-model" maxlength="160"></label></div><label>Base URL<input id="edit-provider-base-url" maxlength="2048"></label><label>API key mới<input id="edit-provider-api-key" type="password" maxlength="4096" autocomplete="new-password" placeholder="Để trống để giữ key hiện tại"></label><p class="inline-help">Worker chưa dùng AI có thể để trống toàn bộ nhóm này.</p></fieldset>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-edit>Hủy</button><button class="button button-primary" type="submit">Lưu thiết lập</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="decommission-dialog" class="wide-dialog">
+    <form id="decommission-form">
+      <div class="dialog-header"><div><h2>Gỡ worker khỏi VPS</h2><p>Chỉ chạy sau khi worker đã Drain; profile được giữ lại để phục hồi.</p></div><button class="icon-button" type="button" data-close-decommission aria-label="Đóng">×</button></div>
+      <input id="decommission-node-id" type="hidden">
+      <p id="decommission-target" class="approval-warning"></p>
+      <label>Nhập lại SSH password<input id="decommission-password" type="password" required maxlength="1024" autocomplete="new-password"></label>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-decommission>Hủy</button><button class="button button-danger" type="submit">Gỡ service trên VPS</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-node-dialog" class="wide-dialog">
+    <div class="dialog-header"><div><h2 id="confirm-title">Xác nhận thao tác</h2><p id="confirm-message"></p></div><button class="icon-button" type="button" data-close-confirm aria-label="Đóng">×</button></div>
+    <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-confirm>Hủy</button><button id="confirm-node-action" class="button button-danger" type="button">Xác nhận</button></div>
+  </dialog>
+  <script src="/static/bot_nodes.js" defer></script>
+</body>
+</html>

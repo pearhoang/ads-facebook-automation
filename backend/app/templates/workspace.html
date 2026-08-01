@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ads Lush — Tài khoản Facebook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css">
+</head>
+<body data-csrf-token="{{ csrf_token }}">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Ads Lush">
+      <span class="brand-mark">A</span>
+      <span><strong>Ads Lush</strong><small>Automation workspace</small></span>
+    </a>
+    <nav aria-label="Điều hướng chính">
+      <a class="nav-item is-active" href="/">Tài khoản Facebook</a>
+      <a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a>
+      <a class="nav-item" href="/campaigns">Campaigns</a>
+      <a class="nav-item" href="/reports">Báo cáo</a>
+      <a class="nav-item" href="/bot-nodes">Bot VPS</a>
+      <a class="nav-item" href="/ai-copilot">AI Copilot</a>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="environment-dot"></span>
+      <span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Account Session</small></span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Tài khoản Facebook</h1>
+        <p>Quản lý Chrome profile và phiên đăng nhập trên worker.</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
+        <button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button>
+        <button id="add-account-button" class="button button-primary" type="button">Thêm tài khoản</button>
+      </div>
+    </header>
+
+    <section class="summary" aria-label="Tổng quan">
+      <div><span>Tài khoản</span><strong id="account-count">0</strong></div>
+      <div><span>Worker online</span><strong id="worker-count">0</strong></div>
+      <div><span>Chờ xác minh</span><strong id="verification-count">0</strong></div>
+      <div><span>Phiên lỗi</span><strong id="failure-count">0</strong></div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-toolbar">
+        <div>
+          <h2>Danh sách tài khoản</h2>
+          <p>Mỗi tài khoản dùng một Chrome profile riêng và giữ lại cookie sau khi đóng phiên.</p>
+        </div>
+        <button id="refresh-button" class="button button-secondary" type="button">Làm mới</button>
+      </div>
+
+      <div id="notice" class="notice" hidden></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tài khoản</th>
+              <th>Worker</th>
+              <th>Đăng nhập</th>
+              <th>Browser session</th>
+              <th class="actions-heading">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="accounts-body"></tbody>
+        </table>
+        <div id="empty-state" class="empty-state" hidden>
+          <strong>Chưa có tài khoản Facebook</strong>
+          <p>Thêm tài khoản đầu tiên, sau đó mở phiên Chrome để đăng nhập hoặc xử lý 2FA.</p>
+          <button class="button button-primary" type="button" data-open-account-dialog>Thêm tài khoản</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="account-dialog">
+    <form id="account-form" method="dialog">
+      <div class="dialog-header">
+        <div><h2>Thêm tài khoản Facebook</h2><p>Tạo một Chrome profile mới trên worker đã chọn.</p></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="Đóng">×</button>
+      </div>
+      <label>Tên gợi nhớ<input id="account-label" name="label" required maxlength="160" placeholder="Ví dụ: Tài khoản bán hàng chính"></label>
+      <label>Worker<select id="worker-select" name="worker_id" required></select></label>
+      <div class="dialog-actions">
+        <button class="button button-secondary" type="button" data-close-dialog>Hủy</button>
+        <button class="button button-primary" type="submit">Tạo tài khoản</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="session-dialog" class="session-dialog">
+    <div class="dialog-header">
+      <div><h2 id="session-title">Phiên đăng nhập</h2><p id="session-description">Đang tải trạng thái phiên.</p></div>
+      <button class="icon-button" type="button" data-close-session-dialog aria-label="Đóng">×</button>
+    </div>
+    <dl class="session-facts">
+      <div><dt>Trạng thái</dt><dd id="session-status">—</dd></div>
+      <div><dt>Thời hạn</dt><dd id="session-expiry">—</dd></div>
+      <div><dt>Lỗi gần nhất</dt><dd id="session-error">Không có</dd></div>
+    </dl>
+    <div class="session-help">
+      Hãy tự nhập mật khẩu và mã 2FA trực tiếp trong noVNC. Hệ thống không đọc hoặc lưu các thông tin này.
+    </div>
+    <div class="dialog-actions">
+      <button id="close-session-button" class="button button-danger" type="button">Đóng phiên</button>
+      <button id="confirm-session-button" class="button button-secondary" type="button">Xác nhận đã đăng nhập</button>
+      <button id="open-novnc-button" class="button button-primary" type="button">Mở noVNC</button>
+    </div>
+  </dialog>
+
+  <script src="/static/workspace.js" defer></script>
+</body>
+</html>

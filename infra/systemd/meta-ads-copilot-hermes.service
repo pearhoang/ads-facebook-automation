@@ -1,0 +1,17 @@
+[Unit]
+Description=Ads Lush Hermes Agent Gateway
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/opt/meta-ads-copilot-runtime/worker-data/hermes/config.yaml
+
+[Service]
+Type=simple
+Environment=HERMES_HOME=/opt/meta-ads-copilot-runtime/worker-data/hermes
+ExecStart=/usr/local/bin/hermes gateway
+Restart=on-failure
+RestartSec=8
+TimeoutStopSec=30
+User=root
+
+[Install]
+WantedBy=multi-user.target

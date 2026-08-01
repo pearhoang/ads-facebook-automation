@@ -1,0 +1,24 @@
+# Decisions Index
+
+| ID | Decision | Status | Scope | Impact |
+|----|----------|--------|-------|--------|
+| DEC-001 | Dùng FastAPI control plane + outbound Python worker | Active | toàn hệ thống | High |
+| DEC-002 | Dùng Hermes làm AI orchestrator, không làm source of truth | Active | agent/backend | High |
+| DEC-003 | Happy path dùng deterministic browser state machine; AI chỉ lập kế hoạch/recovery | Active | worker/agent | High |
+| DEC-004 | Vertical slice đầu tiên là Account Session qua Chrome profile + noVNC | Active | phase 01 | High |
+| DEC-005 | Action rủi ro mặc định DRAFT và cần approval | Active | campaigns/guardrails | High |
+| DEC-006 | Tạo repo sạch và trích reusable modules từ Youtube app, không fork toàn bộ domain cũ | Active | bootstrap | Medium |
+| DEC-007 | Test deployment dùng systemd trên host và Caddy container dùng chung | Active | infra | High |
+| DEC-008 | noVNC/websockify bind localhost và đi qua backend proxy | Active | browser security | High |
+| DEC-009 | Dùng Argon2 + opaque server-side session + membership-derived tenant | Active | auth/tenant | High |
+| DEC-010 | Production dùng dedicated PostgreSQL 17 + Alembic; SQLite chỉ local/test/rollback | Active | database/infra | High |
+| DEC-011 | Approval nội bộ tách khỏi publish; approved không tạo side effect lên Meta | Active | campaigns/guardrails | High |
+| DEC-012 | Execution đầu tiên là deterministic read-only preflight; không click/publish | Active | worker/execution | High |
+| DEC-013 | Phase 4 chỉ tạo/sửa unpublished Meta draft bằng state machine có checkpoint; không publish | Active | worker/execution | High |
+| DEC-014 | Objective automation dùng catalog adapter canonical và chỉ mở default path đã khảo sát | Active | backend/UI/worker | High |
+| DEC-015 | Field filling dùng declarative stage plan và chỉ công nhận kết quả đã xác minh trên DOM | Active | backend/UI/worker | High |
+| DEC-016 | Resource exact-match, asset digest và human handoff là boundary bắt buộc trước Review | Active | backend/UI/worker | High |
+| DEC-017 | Snap Chromium phải chạy direct binary và chứng minh profile path riêng | Active | worker/browser runtime | High |
+| DEC-018 | Reporting dùng read-only worker job và immutable snapshot; Telegram delivery fail-soft | Active | backend/UI/worker | High |
+| DEC-019 | Fleet dùng one-time enrollment, per-node credential và worker durable state | Active | backend/worker/infra | High |
+| DEC-020 | Remote SSH secret transient; AI provider config mã hóa và scope theo worker | Active | backend/UI/agent | High |

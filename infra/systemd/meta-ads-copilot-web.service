@@ -1,0 +1,18 @@
+[Unit]
+Description=Meta Ads Copilot Web Control Plane
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/meta-ads-copilot
+EnvironmentFile=/etc/meta-ads-copilot/app.env
+ExecStart=/opt/meta-ads-copilot-runtime/.venv/bin/python -m uvicorn backend.app.main:app --host 172.17.0.1 --port 8021
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+KillMode=control-group
+User=root
+
+[Install]
+WantedBy=multi-user.target

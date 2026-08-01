@@ -1,0 +1,22 @@
+.report-filter {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 20px 32px 0;
+}
+
+.report-filter label {
+  width: min(520px, 100%);
+  margin: 0;
+}
+
+.report-filter select { margin-top: 6px; }
+.summary-time { font-size: 14px !important; line-height: 1.45; }
+.optional-label { color: var(--muted); font-weight: 400; }
+.cell-meta { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+.error-cell { max-width: 360px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+
+@media (max-width: 860px) {
+  .report-filter { margin: 16px; }
+  .report-filter label { flex: 1; }
+}

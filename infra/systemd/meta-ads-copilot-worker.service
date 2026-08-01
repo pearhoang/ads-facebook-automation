@@ -1,0 +1,18 @@
+[Unit]
+Description=Meta Ads Copilot Browser Worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/meta-ads-copilot
+EnvironmentFile=/etc/meta-ads-copilot/worker.env
+ExecStart=/opt/meta-ads-copilot-runtime/.venv/bin/python -m workers.agent.main
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+KillMode=control-group
+User=root
+
+[Install]
+WantedBy=multi-user.target

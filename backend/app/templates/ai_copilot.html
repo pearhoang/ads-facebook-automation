@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ads Lush — AI Copilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css">
+  <link rel="stylesheet" href="/static/fleet.css">
+</head>
+<body data-csrf-token="{{ csrf_token }}">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Ads Lush"><span class="brand-mark">A</span><span><strong>Ads Lush</strong><small>Automation workspace</small></span></a>
+    <nav aria-label="Điều hướng chính">
+      <a class="nav-item" href="/">Tài khoản Facebook</a><a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a><a class="nav-item" href="/campaigns">Campaigns</a><a class="nav-item" href="/reports">Báo cáo</a><a class="nav-item" href="/bot-nodes">Bot VPS</a><a class="nav-item is-active" href="/ai-copilot">AI Copilot</a>
+    </nav>
+    <div class="sidebar-footer"><span class="environment-dot"></span><span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Hermes settings</small></span></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><h1>AI Copilot</h1><p>Cấu hình inference provider cho Hermes Agent mà không sửa env thủ công.</p></div><div class="provider-health"><span id="provider-status" class="status">Chưa cấu hình</span></div></header>
+    <div class="safety-banner"><strong>Secret boundary:</strong> API key được mã hóa trong control-plane, chỉ trả về cho Bot VPS đã chọn qua credential của node. Trên VPS, key nằm trong Hermes config mode 0600 để agent vẫn hoạt động khi server tạm mất kết nối.</div>
+    <section class="settings-layout">
+      <form id="provider-form" class="settings-panel">
+        <div class="settings-heading"><div><h2>Inference provider</h2><p>Hỗ trợ API trực tiếp và gateway OpenAI-compatible như 9router/CLIProxyAPI.</p></div></div>
+        <label>Preset<select id="provider-preset"><option value="deepseek">DeepSeek V4 Flash</option><option value="custom">Custom OpenAI-compatible</option><option value="openai">OpenAI trực tiếp</option><option value="openrouter">OpenRouter</option><option value="9router">9router</option><option value="cliproxyapi">CLIProxyAPI</option></select></label>
+        <div class="form-grid"><label>Provider name<input id="provider-name" required maxlength="80" value="deepseek"></label><label>Model<input id="provider-model" required maxlength="160" value="deepseek-v4-flash" placeholder="deepseek-v4-flash"></label></div>
+        <label>Base URL<input id="provider-base-url" required maxlength="2048" value="https://api.deepseek.com" placeholder="https://api.deepseek.com"></label>
+        <label>API key<input id="provider-api-key" type="password" maxlength="4096" autocomplete="new-password" placeholder="Nhập key mới hoặc để trống để giữ key hiện tại"></label>
+        <div class="form-grid"><label>Nơi chạy<select id="execution-scope"><option value="worker">Bot VPS (khuyến nghị)</option><option value="control_plane">Control-plane</option></select></label><label id="worker-field">Bot VPS<select id="provider-worker" required></select></label></div>
+        <p class="inline-help">Endpoint `localhost` chỉ có ý nghĩa trên máy được chọn. Đổi provider sẽ không tự publish hoặc tăng budget quảng cáo.</p>
+        <div id="provider-notice" class="notice" hidden></div>
+        <div class="dialog-actions"><button id="test-provider" class="button button-secondary" type="button">Kiểm tra kết nối</button><button class="button button-primary" type="submit">Lưu và đồng bộ Hermes</button></div>
+      </form>
+      <aside class="settings-panel provider-summary"><h2>Trạng thái hiện tại</h2><dl class="session-facts"><div><dt>Provider</dt><dd id="summary-provider">—</dd></div><div><dt>Model</dt><dd id="summary-model">—</dd></div><div><dt>Endpoint</dt><dd id="summary-endpoint">—</dd></div><div><dt>API key</dt><dd id="summary-key">—</dd></div><div><dt>Execution</dt><dd id="summary-scope">—</dd></div><div><dt>Kiểm tra</dt><dd id="summary-test">—</dd></div></dl><p class="settings-note">Worker đồng bộ cấu hình mỗi phút. Nếu control-plane tắt, Hermes tiếp tục dùng bản local gần nhất.</p></aside>
+    </section>
+  </main>
+  <script src="/static/ai_copilot.js" defer></script>
+</body>
+</html>

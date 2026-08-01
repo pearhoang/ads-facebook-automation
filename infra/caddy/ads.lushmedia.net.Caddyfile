@@ -1,0 +1,14 @@
+http://82.197.71.6 {
+    redir https://ads.lushmedia.net{uri} permanent
+}
+
+ads.lushmedia.net {
+    header {
+        -Server
+        Referrer-Policy same-origin
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+    }
+    encode zstd gzip
+    reverse_proxy host.docker.internal:8021
+}
