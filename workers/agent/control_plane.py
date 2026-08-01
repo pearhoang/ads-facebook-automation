@@ -7,7 +7,7 @@ from pathlib import Path
 import httpx
 
 from .config import WorkerConfig
-from .contracts import BrowserSessionAssignment, ExecutionJobAssignment, ReportJobAssignment
+from .contracts import AgentJobAssignment, BrowserSessionAssignment, ExecutionJobAssignment, ReportJobAssignment
 from .local_state import LocalStateStore, TERMINAL_STATUSES
 
 
@@ -184,6 +184,41 @@ class ControlPlaneClient:
         response.raise_for_status()
         payload = response.json()
         return dict(payload) if payload else None
+
+    def poll_agent_job(self) -> AgentJobAssignment | None:
+        worker_id = self._worker_id()
+        try:
+            response = self.http.post(f"/api/workers/{worker_id}/agent-jobs/poll")
+            response.raise_for_status()
+            payload = response.json()
+        except (httpx.TransportError, httpx.TimeoutException):
+            payload = self.state.resumable_assignment("agent")
+        if payload:
+            self.state.save_assignment("agent", str(payload["id"]), payload)
+        return AgentJobAssignment.from_payload(payload) if payload else None
+
+    def sync_agent_job(
+        self,
+        job_id: str,
+        *,
+        status: str,
+        result_json: dict | None = None,
+        last_error: str | None = None,
+    ) -> None:
+        worker_id = self._worker_id()
+        terminal = status in TERMINAL_STATUSES
+        self.state.update_assignment_status("agent", job_id, "terminal" if terminal else status)
+        self._sync_json(
+            f"/api/workers/{worker_id}/agent-jobs/{job_id}/sync",
+            {
+                "status": status,
+                "result_json": result_json or {},
+                "last_error": last_error,
+            },
+            assignment_kind="agent",
+            assignment_id=job_id,
+            terminal=terminal,
+        )
 
     def call_agent_tool(self, path: str, payload: dict | None = None) -> dict:
         worker_id = self._worker_id()

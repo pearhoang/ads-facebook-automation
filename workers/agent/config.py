@@ -40,6 +40,7 @@ class WorkerConfig:
     execution_timeout_seconds: int = 45
     telegram_bot_token: str | None = None
     hermes_home: Path | None = None
+    hermes_ads_api_port: int = 8642
 
     @classmethod
     def from_env(cls) -> "WorkerConfig":
@@ -80,4 +81,5 @@ class WorkerConfig:
             ),
             telegram_bot_token=(os.getenv("TELEGRAM_BOT_TOKEN") or "").strip() or None,
             hermes_home=Path(os.getenv("HERMES_HOME", str(data_dir / "hermes"))),
+            hermes_ads_api_port=int(os.getenv("HERMES_ADS_API_PORT", "8642")),
         )

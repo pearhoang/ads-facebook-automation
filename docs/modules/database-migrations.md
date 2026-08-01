@@ -28,12 +28,12 @@
 - Deploy schema bằng `alembic upgrade head` trước khi restart app dùng model mới.
 - Chạy `alembic check` để phát hiện ORM/schema drift.
 - Migration data phải chạy khi web đã dừng và không có active browser session.
-- Vì worker unit `Requires` web service, cutover stop web sẽ dừng worker; phải start lại cả web và worker.
+- Worker không `Requires` web service; khi control-plane tạm dừng, worker giữ local state/outbox và reconnect sau.
 - Không xóa SQLite snapshot hoặc PostgreSQL dump cho tới khi qua thời gian rollback đã thống nhất.
 
 ## Verification
 
-- `alembic current` phải là `20260801_0005 (head)`.
+- `alembic current` phải khớp revision mới nhất; Phase 10 dùng `20260801_0008 (head)`.
 - `alembic check` phải trả `No new upgrade operations detected.`
 - Auth/account counts phải khớp snapshot; active browser session bằng `0` sau smoke test.
 - noVNC phải tải HTML và WebSocket nhận `RFB 003.008`.

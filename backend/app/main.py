@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from .api import ai, auth, bot_nodes, campaigns, execution, reports, user, worker
+from .api import ai, auth, bot_nodes, campaigns, copilot, execution, reports, user, worker
 from .config import Settings
 from .db import Database
 from .schemas import HealthView
@@ -43,6 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(user.router)
     app.include_router(bot_nodes.router)
     app.include_router(ai.router)
+    app.include_router(copilot.router)
     app.include_router(worker.router)
 
     @app.get("/health", response_model=HealthView, tags=["system"])

@@ -41,7 +41,7 @@ def test_default_worker_repo_and_deepseek_flash_preset():
     assert settings.worker_bootstrap_repo_url == (
         "https://github.com/pearhoang/ads-facebook-automation.git"
     )
-    template = Path("backend/app/templates/ai_copilot.html").read_text(encoding="utf-8")
+    template = Path("backend/app/templates/hermes_agents.html").read_text(encoding="utf-8")
     assert "DeepSeek V4 Flash 0731" in template
     assert "https://api.deepseek.com" in template
     assert "deepseek-v4-flash" in template
@@ -302,6 +302,10 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: P
     assert "sk-test-only" not in manager.config_path.read_text(encoding="utf-8")
     assert "sk-test-only" in manager.env_path.read_text(encoding="utf-8")
     assert "không publish" in manager.soul_path.read_text(encoding="utf-8")
+    assert config["gateway"]["api_server"]["host"] == "127.0.0.1"
+    assert config["gateway"]["api_server"]["port"] == 8642
+    assert manager.api_key_path.exists()
+    assert config["gateway"]["api_server"]["key"] == manager.api_key_path.read_text(encoding="utf-8")
 
 
 def test_mcp_bridge_lists_only_ads_typed_tools():

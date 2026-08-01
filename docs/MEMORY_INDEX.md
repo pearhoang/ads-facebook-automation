@@ -57,6 +57,7 @@
 
 - `docs/modules/bot-node-fleet.md`
 - `docs/modules/ai-provider-settings.md`
+- `docs/modules/agent-copilot.md`
 - `docs/tasks/active/phase-09-telegram-hermes-tools.md`
 - `docs/DECISIONS_INDEX.md`
 
@@ -100,6 +101,7 @@
 - reporting models/API/UI/worker -> `docs/modules/reporting.md`
 - worker enrollment/operations/durable state -> `docs/modules/bot-node-fleet.md`
 - AI provider/Hermes config -> `docs/modules/ai-provider-settings.md`
+- AI Copilot conversation/session/job -> `docs/modules/agent-copilot.md`
 - `infra/**`, systemd/Caddy/VPS deployment -> `docs/modules/infra-runtime.md`
 
 ## Task Notes

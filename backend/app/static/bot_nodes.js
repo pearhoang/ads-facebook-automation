@@ -116,7 +116,6 @@ document.getElementById("add-node-button").addEventListener("click", () => {
 });
 document.getElementById("install-provider-preset").addEventListener("change", applyInstallPreset);
 document.getElementById("install-provider-thinking-mode").addEventListener("change", () => toggleReasoning("install"));
-document.getElementById("edit-provider-thinking-mode").addEventListener("change", () => toggleReasoning("edit"));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => enrollmentDialog.close()));
 document.querySelectorAll("[data-close-edit]").forEach((button) => button.addEventListener("click", () => editDialog.close()));
 document.querySelectorAll("[data-close-decommission]").forEach((button) => button.addEventListener("click", () => decommissionDialog.close()));
@@ -158,14 +157,6 @@ async function openEdit(node) {
   document.getElementById("edit-node-key").value = node.worker_key;
   document.getElementById("edit-node-host").value = node.host || "";
   document.getElementById("edit-node-ssh-user").value = node.ssh_user || "root";
-  const config = await api(`/api/ai-provider?worker_id=${encodeURIComponent(node.id)}`);
-  document.getElementById("edit-provider-name").value = config.provider_name || "custom";
-  document.getElementById("edit-provider-base-url").value = config.base_url || "";
-  document.getElementById("edit-provider-model").value = config.model || "";
-  document.getElementById("edit-provider-thinking-mode").value = config.thinking_mode || "auto";
-  document.getElementById("edit-provider-reasoning-effort").value = config.reasoning_effort || "provider_default";
-  toggleReasoning("edit");
-  document.getElementById("edit-provider-api-key").value = "";
   editDialog.showModal();
 }
 
@@ -173,18 +164,9 @@ document.getElementById("edit-node-form").addEventListener("submit", async (even
   event.preventDefault();
   const workerId = document.getElementById("edit-node-id").value;
   try {
-    const providerName = document.getElementById("edit-provider-name").value.trim();
-    const providerBaseUrl = document.getElementById("edit-provider-base-url").value.trim();
-    const providerModel = document.getElementById("edit-provider-model").value.trim();
-    const providerApiKey = document.getElementById("edit-provider-api-key").value;
-    if (providerName || providerBaseUrl || providerModel || providerApiKey) {
-      if (!providerName || !providerBaseUrl || !providerModel) throw new Error("Hãy nhập đủ Provider name, Base URL và Model; hoặc để trống toàn bộ nhóm Hermes.");
-    }
     await api(`/api/bot-nodes/${workerId}`, { method: "PATCH", body: JSON.stringify({ display_name: document.getElementById("edit-node-name").value.trim(), host: document.getElementById("edit-node-host").value.trim(), ssh_user: document.getElementById("edit-node-ssh-user").value.trim() }) });
-    if (providerName || providerBaseUrl || providerModel || providerApiKey) await api("/api/ai-provider", { method: "PUT", body: JSON.stringify({ provider_type: "openai_compatible", provider_name: providerName, base_url: providerBaseUrl, model: providerModel, thinking_mode: document.getElementById("edit-provider-thinking-mode").value, reasoning_effort: document.getElementById("edit-provider-reasoning-effort").value, api_key: providerApiKey || null, execution_scope: "worker", worker_id: workerId }) });
-    document.getElementById("edit-provider-api-key").value = "";
     editDialog.close();
-    showNotice("Đã lưu thiết lập worker và Hermes.", true);
+    showNotice("Đã lưu thiết lập worker.", true);
     await loadAll();
   } catch (error) { showNotice(error.message); editDialog.close(); }
 });

@@ -9,7 +9,7 @@
 
 - Backend: `backend.app.main:app`
 - Worker: `workers.agent.main`
-- Worker API: register, heartbeat, session poll và session sync.
+- Worker API: register, heartbeat, browser/execution/report/agent job poll và sync.
 
 ## Depends On
 
@@ -22,6 +22,7 @@
 - Worker outbound-only.
 - API route là thin adapter; state transition nằm trong service/store layer.
 - Poll/sync phải idempotent và chịu được retry.
+- AI Copilot dùng outbound `AgentJob`; Hermes API key/session database chỉ nằm trên worker.
 - Worker mất heartbeat không tự động đồng nghĩa Chrome profile bị mất.
 - User API lấy tenant từ authenticated membership; worker API tiếp tục dùng credential riêng.
 - Worker không đổi database contract trong lần SQLite → PostgreSQL cutover vì vẫn chỉ gọi HTTP API.

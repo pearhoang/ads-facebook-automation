@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import secrets
 import subprocess
 import sys
 from pathlib import Path
@@ -17,19 +18,24 @@ class HermesConfigManager:
         self.env_path = hermes_home / ".env"
         self.soul_path = hermes_home / "SOUL.md"
         self.managed_hash_path = hermes_home / ".ads-lush-provider.sha256"
+        self.api_key_path = hermes_home / ".ads-lush-api-server.key"
 
     def apply(self, provider: dict | None) -> bool:
         if not provider:
             return False
         canonical = json.dumps(
-            {"schema_version": 3, "provider": provider},
+            {"schema_version": 4, "provider": provider},
             sort_keys=True,
             ensure_ascii=False,
         ).encode("utf-8")
         digest = hashlib.sha256(canonical).hexdigest()
-        if self.managed_hash_path.exists() and self.managed_hash_path.read_text(
+        if (
+            self.managed_hash_path.exists()
+            and self.api_key_path.exists()
+            and self.managed_hash_path.read_text(
             encoding="utf-8"
-        ).strip() == digest:
+            ).strip() == digest
+        ):
             return False
 
         self.home.mkdir(parents=True, exist_ok=True)
@@ -127,6 +133,13 @@ class HermesConfigManager:
             gateway = {}
             config["gateway"] = gateway
         gateway["delivery_ledger"] = True
+        gateway["api_server"] = {
+            "enabled": True,
+            "host": "127.0.0.1",
+            "port": 8642,
+            "key": self._ensure_api_key(self.home),
+            "model_name": "ads-copilot",
+        }
 
         self._write_env("ADS_LUSH_PROVIDER_API_KEY", str(provider.get("api_key") or ""))
         self._write_soul()
@@ -152,6 +165,21 @@ class HermesConfigManager:
             stderr=subprocess.DEVNULL,
         )
         return True
+
+    def _ensure_api_key(self, home: Path) -> str:
+        key_path = home / ".ads-lush-api-server.key"
+        if key_path.exists():
+            current = key_path.read_text(encoding="utf-8").strip()
+            if current:
+                return current
+        home.mkdir(parents=True, exist_ok=True)
+        key = secrets.token_urlsafe(48)
+        temporary = key_path.with_suffix(".key.tmp")
+        temporary.write_text(key, encoding="utf-8")
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, key_path)
+        return key
+
 
     def _write_env(self, key: str, value: str) -> None:
         entries: dict[str, str] = {}

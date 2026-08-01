@@ -144,3 +144,12 @@
 - Telegram allowlist bắt buộc. Gateway không được bật `allow all`; token ở worker environment và không trả qua UI/API.
 - Telegram toolset production tắt terminal, file, browser, code execution, delegation và computer use; browser ads vẫn do deterministic worker state machine sở hữu.
 - Reasoning lưu theo worker. `thinking_mode=disabled` ánh xạ thành Hermes `reasoning_effort=none`; provider-specific thinking payload chỉ gửi cho endpoint đã nhận diện hỗ trợ.
+
+## DEC-023 — AI Copilot dùng Hermes session bridge và chỉ phục vụ Meta Ads
+
+- AI Copilot không tự xây inference/chat engine; worker gọi Hermes API Server local và control-plane chỉ giữ tenant-scoped mirror cùng outbound job state.
+- Web và Telegram tiếp tục cùng exact `hermes_session_id`, nên lịch sử/ngữ cảnh không bị tách thành hai trợ lý.
+- Natural language là luồng mặc định. Shortcut chỉ là tối đa hai tiện ích cho action preview/resource cụ thể và không vô hiệu composer.
+- Provider/model settings có canonical surface riêng `Hermes Agents`; popup sửa Bot VPS không lặp lại cấu hình này.
+- Không tích hợp VPS Copilot vào sản phẩm Ads. Chat quản trị máy chủ nằm ngoài scope SaaS hiện tại.
+- Hermes API Server bind localhost, bearer key chỉ nằm trên worker; control-plane/JavaScript không nhận key.

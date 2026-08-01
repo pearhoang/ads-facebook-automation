@@ -91,3 +91,32 @@ class ReportJobAssignment:
             range_end=str(payload["range_end"]),
             payload=dict(payload.get("payload_json") or {}),
         )
+
+
+@dataclass(frozen=True, slots=True)
+class AgentJobAssignment:
+    job_id: str
+    conversation_id: str | None
+    profile: str
+    job_type: str
+    status: str
+    hermes_session_id: str | None
+    payload: dict
+
+    @classmethod
+    def from_payload(cls, payload: dict) -> "AgentJobAssignment":
+        return cls(
+            job_id=str(payload["id"]),
+            conversation_id=(
+                str(payload["conversation_id"]) if payload.get("conversation_id") else None
+            ),
+            profile=str(payload.get("profile") or "ads"),
+            job_type=str(payload["job_type"]),
+            status=str(payload["status"]),
+            hermes_session_id=(
+                str(payload["hermes_session_id"])
+                if payload.get("hermes_session_id")
+                else None
+            ),
+            payload=dict(payload.get("payload_json") or {}),
+        )

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from ..config import Settings
 from ..dependencies import get_db, get_settings, verify_worker_secret
-from ..models import Worker
+from ..models import AgentConversation, Worker
 from ..schemas import (
     BrowserSessionSyncRequest,
     BrowserSessionView,
@@ -25,9 +25,12 @@ from ..schemas import (
     AgentCampaignQuery,
     AgentKPIQuery,
     AgentReportRequest,
+    AgentJobSyncRequest,
     CampaignDraftCreateRequest,
+    AgentJobView,
+    WorkerAgentJobItem,
 )
-from ..services import account_sessions, agent_tools, ai_settings, execution_jobs, fleet, reporting, resources
+from ..services import account_sessions, agent_chat, agent_tools, ai_settings, execution_jobs, fleet, reporting, resources
 
 
 router = APIRouter(
@@ -257,6 +260,55 @@ def get_worker_ai_provider(
         db,
         worker_id=worker_id,
         encryption_key=settings.resolved_secret_encryption_key(),
+    )
+
+
+@router.post(
+    "/{worker_id}/agent-jobs/poll",
+    response_model=WorkerAgentJobItem | None,
+)
+def poll_agent_job(
+    worker_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    node = db.get(Worker, worker_id)
+    if node is None or node.lifecycle_status != "active":
+        return None
+    job = agent_chat.poll_worker_job(db, worker_id)
+    if job is None:
+        return None
+    hermes_session_id = None
+    if job.conversation_id:
+        conversation = db.get(AgentConversation, job.conversation_id)
+        hermes_session_id = conversation.hermes_session_id if conversation else None
+    return WorkerAgentJobItem(
+        **AgentJobView.model_validate(job).model_dump(),
+        hermes_session_id=hermes_session_id,
+        payload_json=job.payload_json,
+    )
+
+
+@router.post(
+    "/{worker_id}/agent-jobs/{job_id}/sync",
+    response_model=AgentJobView,
+)
+def sync_agent_job(
+    worker_id: str,
+    job_id: str,
+    payload: AgentJobSyncRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return agent_chat.sync_worker_job(
+        db,
+        worker_id=worker_id,
+        job_id=job_id,
+        next_status=payload.status,
+        result_json=payload.result_json,
+        last_error=payload.last_error,
     )
 
 

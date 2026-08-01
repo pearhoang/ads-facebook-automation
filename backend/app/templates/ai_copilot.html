@@ -8,34 +8,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/workspace.css">
-  <link rel="stylesheet" href="/static/fleet.css">
+  <link rel="stylesheet" href="/static/copilot.css">
 </head>
 <body data-csrf-token="{{ csrf_token }}">
   <aside class="sidebar">
     <a class="brand" href="/" aria-label="Ads Lush"><span class="brand-mark">A</span><span><strong>Ads Lush</strong><small>Automation workspace</small></span></a>
     <nav aria-label="Điều hướng chính">
-      <a class="nav-item" href="/">Tài khoản Facebook</a><a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a><a class="nav-item" href="/campaigns">Campaigns</a><a class="nav-item" href="/reports">Báo cáo</a><a class="nav-item" href="/bot-nodes">Bot VPS</a><a class="nav-item is-active" href="/ai-copilot">AI Copilot</a>
+      <a class="nav-item" href="/">Tài khoản Facebook</a><a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a><a class="nav-item" href="/campaigns">Campaigns</a><a class="nav-item" href="/reports">Báo cáo</a><a class="nav-item" href="/bot-nodes">Bot VPS</a><a class="nav-item" href="/hermes-agents">Hermes Agents</a><a class="nav-item is-active" href="/ai-copilot">AI Copilot</a>
     </nav>
-    <div class="sidebar-footer"><span class="environment-dot"></span><span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Hermes settings</small></span></div>
+    <div class="sidebar-footer"><span class="environment-dot"></span><span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Natural-first</small></span></div>
   </aside>
-  <main class="main">
-    <header class="topbar"><div><h1>AI Copilot</h1><p>Cấu hình inference provider cho Hermes Agent mà không sửa env thủ công.</p></div><div class="provider-health"><span id="provider-status" class="status">Chưa cấu hình</span></div></header>
-    <div class="safety-banner"><strong>Secret boundary:</strong> API key được mã hóa trong control-plane, chỉ trả về cho Bot VPS đã chọn qua credential của node. Trên VPS, key nằm trong Hermes config mode 0600 để agent vẫn hoạt động khi server tạm mất kết nối.</div>
-    <section class="settings-layout">
-      <form id="provider-form" class="settings-panel">
-        <div class="settings-heading"><div><h2>Inference provider</h2><p>Hỗ trợ API trực tiếp và gateway OpenAI-compatible như 9router/CLIProxyAPI.</p></div></div>
-        <label>Preset<select id="provider-preset"><option value="deepseek">DeepSeek V4 Flash 0731</option><option value="custom">Custom OpenAI-compatible</option><option value="openai">OpenAI trực tiếp</option><option value="openrouter">OpenRouter</option><option value="9router">9router</option><option value="cliproxyapi">CLIProxyAPI</option></select></label>
-        <div class="form-grid"><label>Provider name<input id="provider-name" required maxlength="80" value="deepseek"></label><label>Model<input id="provider-model" required maxlength="160" value="deepseek-v4-flash" placeholder="deepseek-v4-flash"></label></div>
-        <label>Base URL<input id="provider-base-url" required maxlength="2048" value="https://api.deepseek.com" placeholder="https://api.deepseek.com"></label>
-        <label>API key<input id="provider-api-key" type="password" maxlength="4096" autocomplete="new-password" placeholder="Nhập key mới hoặc để trống để giữ key hiện tại"></label>
-        <div class="form-grid"><label>Thinking<select id="provider-thinking-mode"><option value="auto">Tự động theo model</option><option value="enabled">Bật</option><option value="disabled">Tắt</option></select></label><label>Reasoning effort<select id="provider-reasoning-effort"><option value="provider_default">Mặc định của provider</option><option value="minimal">Minimal</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="xhigh">XHigh</option><option value="max">Max</option><option value="ultra">Ultra</option></select></label></div>
-        <p id="reasoning-help" class="inline-help">DeepSeek V4 mặc định bật thinking ở mức High; Low/Medium được DeepSeek ánh xạ lên High.</p>
-        <div class="form-grid"><label>Nơi chạy<select id="execution-scope"><option value="worker">Bot VPS (khuyến nghị)</option><option value="control_plane">Control-plane</option></select></label><label id="worker-field">Bot VPS<select id="provider-worker" required></select></label></div>
-        <p class="inline-help">Endpoint `localhost` chỉ có ý nghĩa trên máy được chọn. Đổi provider sẽ không tự publish hoặc tăng budget quảng cáo.</p>
-        <div id="provider-notice" class="notice" hidden></div>
-        <div class="dialog-actions"><button id="test-provider" class="button button-secondary" type="button">Kiểm tra kết nối</button><button class="button button-primary" type="submit">Lưu và đồng bộ Hermes</button></div>
-      </form>
-      <aside class="settings-panel provider-summary"><h2>Trạng thái hiện tại</h2><dl class="session-facts"><div><dt>Provider</dt><dd id="summary-provider">—</dd></div><div><dt>Model</dt><dd id="summary-model">—</dd></div><div><dt>Thinking</dt><dd id="summary-thinking">—</dd></div><div><dt>Reasoning</dt><dd id="summary-reasoning">—</dd></div><div><dt>Endpoint</dt><dd id="summary-endpoint">—</dd></div><div><dt>API key</dt><dd id="summary-key">—</dd></div><div><dt>Execution</dt><dd id="summary-scope">—</dd></div><div><dt>Kiểm tra</dt><dd id="summary-test">—</dd></div></dl><p class="settings-note">Worker đồng bộ cấu hình mỗi phút. Nếu control-plane tắt, Hermes tiếp tục dùng bản local gần nhất.</p></aside>
+  <main class="main copilot-main">
+    <header class="copilot-topbar">
+      <div><h1>AI Copilot</h1><p>Hỏi, phân tích và điều phối công việc bằng ngôn ngữ tự nhiên.</p></div>
+      <div class="copilot-controls">
+        <label><span>Bot VPS</span><select id="copilot-worker" aria-label="Chọn Bot VPS"></select></label>
+        <span class="copilot-profile-label">Ads Copilot</span>
+        <button id="sync-sessions" class="button button-secondary button-small" type="button">Đồng bộ</button>
+      </div>
+    </header>
+    <div id="copilot-notice" class="notice page-notice" hidden></div>
+    <section class="copilot-shell" aria-label="AI Copilot workspace">
+      <aside class="conversation-panel">
+        <div class="conversation-toolbar"><div><strong>Cuộc trò chuyện</strong><small id="conversation-source-note">Web và Telegram</small></div><button id="new-conversation" class="new-chat-button" type="button" aria-label="Tạo cuộc trò chuyện mới">＋</button></div>
+        <div id="conversation-list" class="conversation-list"></div>
+        <div id="conversation-empty" class="conversation-empty"><strong>Chưa có phiên nào</strong><p>Đồng bộ để lấy session Telegram, hoặc tạo một cuộc trò chuyện mới.</p></div>
+      </aside>
+      <section class="chat-panel">
+        <div id="chat-context" class="chat-context"><div><span id="chat-source" class="source-badge">Hermes</span><h2 id="chat-title">Chọn một cuộc trò chuyện</h2></div><span id="chat-status" class="status">Sẵn sàng</span></div>
+        <div id="message-list" class="message-list" aria-live="polite">
+          <div id="welcome-state" class="welcome-state"><span class="welcome-mark">A</span><h2>Bạn muốn Hermes hỗ trợ quảng cáo gì?</h2><p>Bạn cứ nói theo cách tự nhiên. Hệ thống chỉ hiện shortcut khi đã có một hành động hoặc tài nguyên cụ thể.</p><div class="prompt-examples"><span>Báo cáo quảng cáo hôm qua</span><span>Campaign nào đang tốn tiền nhưng không có chuyển đổi?</span><span>Tạo bản nháp campaign bán sản phẩm X</span></div></div>
+        </div>
+        <form id="composer-form" class="composer" autocomplete="off">
+          <textarea id="composer-input" rows="1" maxlength="24000" placeholder="Nhắn cho Hermes…" aria-label="Tin nhắn" disabled></textarea>
+          <button id="send-message" type="submit" disabled>Gửi</button>
+          <p>Enter để gửi · Shift+Enter xuống dòng · Action tốn tiền vẫn cần approval rõ ràng.</p>
+        </form>
+      </section>
     </section>
   </main>
   <script src="/static/ai_copilot.js" defer></script>

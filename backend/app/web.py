@@ -119,6 +119,23 @@ def ai_copilot_page(request: Request, db: Session = Depends(get_db)):
     )
 
 
+@router.get("/hermes-agents", response_class=HTMLResponse)
+def hermes_agents_page(request: Request, db: Session = Depends(get_db)):
+    principal = resolve_optional_principal(request, db)
+    if principal is None:
+        return RedirectResponse("/login", status_code=303)
+    settings = request.app.state.settings
+    return templates.TemplateResponse(
+        request=request,
+        name="hermes_agents.html",
+        context={
+            "principal": principal,
+            "csrf_token": request.cookies.get(settings.csrf_cookie_name, ""),
+        },
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 def _load_proxy_target(request: Request, session_id: str) -> BrowserSession:
     settings = request.app.state.settings
     with request.app.state.database.session_factory() as db:

@@ -185,6 +185,93 @@ class AIProviderConfig(Base):
     )
 
 
+class AgentConversation(Base):
+    __tablename__ = "agent_conversations"
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "worker_id",
+            "profile",
+            "hermes_session_id",
+            name="uq_agent_conversations_hermes_session",
+        ),
+        Index("ix_agent_conversations_tenant_updated", "tenant_id", "updated_at"),
+        Index("ix_agent_conversations_worker_profile", "worker_id", "profile"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    worker_id: Mapped[str] = mapped_column(ForeignKey("workers.id"), index=True)
+    profile: Mapped[str] = mapped_column(String(16), default="ads", index=True)
+    hermes_session_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    source: Mapped[str] = mapped_column(String(32), default="web", index=True)
+    title: Mapped[str] = mapped_column(String(240), default="Cuộc trò chuyện mới")
+    status: Mapped[str] = mapped_column(String(24), default="active", index=True)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_by_user_id: Mapped[str | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+
+class AgentMessage(Base):
+    __tablename__ = "agent_messages"
+    __table_args__ = (
+        UniqueConstraint(
+            "conversation_id", "external_key", name="uq_agent_messages_external_key"
+        ),
+        Index("ix_agent_messages_conversation_created", "conversation_id", "created_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    conversation_id: Mapped[str] = mapped_column(
+        ForeignKey("agent_conversations.id"), index=True
+    )
+    role: Mapped[str] = mapped_column(String(24))
+    content: Mapped[str] = mapped_column(Text)
+    source: Mapped[str] = mapped_column(String(32), default="web")
+    external_key: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+
+class AgentJob(Base):
+    __tablename__ = "agent_jobs"
+    __table_args__ = (
+        Index("ix_agent_jobs_worker_status", "worker_id", "status"),
+        Index("ix_agent_jobs_tenant_created", "tenant_id", "created_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    worker_id: Mapped[str] = mapped_column(ForeignKey("workers.id"), index=True)
+    conversation_id: Mapped[str | None] = mapped_column(
+        ForeignKey("agent_conversations.id"), nullable=True, index=True
+    )
+    profile: Mapped[str] = mapped_column(String(16), default="ads", index=True)
+    job_type: Mapped[str] = mapped_column(String(32), index=True)
+    status: Mapped[str] = mapped_column(String(24), default="queued", index=True)
+    payload_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    result_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    requested_by_user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    attempt_count: Mapped[int] = mapped_column(Integer, default=0)
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    claimed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+
 class FacebookAccount(Base):
     __tablename__ = "facebook_accounts"
     __table_args__ = (

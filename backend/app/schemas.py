@@ -133,7 +133,7 @@ class AIProviderConfigUpdateRequest(BaseModel):
         pattern=r"^(provider_default|minimal|low|medium|high|xhigh|max|ultra)$",
     )
     api_key: str | None = Field(default=None, max_length=4096)
-    execution_scope: str = Field(default="worker", pattern=r"^(worker|control_plane)$")
+    execution_scope: str = Field(default="worker", pattern=r"^worker$")
     worker_id: str | None = None
 
     @field_validator("base_url")
@@ -148,8 +148,6 @@ class AIProviderConfigUpdateRequest(BaseModel):
     def validate_scope(self):
         if self.execution_scope == "worker" and not self.worker_id:
             raise ValueError("Hãy chọn Bot VPS chạy Hermes.")
-        if self.execution_scope == "control_plane":
-            self.worker_id = None
         return self
 
 
@@ -179,6 +177,85 @@ class WorkerAIProviderRuntimeView(BaseModel):
     thinking_mode: str
     reasoning_effort: str
     api_key: str | None
+
+
+class AgentConversationCreateRequest(BaseModel):
+    worker_id: str = Field(min_length=1, max_length=36)
+    profile: str = Field(default="ads", pattern=r"^ads$")
+    title: str = Field(default="Cuộc trò chuyện mới", min_length=1, max_length=240)
+
+
+class AgentConversationView(ORMModel):
+    id: str
+    tenant_id: str
+    worker_id: str
+    profile: str
+    hermes_session_id: str | None
+    source: str
+    title: str
+    status: str
+    metadata_json: dict
+    last_synced_at: datetime | None
+    created_by_user_id: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class AgentMessageCreateRequest(BaseModel):
+    content: str = Field(min_length=1, max_length=24000)
+
+    @field_validator("content")
+    @classmethod
+    def normalize_content(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("Tin nhắn không được để trống.")
+        return normalized
+
+
+class AgentMessageView(ORMModel):
+    id: str
+    tenant_id: str
+    conversation_id: str
+    role: str
+    content: str
+    source: str
+    metadata_json: dict
+    created_at: datetime
+
+
+class AgentSyncRequest(BaseModel):
+    worker_id: str = Field(min_length=1, max_length=36)
+    profile: str = Field(default="ads", pattern=r"^ads$")
+
+
+class AgentJobView(ORMModel):
+    id: str
+    tenant_id: str
+    worker_id: str
+    conversation_id: str | None
+    profile: str
+    job_type: str
+    status: str
+    result_json: dict
+    last_error: str | None
+    attempt_count: int
+    requested_at: datetime
+    claimed_at: datetime | None
+    started_at: datetime | None
+    completed_at: datetime | None
+    updated_at: datetime
+
+
+class WorkerAgentJobItem(AgentJobView):
+    hermes_session_id: str | None = None
+    payload_json: dict
+
+
+class AgentJobSyncRequest(BaseModel):
+    status: str = Field(pattern=r"^(running|succeeded|failed)$")
+    result_json: dict = Field(default_factory=dict)
+    last_error: str | None = Field(default=None, max_length=8000)
 
 
 class AgentKPIQuery(BaseModel):

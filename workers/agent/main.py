@@ -12,6 +12,7 @@ from .sessions import BrowserSessionSupervisor
 from .execution import ExecutionJobSupervisor
 from .hermes_config import HermesConfigManager
 from .reporting import ReportJobSupervisor
+from .agent_bridge import AgentJobSupervisor
 
 
 def run() -> None:
@@ -28,6 +29,7 @@ def run() -> None:
     supervisor = BrowserSessionSupervisor(config, client)
     execution_supervisor = ExecutionJobSupervisor(config, client)
     report_supervisor = ReportJobSupervisor(config, client)
+    agent_supervisor = AgentJobSupervisor(config, client)
     hermes_manager = HermesConfigManager(config.hermes_home or (config.data_dir / "hermes"))
     last_heartbeat_at = 0.0
     last_ai_sync_at = 0.0
@@ -79,6 +81,10 @@ def run() -> None:
                     report_supervisor.reconcile(supervisor.active_profile_keys())
                 except (httpx.HTTPError, RuntimeError) as exc:
                     print(f"[worker] report reconcile deferred: {exc}", flush=True)
+            try:
+                agent_supervisor.reconcile()
+            except (httpx.HTTPError, RuntimeError) as exc:
+                print(f"[worker] agent reconcile deferred: {exc}", flush=True)
             stop_event.wait(config.poll_seconds)
     finally:
         supervisor.shutdown()

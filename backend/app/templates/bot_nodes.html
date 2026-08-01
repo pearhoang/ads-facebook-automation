@@ -19,6 +19,7 @@
       <a class="nav-item" href="/campaigns">Campaigns</a>
       <a class="nav-item" href="/reports">Báo cáo</a>
       <a class="nav-item is-active" href="/bot-nodes">Bot VPS</a>
+      <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
       <a class="nav-item" href="/ai-copilot">AI Copilot</a>
     </nav>
     <div class="sidebar-footer"><span class="environment-dot"></span><span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Fleet control</small></span></div>
@@ -68,7 +69,7 @@
       <input id="edit-node-id" type="hidden">
       <div class="form-grid"><label>Tên hiển thị<input id="edit-node-name" required maxlength="160"></label><label>Worker key<input id="edit-node-key" disabled></label></div>
       <div class="form-grid"><label>IP hoặc hostname<input id="edit-node-host" required maxlength="255"></label><label>SSH user<input id="edit-node-ssh-user" required maxlength="80"></label></div>
-      <fieldset class="form-section"><legend>Hermes Agent</legend><div class="form-grid"><label>Provider name<input id="edit-provider-name" maxlength="80"></label><label>Model<input id="edit-provider-model" maxlength="160"></label></div><label>Base URL<input id="edit-provider-base-url" maxlength="2048"></label><label>API key mới<input id="edit-provider-api-key" type="password" maxlength="4096" autocomplete="new-password" placeholder="Để trống để giữ key hiện tại"></label><div class="form-grid"><label>Thinking<select id="edit-provider-thinking-mode"><option value="auto">Tự động theo model</option><option value="enabled">Bật</option><option value="disabled">Tắt</option></select></label><label>Reasoning effort<select id="edit-provider-reasoning-effort"><option value="provider_default">Mặc định của provider</option><option value="minimal">Minimal</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="xhigh">XHigh</option><option value="max">Max</option><option value="ultra">Ultra</option></select></label></div><p class="inline-help">Tắt Thinking sẽ ưu tiên tốc độ; mức reasoning chỉ áp dụng khi model/provider hỗ trợ.</p></fieldset>
+      <p class="inline-help">Provider và model của Hermes được quản lý tập trung tại trang Hermes Agents.</p>
       <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-edit>Hủy</button><button class="button button-primary" type="submit">Lưu thiết lập</button></div>
     </form>
   </dialog>

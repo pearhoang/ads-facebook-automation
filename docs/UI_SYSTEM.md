@@ -43,10 +43,14 @@
 - Report job tách trạng thái thu thập khỏi trạng thái Telegram để lỗi gửi tin không làm mất snapshot.
 - Trang `Bot VPS` dùng một table duy nhất; mỗi worker có action `Sửa`, `Drain/Kích hoạt`, `Gỡ khỏi VPS`, `Xóa kết nối`, và action rủi ro luôn mở popup xác nhận.
 - Popup cài worker nhóm rõ `SSH`, `Source` và `Hermes Agent`; password/API key dùng password input, không render lại sau submit và operation chỉ hiển thị tiến độ không chứa secret.
-- Trang `AI Copilot` bắt buộc chọn worker trước khi sửa provider; API key luôn masked và để trống nghĩa là giữ key hiện tại.
+- Trang `Hermes Agents` bắt buộc chọn worker trước khi sửa provider; API key luôn masked và để trống nghĩa là giữ key hiện tại.
 - Popup cài worker điền sẵn canonical GitHub repo nhưng vẫn là input sửa được; DeepSeek V4 Flash 0731 là preset đầu tiên, còn model API canonical giữ `deepseek-v4-flash`.
-- AI Copilot và popup Bot VPS dùng cùng hai control `Thinking` và `Reasoning effort`; tắt Thinking vô hiệu hóa effort, còn provider không hỗ trợ được giữ ở provider default.
+- Hermes Agents và popup cài Bot VPS dùng cùng hai control `Thinking` và `Reasoning effort`; popup sửa Bot VPS không lặp lại provider settings.
 - Copy DeepSeek phải nói rõ default thinking High và Low/Medium được provider ánh xạ lên High; không hứa mức suy luận mà endpoint không hỗ trợ.
+- AI Copilot là chat workspace cho Meta Ads, không phải màn settings và không chứa VPS Copilot.
+- Natural language là primary interaction. Không hiện generic menu button sau mọi câu trả lời.
+- Shortcut chỉ render khi có action preview/resource cụ thể, tối đa hai chip nhẹ; composer luôn hoạt động và user có thể trả lời bằng lời.
+- Conversation list phân biệt Web/Telegram; chọn Telegram phải tiếp tục exact Hermes session, không tạo context mới.
 
 ## Consistency Rules
 
