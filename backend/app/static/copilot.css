@@ -66,11 +66,13 @@
 .thinking-row::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 7px; border-radius: 50%; background: var(--accent); animation: pulse 1.1s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .3; transform: scale(.75); } }
 .composer { position: relative; padding: 12px max(24px, calc((100% - 780px) / 2)) 16px; border-top: 1px solid var(--border); background: #fbfaf8; }
-.composer-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 8px; }
-.composer textarea { min-height: 50px; max-height: 150px; margin: 0; padding: 13px 14px 12px; resize: none; border-radius: 9px; background: white; line-height: 1.45; }
-.composer .attach-file, .composer .send-message { min-height: 36px; margin-bottom: 7px; padding: 7px 11px; border-radius: 7px; font-size: 10px; font-weight: 700; }
-.composer .attach-file { border: 1px solid var(--border-strong); background: white; color: var(--text); }
-.composer .send-message { border: 0; background: var(--accent); color: white; }
+.composer-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px; }
+.composer-input-shell { position: relative; min-width: 0; }
+.composer textarea { width: 100%; min-height: 50px; max-height: 150px; margin: 0; padding: 13px 14px 12px 48px; resize: none; border-radius: 9px; background: white; line-height: 1.45; }
+.composer .attach-file { position: absolute; z-index: 1; bottom: 9px; left: 8px; width: 32px; height: 32px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 6px; background: transparent; color: #625d56; font-size: 21px; font-weight: 400; line-height: 1; }
+.composer .attach-file:hover:not(:disabled), .composer .attach-file:focus-visible { background: #f0efec; color: var(--text); }
+.composer .attach-file:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.composer .send-message { min-height: 36px; margin-bottom: 7px; padding: 7px 11px; border: 0; border-radius: 7px; background: var(--accent); color: white; font-size: 10px; font-weight: 700; }
 .composer button:disabled { opacity: .42; cursor: not-allowed; }
 .composer p { margin-top: 7px; color: var(--muted); font-size: 9px; }
 .attachment-queue { margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 6px; }

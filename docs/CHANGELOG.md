@@ -162,3 +162,9 @@
 - Affected: `workers/agent/hermes_config.py`, provider regression test và project memory.
 - Verified: `51 passed`, compile/diff sạch; production Hermes session tạo với model `ads-copilot` và chat trả `200`, session smoke được xóa; web/worker/Hermes active, public health `200`, current Hermes invocation có `0` provider/runtime error và Alembic không có drift.
 - Safety: Không tạo campaign, không publish, không giữ session smoke; production không có active agent job hoặc browser session khi deploy.
+
+### 2026-08-01 - Gọn attachment trigger trong AI Copilot
+
+- Changed: Đổi nút chữ `Đính kèm` thành dấu `+` nằm trong mép trái ô chat, giữ tooltip, accessible label và attachment queue hiện có.
+- Affected: AI Copilot template/CSS, UTF-8 UI regression test và UI system memory.
+- Safety: Không đổi upload API, loại tệp, giới hạn dung lượng hoặc Hermes message flow.

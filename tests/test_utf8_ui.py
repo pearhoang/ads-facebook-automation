@@ -34,3 +34,17 @@ def test_campaign_ui_files_are_utf8_without_mojibake_markers():
     assert "Chỉ đọc Ads Manager" in combined
     assert "Đính kèm tệp văn bản" in combined
     assert "Gõ / để xem shortcut" in combined
+
+
+def test_copilot_attachment_trigger_is_compact_and_inside_composer_input():
+    template = Path("backend/app/templates/ai_copilot.html").read_text(encoding="utf-8")
+    styles = Path("backend/app/static/copilot.css").read_text(encoding="utf-8")
+
+    shell_start = template.index('<div class="composer-input-shell">')
+    shell_end = template.index("</div>", shell_start)
+    shell = template[shell_start:shell_end]
+    assert 'id="attach-file"' in shell
+    assert '<span aria-hidden="true">+</span>' in shell
+    assert 'id="composer-input"' in shell
+    assert ".composer-input-shell { position: relative;" in styles
+    assert ".composer .attach-file { position: absolute;" in styles
