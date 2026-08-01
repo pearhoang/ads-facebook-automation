@@ -181,5 +181,6 @@
 
 - Changed: Retire AI Copilot UI tự xây khỏi navigation; route cũ chuyển hướng có authentication sang native Hermes Dashboard. Thêm dashboard systemd unit, HTTPS Caddy route và action mở dashboard tại Hermes Agents.
 - Affected: web route/config, navigation templates, Hermes/Caddy packaging, tests, decisions và module memory.
-- Verified: `54 passed`, Python/JavaScript/UTF-8/diff check sạch; production verification được ghi sau deploy.
+- Verified: `54 passed`, Python/JavaScript/UTF-8/diff check sạch. Production HTTPS dùng Let's Encrypt; basic-auth login, Telegram session list, Chat PTY và tool event feed đều hoạt động. Smoke chat trả đúng `HERMES DASHBOARD OK` và session thử đã được xóa.
+- Deploy: Commit UI/infra `7381070`, WebSocket proxy fix `3164426`; web/worker/Hermes gateway/dashboard đều active. Port `9119` chỉ bind `172.17.0.1`. Backup tại `/var/backups/meta-ads-copilot/20260801T171727Z-native-hermes-dashboard` và `/opt/spoticheck/app/deploy/Caddyfile.pre-hermes-ws-20260801T173809Z`.
 - Safety: Không xóa transcript, AgentJob, API hoặc migration legacy; dashboard dùng Hermes auth provider, bind nội bộ và không expose port `9119` trực tiếp.

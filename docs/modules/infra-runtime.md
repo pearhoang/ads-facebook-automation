@@ -16,14 +16,16 @@
 - x11vnc và websockify bind localhost; browser UI đi qua FastAPI proxy.
 - CDP chỉ bind mặc định trên host runtime và không được expose qua reverse proxy.
 - PostgreSQL chỉ bind `127.0.0.1:55432`.
-- Hermes native dashboard bind Docker host interface `172.17.0.1:9119`, yêu cầu Hermes basic auth và chỉ được Caddy proxy; không listen trên public interface.
+- Hermes native dashboard bind Docker host interface `172.17.0.1:9119`, yêu cầu Hermes basic auth và chỉ được Caddy proxy; không listen trên public interface. Caddy rewrite riêng WebSocket `Host` và `Origin` về private bind để vượt qua DNS-rebinding guard chính chủ của Hermes.
 
 ## Domain
 
 - Canonical URL: `https://ads.lushmedia.net` dùng application authentication.
 - Hermes URL: `https://hermes.ads.lushmedia.net` dùng dashboard authentication chính chủ của Hermes.
 - Cloudflare record `A ads -> 82.197.71.6` đã hoạt động.
+- Cloudflare record `A hermes.ads -> 82.197.71.6` đã hoạt động ở chế độ DNS only.
 - Caddy đã cấp chứng chỉ Let's Encrypt cho `ads.lushmedia.net`; IP HTTP redirect sang domain này.
+- Caddy đã cấp chứng chỉ Let's Encrypt cho `hermes.ads.lushmedia.net`; certificate hiện tại hết hạn ngày 2026-10-30.
 
 ## Current Deployment
 
@@ -64,12 +66,14 @@
 - Backup trước chuyển Git checkout: `/opt/meta-ads-backups/20260801-132105-git-checkout`.
 - Auth source/database/app env backup: `/opt/meta-ads-copilot-runtime/backups/*-before-auth-20260731-184227*`.
 - Caddy auth migration backup: `/opt/spoticheck/app/deploy/Caddyfile.backup-auth-20260731-184555`.
+- Native Hermes Dashboard đã deploy từ commit `3164426`; login basic auth, session Telegram, Chat PTY và tool event feed đều được smoke test qua public HTTPS. Smoke session `20260801_193914_2fc1bf` đã xóa sau kiểm thử.
+- Native dashboard backup: `/var/backups/meta-ads-copilot/20260801T171727Z-native-hermes-dashboard`; Caddy WebSocket fix backup: `/opt/spoticheck/app/deploy/Caddyfile.pre-hermes-ws-20260801T173809Z`.
 
 ## Services
 
 - `meta-ads-copilot-web.service`
 - `meta-ads-copilot-worker.service`
-- `meta-ads-copilot-hermes.service` (inactive cho tới khi có AI provider config)
+- `meta-ads-copilot-hermes.service` (gateway; active khi worker đã có AI provider config)
 - `meta-ads-copilot-hermes-dashboard.service` (chỉ start khi có config, dashboard env và built SPA)
 - `meta-ads-postgres` Docker container
 
