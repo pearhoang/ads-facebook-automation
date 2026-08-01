@@ -52,3 +52,21 @@ def test_copilot_attachment_trigger_is_compact_and_inside_composer_input():
     assert 'id="composer-input"' in shell
     assert ".composer-input-shell { position: relative;" in styles
     assert ".composer .attach-file { position: absolute;" in styles
+
+
+def test_primary_navigation_uses_native_hermes_dashboard():
+    active_templates = (
+        Path("backend/app/templates/workspace.html"),
+        Path("backend/app/templates/campaigns.html"),
+        Path("backend/app/templates/reports.html"),
+        Path("backend/app/templates/bot_nodes.html"),
+        Path("backend/app/templates/hermes_agents.html"),
+    )
+    for path in active_templates:
+        text = path.read_text(encoding="utf-8")
+        assert ">AI Copilot<" not in text
+        assert "Hermes Dashboard" in text
+        assert 'href="/ai-copilot"' in text
+
+    hermes_agents = active_templates[-1].read_text(encoding="utf-8")
+    assert "Mở Hermes Dashboard" in hermes_agents

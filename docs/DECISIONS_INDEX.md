@@ -24,5 +24,6 @@
 | DEC-020 | Remote SSH/Telegram bootstrap secret transient; AI provider config mã hóa và scope theo worker | Active | backend/UI/agent | High |
 | DEC-021 | Source/worker bootstrap dùng public GitHub checkout tracking main | Active | repo/infra/worker | High |
 | DEC-022 | Telegram dùng Hermes conversational gateway và MCP typed tools scope theo worker | Active | agent/backend/worker | High |
-| DEC-023 | AI Copilot dùng Hermes session bridge, natural-first với shortcut/attachment giới hạn và chỉ phục vụ Meta Ads | Active | backend/UI/worker/agent | High |
+| DEC-023 | AI Copilot session bridge được giữ như legacy rollback, không còn là UI chính | Superseded by DEC-025 | backend/UI/worker/agent | High |
 | DEC-024 | Hermes permission mode theo worker, safe mặc định và experimental full chỉ opt-in | Active | backend/UI/worker/agent | High |
+| DEC-025 | Chat Web dùng native Hermes Dashboard; Telegram vẫn là kênh lệnh chính | Active | backend/UI/infra/agent | High |

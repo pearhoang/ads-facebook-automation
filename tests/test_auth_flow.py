@@ -46,6 +46,9 @@ def test_login_cookie_csrf_logout_and_workspace_guard():
         unauthenticated_page = client.get("/", follow_redirects=False)
         assert unauthenticated_page.status_code == 303
         assert unauthenticated_page.headers["location"] == "/login"
+        unauthenticated_hermes = client.get("/ai-copilot", follow_redirects=False)
+        assert unauthenticated_hermes.status_code == 303
+        assert unauthenticated_hermes.headers["location"] == "/login"
         assert client.get("/api/accounts").status_code == 401
 
         wrong_origin = client.post(
@@ -80,6 +83,10 @@ def test_login_cookie_csrf_logout_and_workspace_guard():
         assert workspace.status_code == 200
         assert "Quản trị viên" in workspace.text
         assert "Lush Media" in workspace.text
+        assert "Hermes Dashboard" in workspace.text
+        dashboard = client.get("/ai-copilot", follow_redirects=False)
+        assert dashboard.status_code == 303
+        assert dashboard.headers["location"] == "https://hermes.ads.lushmedia.net"
         assert client.get("/api/auth/me").status_code == 200
         assert client.get("/docs").status_code == 404
 

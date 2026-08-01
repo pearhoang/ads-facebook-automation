@@ -167,3 +167,11 @@
 - Full access nhằm thử nghiệm khả năng tạo artifact, chạy code, dùng browser/computer và tự xây skill sau khi kiểm thử. Nó không cấp typed tool submit approval, publish hoặc tăng budget và không được dùng quyền hệ thống để đi vòng safety boundary của Meta Ads.
 - API key, Telegram token và worker credential tiếp tục là secret; thao tác phá hủy, thay đổi hệ thống, cài package toàn cục hoặc gửi dữ liệu ra ngoài phải có xác nhận rõ ràng.
 - Thay đổi toolset áp dụng cho session mới hoặc sau `/reset`; web/Telegram vẫn dùng chung Hermes runtime của worker.
+
+## DEC-025 — Chat Web dùng native Hermes Dashboard
+
+- Không tiếp tục duy trì AI Copilot chat UI tự xây vì nó cần outbound polling/sync thủ công và chỉ lặp một phần nhỏ khả năng của Hermes.
+- Telegram là kênh trò chuyện/ra lệnh chính; người dùng cần Web chat, session, file, skill, cron hoặc monitoring sẽ dùng native Hermes Dashboard.
+- Route `/ai-copilot` vẫn yêu cầu Ads Lush session rồi chuyển hướng tới dashboard; legacy API, transcript và job table được giữ để rollback, không hard-delete dữ liệu.
+- Dashboard chạy service riêng từ cùng `HERMES_HOME`, bind interface nội bộ, dùng password provider chính chủ với scrypt hash + signing secret và được Caddy expose qua HTTPS subdomain.
+- `Hermes Agents` tiếp tục là canonical control-plane UI cho provider/model/thinking/permission; nó không nhúng hoặc tái tạo chat.

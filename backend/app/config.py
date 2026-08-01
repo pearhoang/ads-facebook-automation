@@ -35,6 +35,7 @@ class Settings:
     worker_bootstrap_repo_url: str = "https://github.com/pearhoang/ads-facebook-automation.git"
     worker_bootstrap_repo_branch: str = "main"
     worker_enrollment_ttl_minutes: int = 120
+    hermes_dashboard_url: str = "https://hermes.ads.lushmedia.net"
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -89,6 +90,10 @@ class Settings:
                 5,
                 min(1440, int(os.getenv("WORKER_ENROLLMENT_TTL_MINUTES", "120"))),
             ),
+            hermes_dashboard_url=os.getenv(
+                "HERMES_DASHBOARD_URL",
+                "https://hermes.ads.lushmedia.net",
+            ).strip().rstrip("/"),
         )
 
     def resolved_secret_encryption_key(self) -> bytes:
@@ -115,5 +120,7 @@ class Settings:
             raise RuntimeError("EXECUTION_ARTIFACT_ROOT must not be empty.")
         if not self.creative_asset_root:
             raise RuntimeError("CREATIVE_ASSET_ROOT must not be empty.")
+        if self.app_env == "production" and not self.hermes_dashboard_url.startswith("https://"):
+            raise RuntimeError("HERMES_DASHBOARD_URL must use HTTPS in production.")
         if not (1024 <= self.browser_proxy_port_min <= self.browser_proxy_port_max <= 65535):
             raise RuntimeError("Invalid browser proxy port range.")

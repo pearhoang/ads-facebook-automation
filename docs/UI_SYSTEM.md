@@ -49,7 +49,8 @@
 - Hermes Agents và popup cài Bot VPS dùng cùng hai control `Thinking` và `Reasoning effort`; popup sửa Bot VPS không lặp lại provider settings.
 - Hermes Agents có control `Quyền Agent` theo worker. `Ads Safe` là mặc định; `Experimental Full Access` hiển thị cảnh báo inline về quyền terminal/file/code/browser/computer/delegation và nói rõ session mới hoặc `/reset` mới nhận bộ quyền.
 - Copy DeepSeek phải nói rõ default thinking High và Low/Medium được provider ánh xạ lên High; không hứa mức suy luận mà endpoint không hỗ trợ.
-- AI Copilot là chat workspace cho Meta Ads, không phải màn settings và không chứa VPS Copilot.
+- Native Hermes Dashboard là Web chat/agent surface. Ads Lush không tái tạo chat workspace; route legacy `/ai-copilot` chỉ chuyển hướng sau khi kiểm tra đăng nhập.
+- Navigation dùng nhãn `Hermes Dashboard` mở tab mới; `Hermes Agents` có action `Mở Hermes Dashboard` cạnh trạng thái provider.
 - Natural language là primary interaction. Không hiện generic menu button sau mọi câu trả lời.
 - Shortcut chỉ render khi có action preview/resource cụ thể, tối đa hai chip nhẹ; composer luôn hoạt động và user có thể trả lời bằng lời.
 - Conversation list phân biệt Web/Telegram; chọn Telegram phải tiếp tục exact Hermes session, không tạo context mới.

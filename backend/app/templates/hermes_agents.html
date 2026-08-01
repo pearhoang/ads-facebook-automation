@@ -14,12 +14,12 @@
   <aside class="sidebar">
     <a class="brand" href="/" aria-label="Ads Lush"><span class="brand-mark">A</span><span><strong>Ads Lush</strong><small>Automation workspace</small></span></a>
     <nav aria-label="Điều hướng chính">
-      <a class="nav-item" href="/">Tài khoản Facebook</a><a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a><a class="nav-item" href="/campaigns">Campaigns</a><a class="nav-item" href="/reports">Báo cáo</a><a class="nav-item" href="/bot-nodes">Bot VPS</a><a class="nav-item is-active" href="/hermes-agents">Hermes Agents</a><a class="nav-item" href="/ai-copilot">AI Copilot</a>
+      <a class="nav-item" href="/">Tài khoản Facebook</a><a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a><a class="nav-item" href="/campaigns">Campaigns</a><a class="nav-item" href="/reports">Báo cáo</a><a class="nav-item" href="/bot-nodes">Bot VPS</a><a class="nav-item is-active" href="/hermes-agents">Hermes Agents</a><a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
     </nav>
     <div class="sidebar-footer"><span class="environment-dot"></span><span><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Hermes settings</small></span></div>
   </aside>
   <main class="main">
-    <header class="topbar"><div><h1>Hermes Agents</h1><p>Quản lý provider, model và trạng thái Hermes theo từng Bot VPS.</p></div><div class="provider-health"><span id="provider-status" class="status">Chưa cấu hình</span></div></header>
+    <header class="topbar"><div><h1>Hermes Agents</h1><p>Quản lý provider, model và trạng thái Hermes theo từng Bot VPS.</p></div><div class="provider-health"><span id="provider-status" class="status">Chưa cấu hình</span><a class="button button-secondary" href="{{ hermes_dashboard_url }}" target="_blank" rel="noopener">Mở Hermes Dashboard</a></div></header>
     <div class="safety-banner"><strong>Secret boundary:</strong> API key được mã hóa trong control-plane, chỉ trả về cho Bot VPS đã chọn qua credential của node. Trên VPS, key nằm trong Hermes config mode 0600 để agent vẫn hoạt động khi server tạm mất kết nối.</div>
     <section class="settings-layout">
       <form id="provider-form" class="settings-panel">

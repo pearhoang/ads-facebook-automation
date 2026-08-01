@@ -37,7 +37,7 @@
 - Lịch báo cáo dùng ngày đã hoàn tất theo timezone ad account; Telegram token chỉ nằm ở worker environment và được truyền one-shot khi Add Bot.
 - Thao tác publish, tăng budget hoặc thay đổi rủi ro cao phải qua preview, guardrail và approval.
 - Agent không phải source of truth và không được sửa production trực tiếp.
-- AI Copilot chỉ phục vụ Meta Ads, dùng exact Hermes session chung với Telegram qua outbound worker job; Hermes API không public.
+- Chat/agent dùng Telegram hoặc Hermes Dashboard chính chủ. Legacy AI Copilot API/session mirror được giữ tạm để rollback nhưng không còn là UI chính; Hermes API và dashboard port không public trực tiếp.
 - Production schema chỉ thay đổi qua Alembic revision; application startup không tự tạo bảng.
 
 ## Build / Test / Lint

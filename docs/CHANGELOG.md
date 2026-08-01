@@ -176,3 +176,10 @@
 - Verified: `53 passed`, Python compile, JavaScript syntax, UTF-8 guard và Alembic `20260801_0009 (head)` sạch. Production worker `Ads Browser VPS 82` đã ghi audit `experimental_full`; `disabled_toolsets` rỗng và smoke session dùng thật `terminal` + `read_file`, trả `/root`, Python 3.12.3 và Ubuntu 24.04.4 LTS rồi được xóa.
 - Deploy: Commit `82835ed`, web/worker/Hermes active, public health `ok`, API Server chỉ bind `127.0.0.1:8642`; backup tại `/var/backups/meta-ads-copilot/20260801T165330Z-experimental-full`.
 - Safety: Worker mới vẫn mặc định `Ads Safe`; full access không thêm typed tool publish/budget và không thay DRAFT/approval boundary của control-plane.
+
+### 2026-08-02 - Chuyển Web chat sang native Hermes Dashboard
+
+- Changed: Retire AI Copilot UI tự xây khỏi navigation; route cũ chuyển hướng có authentication sang native Hermes Dashboard. Thêm dashboard systemd unit, HTTPS Caddy route và action mở dashboard tại Hermes Agents.
+- Affected: web route/config, navigation templates, Hermes/Caddy packaging, tests, decisions và module memory.
+- Verified: `54 passed`, Python/JavaScript/UTF-8/diff check sạch; production verification được ghi sau deploy.
+- Safety: Không xóa transcript, AgentJob, API hoặc migration legacy; dashboard dùng Hermes auth provider, bind nội bộ và không expose port `9119` trực tiếp.

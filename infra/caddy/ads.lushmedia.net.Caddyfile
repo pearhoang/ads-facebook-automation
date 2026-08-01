@@ -12,3 +12,18 @@ ads.lushmedia.net {
     encode zstd gzip
     reverse_proxy host.docker.internal:8021
 }
+
+hermes.ads.lushmedia.net {
+    header {
+        -Server
+        Referrer-Policy same-origin
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+    }
+    encode zstd gzip
+    reverse_proxy host.docker.internal:9119 {
+        header_up Host 172.17.0.1:9119
+        header_up X-Forwarded-Host {host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}

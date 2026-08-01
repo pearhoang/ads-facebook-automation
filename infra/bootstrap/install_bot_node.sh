@@ -121,6 +121,7 @@ bash /tmp/hermes-agent-install.sh --skip-setup --skip-browser --hermes-home "$WO
 
 install -m 0644 "$APP_DIR/infra/systemd/meta-ads-copilot-worker.service" /etc/systemd/system/meta-ads-copilot-worker.service
 install -m 0644 "$APP_DIR/infra/systemd/meta-ads-copilot-hermes.service" /etc/systemd/system/meta-ads-copilot-hermes.service
+install -m 0644 "$APP_DIR/infra/systemd/meta-ads-copilot-hermes-dashboard.service" /etc/systemd/system/meta-ads-copilot-hermes-dashboard.service
 systemctl daemon-reload
 systemctl enable --now meta-ads-copilot-worker.service
 

@@ -107,14 +107,9 @@ def ai_copilot_page(request: Request, db: Session = Depends(get_db)):
     principal = resolve_optional_principal(request, db)
     if principal is None:
         return RedirectResponse("/login", status_code=303)
-    settings = request.app.state.settings
-    return templates.TemplateResponse(
-        request=request,
-        name="ai_copilot.html",
-        context={
-            "principal": principal,
-            "csrf_token": request.cookies.get(settings.csrf_cookie_name, ""),
-        },
+    return RedirectResponse(
+        request.app.state.settings.hermes_dashboard_url,
+        status_code=303,
         headers={"Cache-Control": "no-store"},
     )
 
@@ -131,6 +126,7 @@ def hermes_agents_page(request: Request, db: Session = Depends(get_db)):
         context={
             "principal": principal,
             "csrf_token": request.cookies.get(settings.csrf_cookie_name, ""),
+            "hermes_dashboard_url": settings.hermes_dashboard_url,
         },
         headers={"Cache-Control": "no-store"},
     )

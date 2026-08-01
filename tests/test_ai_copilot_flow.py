@@ -64,10 +64,9 @@ def provision(client: TestClient) -> tuple[dict[str, str], dict[str, str], dict]
 def test_web_chat_uses_outbound_worker_job_and_mirrors_hermes_reply(tmp_path: Path):
     with build_client(tmp_path) as client:
         csrf, worker_headers, worker = provision(client)
-        page = client.get("/ai-copilot")
-        assert page.status_code == 200
-        assert "Bạn cứ nói theo cách tự nhiên" in page.text
-        assert "VPS Copilot" not in page.text
+        page = client.get("/ai-copilot", follow_redirects=False)
+        assert page.status_code == 303
+        assert page.headers["location"] == "https://hermes.ads.lushmedia.net"
 
         created = client.post(
             "/api/ai-copilot/conversations",

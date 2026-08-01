@@ -12,6 +12,7 @@
 - Encryption: `backend/app/services/ai_settings.py`.
 - Worker sync: `workers/agent/hermes_config.py` và endpoint runtime theo per-node credential.
 - MCP bridge: `workers/agent/control_plane_mcp.py`; typed facade: `backend/app/services/agent_tools.py`.
+- Native dashboard: `infra/systemd/meta-ads-copilot-hermes-dashboard.service`, bind nội bộ và reverse proxy HTTPS riêng.
 
 ## Invariants
 
@@ -26,6 +27,8 @@
 - `ads_create_campaign_draft` chỉ tạo control-plane `DRAFT`; không submit/publish.
 - `agent_permission_mode=ads_safe` là mặc định. `experimental_full` chỉ được bật chủ động theo từng worker và chỉ gỡ sáu toolset block do Ads Lush quản lý.
 - Experimental Full Access không mở thêm typed tool publish/budget và không thay approval boundary của control-plane.
+- Dashboard dùng auth provider chính chủ của Hermes; password chỉ lưu dạng scrypt hash và signing secret nằm trong env mode `0600`.
+- Port dashboard không bind public interface. Caddy chỉ truy cập qua Docker host interface và HTTPS subdomain.
 
 ## Current State
 
@@ -36,3 +39,4 @@
 - UI hỗ trợ `Ads Safe` và `Experimental Full Access`; cảnh báo rõ quyền terminal/file/code/browser/computer/delegation của service trên VPS và yêu cầu session mới hoặc `/reset`.
 - Provider/model có một canonical UI tại `Hermes Agents`; popup sửa Bot VPS chỉ sửa identity/SSH, còn popup cài mới vẫn nhận initial provider bootstrap.
 - Worker production `Ads Browser VPS 82` hiện được owner bật `experimental_full`; smoke chỉ đọc đã chứng minh Hermes gọi được `terminal` và `read_file`. Các worker mới vẫn bắt đầu ở `ads_safe`.
+- Chat Web chính chuyển sang native Hermes Dashboard; `Hermes Agents` chỉ giữ provider/model/permission settings và action mở dashboard.

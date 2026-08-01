@@ -26,4 +26,5 @@
 - Production migration mục tiêu `20260801_0007`; một worker hiện hữu đã gắn host và trạng thái installed.
 - Canonical public repo là `https://github.com/pearhoang/ads-facebook-automation.git`, branch `main`; popup điền sẵn và cho phép thay bằng fork khác.
 - Popup Add Bot là one-shot setup: SSH, Git checkout, initial Hermes provider, Telegram Bot Token và allowlist user ID; worker tự cài browser/noVNC/Hermes rồi kết nối control-plane.
+- Installer cài sẵn unit native Hermes Dashboard nhưng không tự public hoặc start khi chưa có dashboard env/auth và reverse proxy riêng của node.
 - Production source là Git checkout sạch tracking `origin/main`.

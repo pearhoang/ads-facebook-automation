@@ -328,6 +328,15 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal_by_default(
     assert config["gateway"]["api_server"]["key"] == manager.api_key_path.read_text(encoding="utf-8")
     service = Path("infra/systemd/meta-ads-copilot-hermes.service").read_text(encoding="utf-8")
     assert "EnvironmentFile=-/opt/meta-ads-copilot-runtime/worker-data/hermes/.env" in service
+    dashboard_service = Path(
+        "infra/systemd/meta-ads-copilot-hermes-dashboard.service"
+    ).read_text(encoding="utf-8")
+    assert "HERMES_DASHBOARD_BIND_HOST" in dashboard_service
+    assert "--skip-build --no-open" in dashboard_service
+    assert "hermes-dashboard.env" in dashboard_service
+    caddy = Path("infra/caddy/ads.lushmedia.net.Caddyfile").read_text(encoding="utf-8")
+    assert "hermes.ads.lushmedia.net" in caddy
+    assert "host.docker.internal:9119" in caddy
 
 
 def test_hermes_experimental_full_access_removes_managed_toolset_blocks(tmp_path: Path, monkeypatch):

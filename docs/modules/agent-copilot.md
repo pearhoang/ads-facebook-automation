@@ -2,7 +2,7 @@
 
 ## Responsibility
 
-- Cung cấp chat Meta Ads trên web bằng đúng Hermes runtime/session đang dùng cho Telegram.
+- Legacy bridge từng cung cấp chat Meta Ads trên web bằng đúng Hermes runtime/session đang dùng cho Telegram.
 - Mirror conversation/message vào control-plane để áp tenant authorization, audit và UI history.
 - Chuyển chat/sync thành outbound `AgentJob`; control-plane không gọi ngược vào localhost của worker.
 
@@ -32,6 +32,9 @@
 
 ## Current State
 
+- UI tự xây đã được retire khỏi navigation vì cần sync thủ công và lặp lại chức năng Hermes. Route `/ai-copilot` sau authentication chuyển hướng tới native Hermes Dashboard.
+- API, conversation/job table và worker bridge được giữ tạm để rollback/đọc lịch sử; không xóa transcript hoặc migration cũ trong thay đổi này.
+- Kênh chat chính là Telegram và native Hermes Dashboard; dashboard dùng trực tiếp Hermes session/tool/artifact runtime, không mirror qua control-plane.
 - Web tạo chat mới, gửi turn, poll trạng thái và mirror assistant response.
 - Session sync import title/source/messages từ Hermes, gồm session Telegram hiện hữu.
 - UI có conversation list, source badge, composer natural-first và trạng thái Hermes đang xử lý.

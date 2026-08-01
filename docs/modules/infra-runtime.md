@@ -16,10 +16,12 @@
 - x11vnc và websockify bind localhost; browser UI đi qua FastAPI proxy.
 - CDP chỉ bind mặc định trên host runtime và không được expose qua reverse proxy.
 - PostgreSQL chỉ bind `127.0.0.1:55432`.
+- Hermes native dashboard bind Docker host interface `172.17.0.1:9119`, yêu cầu Hermes basic auth và chỉ được Caddy proxy; không listen trên public interface.
 
 ## Domain
 
 - Canonical URL: `https://ads.lushmedia.net` dùng application authentication.
+- Hermes URL: `https://hermes.ads.lushmedia.net` dùng dashboard authentication chính chủ của Hermes.
 - Cloudflare record `A ads -> 82.197.71.6` đã hoạt động.
 - Caddy đã cấp chứng chỉ Let's Encrypt cho `ads.lushmedia.net`; IP HTTP redirect sang domain này.
 
@@ -68,6 +70,7 @@
 - `meta-ads-copilot-web.service`
 - `meta-ads-copilot-worker.service`
 - `meta-ads-copilot-hermes.service` (inactive cho tới khi có AI provider config)
+- `meta-ads-copilot-hermes-dashboard.service` (chỉ start khi có config, dashboard env và built SPA)
 - `meta-ads-postgres` Docker container
 
 ## Safety
