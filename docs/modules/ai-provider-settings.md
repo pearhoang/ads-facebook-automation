@@ -35,3 +35,4 @@
 - UI hỗ trợ `auto|enabled|disabled` và effort `provider_default|minimal|low|medium|high|xhigh|max|ultra`.
 - UI hỗ trợ `Ads Safe` và `Experimental Full Access`; cảnh báo rõ quyền terminal/file/code/browser/computer/delegation của service trên VPS và yêu cầu session mới hoặc `/reset`.
 - Provider/model có một canonical UI tại `Hermes Agents`; popup sửa Bot VPS chỉ sửa identity/SSH, còn popup cài mới vẫn nhận initial provider bootstrap.
+- Worker production `Ads Browser VPS 82` hiện được owner bật `experimental_full`; smoke chỉ đọc đã chứng minh Hermes gọi được `terminal` và `read_file`. Các worker mới vẫn bắt đầu ở `ads_safe`.

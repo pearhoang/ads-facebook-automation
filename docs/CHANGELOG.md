@@ -173,5 +173,6 @@
 
 - Changed: Thêm `agent_permission_mode` theo worker, UI `Ads Safe | Experimental Full Access`, audit/runtime contract và worker sync có thể gỡ/khôi phục sáu toolset block terminal/file/code/browser/computer/delegation.
 - Affected: AI provider schema/API/UI, Alembic `20260801_0009`, Hermes config/SOUL, tests và project memory.
-- Verified: `53 passed`, Python compile, JavaScript syntax, UTF-8 guard và Alembic `20260801_0009 (head)` sạch; production verification được ghi sau deploy.
+- Verified: `53 passed`, Python compile, JavaScript syntax, UTF-8 guard và Alembic `20260801_0009 (head)` sạch. Production worker `Ads Browser VPS 82` đã ghi audit `experimental_full`; `disabled_toolsets` rỗng và smoke session dùng thật `terminal` + `read_file`, trả `/root`, Python 3.12.3 và Ubuntu 24.04.4 LTS rồi được xóa.
+- Deploy: Commit `82835ed`, web/worker/Hermes active, public health `ok`, API Server chỉ bind `127.0.0.1:8642`; backup tại `/var/backups/meta-ads-copilot/20260801T165330Z-experimental-full`.
 - Safety: Worker mới vẫn mặc định `Ads Safe`; full access không thêm typed tool publish/budget và không thay DRAFT/approval boundary của control-plane.
