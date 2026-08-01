@@ -22,7 +22,7 @@ class HermesConfigManager:
         if not provider:
             return False
         canonical = json.dumps(
-            {"schema_version": 2, "provider": provider},
+            {"schema_version": 3, "provider": provider},
             sort_keys=True,
             ensure_ascii=False,
         ).encode("utf-8")
@@ -94,6 +94,14 @@ class HermesConfigManager:
         mcp_servers["ads_control_plane"] = {
             "command": sys.executable,
             "args": ["-m", "workers.agent.control_plane_mcp"],
+            # Hermes intentionally gives stdio MCP children a minimal
+            # environment. Forward only the values required by this facade;
+            # the raw node credential remains in its 0600 credential file.
+            "env": {
+                "CONTROL_PLANE_URL": "${CONTROL_PLANE_URL}",
+                "WORKER_DATA_DIR": "${WORKER_DATA_DIR}",
+                "WORKER_CREDENTIAL_FILE": "${WORKER_CREDENTIAL_FILE}",
+            },
             "tools": {
                 "include": [
                     "ads_workspace_context",

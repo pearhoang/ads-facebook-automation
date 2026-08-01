@@ -292,7 +292,13 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal(tmp_path: P
     assert config["agent"]["reasoning_effort"] == "high"
     assert "terminal" in config["agent"]["disabled_toolsets"]
     assert config["providers"]["ads-lush"]["extra_body"]["thinking"]["type"] == "enabled"
-    assert "ads_create_campaign_draft" in config["mcp_servers"]["ads_control_plane"]["tools"]["include"]
+    mcp_config = config["mcp_servers"]["ads_control_plane"]
+    assert "ads_create_campaign_draft" in mcp_config["tools"]["include"]
+    assert mcp_config["env"] == {
+        "CONTROL_PLANE_URL": "${CONTROL_PLANE_URL}",
+        "WORKER_DATA_DIR": "${WORKER_DATA_DIR}",
+        "WORKER_CREDENTIAL_FILE": "${WORKER_CREDENTIAL_FILE}",
+    }
     assert "sk-test-only" not in manager.config_path.read_text(encoding="utf-8")
     assert "sk-test-only" in manager.env_path.read_text(encoding="utf-8")
     assert "không publish" in manager.soul_path.read_text(encoding="utf-8")
