@@ -143,56 +143,75 @@ body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #
     ),
     "meta-dark-sidebar-glass": Variant(
         slug="meta-dark-sidebar-glass",
-        name="Meta Dark Sidebar + Glass",
-        label="C · Premium",
-        summary="Navy–indigo sâu, surface trong nhẹ và focus glow có kiểm soát cho cảm giác premium nhưng dữ liệu vẫn rõ.",
-        page="#eef2ff",
-        surface="rgba(255,255,255,.86)",
-        surface_soft="rgba(248,250,255,.76)",
-        border="rgba(166,177,213,.48)",
-        text="#18213a",
-        muted="#68708a",
-        sidebar_start="#0f172a",
-        sidebar_mid="#1e1b4b",
-        sidebar_end="#312e81",
-        sidebar_text="#f8fafc",
-        sidebar_muted="#b8b7d4",
-        primary="#6366f1",
-        primary_2="#8b5cf6",
-        shadow_1="0 4px 16px rgba(41,46,108,.09)",
-        shadow_2="0 18px 44px rgba(49,46,129,.18)",
-        radius="14px",
+        name="Meta Light Focus",
+        label="C · Đã chọn",
+        summary="Shell sáng kiểu Meta Business, sidebar trắng và action xanh rõ; login giữ mảng gradient giàu nhận diện của phương án A.",
+        page="#f5f7fa",
+        surface="#ffffff",
+        surface_soft="#f7f8fa",
+        border="#d8dde6",
+        text="#1c1e21",
+        muted="#65676b",
+        sidebar_start="#ffffff",
+        sidebar_mid="#ffffff",
+        sidebar_end="#ffffff",
+        sidebar_text="#1c1e21",
+        sidebar_muted="#65676b",
+        primary="#0866ff",
+        primary_2="#1877f2",
+        shadow_1="0 1px 4px rgba(15,23,42,.05)",
+        shadow_2="0 14px 34px rgba(15,23,42,.13)",
+        radius="12px",
         variant_css="""
 body[data-variant="meta-dark-sidebar-glass"] .content-pane {
-  background:
-    radial-gradient(circle at 16% 0%, rgba(99,102,241,.12), transparent 30%),
-    radial-gradient(circle at 92% 12%, rgba(139,92,246,.10), transparent 28%),
-    var(--page);
+  background: var(--page);
 }
-body[data-variant="meta-dark-sidebar-glass"] .topbar,
-body[data-variant="meta-dark-sidebar-glass"] .card,
-body[data-variant="meta-dark-sidebar-glass"] .metric,
-body[data-variant="meta-dark-sidebar-glass"] .login-card {
-  backdrop-filter: blur(12px);
+body[data-variant="meta-dark-sidebar-glass"] .sidebar {
+  border-right-color: var(--border);
+}
+body[data-variant="meta-dark-sidebar-glass"] .brand,
+body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer {
+  border-color: var(--border);
+}
+body[data-variant="meta-dark-sidebar-glass"] .brand > .brand-mark,
+body[data-variant="meta-dark-sidebar-glass"] .mobilebar > .brand-mark {
+  border-color: #0866ff;
+  background: #0866ff;
+  color: #fff;
+  box-shadow: none;
+}
+body[data-variant="meta-dark-sidebar-glass"] .nav-link:hover {
+  background: #f0f2f5;
+  color: var(--sidebar-text);
+}
+body[data-variant="meta-dark-sidebar-glass"] .nav-link:focus-visible {
+  outline-color: rgba(8,102,255,.24);
 }
 body[data-variant="meta-dark-sidebar-glass"] .primary-button {
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  box-shadow: 0 6px 18px rgba(99,102,241,.24);
+  background: var(--primary);
+  box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav {
-  background: rgba(99,102,241,.27);
-  box-shadow: inset 0 0 0 1px rgba(165,180,252,.26), 0 0 22px rgba(99,102,241,.18);
+  background: #e7f3ff;
+  color: #0866ff;
+  box-shadow: inset 3px 0 0 #0866ff;
 }
 body[data-variant="meta-dark-sidebar-glass"] .metric {
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.92), var(--shadow-1);
+  box-shadow: var(--shadow-1);
 }
-body[data-variant="meta-dark-sidebar-glass"] .brand-panel,
+body[data-variant="meta-dark-sidebar-glass"] .brand-panel {
+  background: linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899);
+}
 body[data-variant="meta-dark-sidebar-glass"] .dialog-head::before {
-  background: linear-gradient(135deg, #0f172a, #312e81 64%, #6366f1);
+  background: #0866ff;
 }
 body[data-variant="meta-dark-sidebar-glass"] dialog::backdrop {
-  background: rgba(15,23,42,.52);
-  backdrop-filter: blur(7px);
+  background: rgba(15,23,42,.46);
+}
+body[data-variant="meta-dark-sidebar-glass"] .mobilebar {
+  background: #fff;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
 }
 """,
     ),

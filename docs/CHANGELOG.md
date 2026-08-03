@@ -248,3 +248,11 @@
 - Verified: `67 passed`, Python compile, diff check và mojibake scan sạch. Browser smoke ở `1440×900`, `1024×768`, `390×844` xác nhận dashboard/login/dialogs, Lucide icon positioning, native dialog fit, search/filter/popover, danger `rgb(184, 58, 58)` và không có console warning/error.
 - Preview: Launcher local tại `http://127.0.0.1:8020/index.html`; branch `codex/meta-ui-prototypes` chưa push hoặc deploy.
 - Safety: Prototype không gọi API, không tự publish, không chứa live data/secret/password plaintext và không thay API, database, worker contract hoặc runtime config.
+
+### 2026-08-03 - Tinh chỉnh phương án 3 thành Meta Light Focus
+
+- Changed: Giữ cấu trúc ít nhiễu của phương án 3 nhưng chuyển sidebar sang trắng, canvas sang `#F5F7FA`, logo tile/action sang `#0866FF`; login dùng lại identity gradient xanh–tím–hồng của phương án 1.
+- Affected: Prototype generator, phương án `meta-dark-sidebar-glass.html`, launcher, contract tests, design spec và UI memory; slug review cũ được giữ ổn định.
+- Verified: Contract test mới đã fail trên palette navy cũ rồi pass sau thay đổi; full suite `68 passed`. Browser smoke xác nhận sidebar desktop `248px`, logo xanh/chữ trắng, mobile không overflow, login gradient đúng, dialog vừa viewport, danger `rgb(184, 58, 58)` và console không có warning/error.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng vào Jinja production, chưa push hoặc deploy.
+- Safety: Danger vẫn `#B83A3A`; không đổi API, database, worker contract, live data hoặc runtime config.

@@ -4,33 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
-  <title>Meta Dark Sidebar + Glass — Ads Meta Master UI Prototype</title>
+  <title>Meta Light Focus — Ads Meta Master UI Prototype</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <style>
     :root {
-      --page: #eef2ff;
-      --surface: rgba(255,255,255,.86);
-      --surface-soft: rgba(248,250,255,.76);
-      --border: rgba(166,177,213,.48);
-      --text: #18213a;
-      --muted: #68708a;
-      --sidebar-start: #0f172a;
-      --sidebar-mid: #1e1b4b;
-      --sidebar-end: #312e81;
-      --sidebar-text: #f8fafc;
-      --sidebar-muted: #b8b7d4;
-      --primary: #6366f1;
-      --primary-2: #8b5cf6;
+      --page: #f5f7fa;
+      --surface: #ffffff;
+      --surface-soft: #f7f8fa;
+      --border: #d8dde6;
+      --text: #1c1e21;
+      --muted: #65676b;
+      --sidebar-start: #ffffff;
+      --sidebar-mid: #ffffff;
+      --sidebar-end: #ffffff;
+      --sidebar-text: #1c1e21;
+      --sidebar-muted: #65676b;
+      --primary: #0866ff;
+      --primary-2: #1877f2;
       --success: #16865f;
       --attention: #4f46e5;
       --warning: #a76513;
       --danger: #b83a3a;
-      --shadow-1: 0 4px 16px rgba(41,46,108,.09);
-      --shadow-2: 0 18px 44px rgba(49,46,129,.18);
-      --radius: 14px;
+      --shadow-1: 0 1px 4px rgba(15,23,42,.05);
+      --shadow-2: 0 14px 34px rgba(15,23,42,.13);
+      --radius: 12px;
       --font-display: "Be Vietnam Pro", sans-serif;
       --font-body: "Inter", sans-serif;
     }
@@ -367,35 +367,54 @@
     .prototype-toast svg { width: 15px; height: 15px; color: #6ee7b7; }
 
     body[data-variant="meta-dark-sidebar-glass"] .content-pane {
-  background:
-    radial-gradient(circle at 16% 0%, rgba(99,102,241,.12), transparent 30%),
-    radial-gradient(circle at 92% 12%, rgba(139,92,246,.10), transparent 28%),
-    var(--page);
+  background: var(--page);
 }
-body[data-variant="meta-dark-sidebar-glass"] .topbar,
-body[data-variant="meta-dark-sidebar-glass"] .card,
-body[data-variant="meta-dark-sidebar-glass"] .metric,
-body[data-variant="meta-dark-sidebar-glass"] .login-card {
-  backdrop-filter: blur(12px);
+body[data-variant="meta-dark-sidebar-glass"] .sidebar {
+  border-right-color: var(--border);
+}
+body[data-variant="meta-dark-sidebar-glass"] .brand,
+body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer {
+  border-color: var(--border);
+}
+body[data-variant="meta-dark-sidebar-glass"] .brand > .brand-mark,
+body[data-variant="meta-dark-sidebar-glass"] .mobilebar > .brand-mark {
+  border-color: #0866ff;
+  background: #0866ff;
+  color: #fff;
+  box-shadow: none;
+}
+body[data-variant="meta-dark-sidebar-glass"] .nav-link:hover {
+  background: #f0f2f5;
+  color: var(--sidebar-text);
+}
+body[data-variant="meta-dark-sidebar-glass"] .nav-link:focus-visible {
+  outline-color: rgba(8,102,255,.24);
 }
 body[data-variant="meta-dark-sidebar-glass"] .primary-button {
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  box-shadow: 0 6px 18px rgba(99,102,241,.24);
+  background: var(--primary);
+  box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav {
-  background: rgba(99,102,241,.27);
-  box-shadow: inset 0 0 0 1px rgba(165,180,252,.26), 0 0 22px rgba(99,102,241,.18);
+  background: #e7f3ff;
+  color: #0866ff;
+  box-shadow: inset 3px 0 0 #0866ff;
 }
 body[data-variant="meta-dark-sidebar-glass"] .metric {
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.92), var(--shadow-1);
+  box-shadow: var(--shadow-1);
 }
-body[data-variant="meta-dark-sidebar-glass"] .brand-panel,
+body[data-variant="meta-dark-sidebar-glass"] .brand-panel {
+  background: linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899);
+}
 body[data-variant="meta-dark-sidebar-glass"] .dialog-head::before {
-  background: linear-gradient(135deg, #0f172a, #312e81 64%, #6366f1);
+  background: #0866ff;
 }
 body[data-variant="meta-dark-sidebar-glass"] dialog::backdrop {
-  background: rgba(15,23,42,.52);
-  backdrop-filter: blur(7px);
+  background: rgba(15,23,42,.46);
+}
+body[data-variant="meta-dark-sidebar-glass"] .mobilebar {
+  background: #fff;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
 }
 
     @media (max-width: 1120px) {
@@ -643,7 +662,7 @@ body[data-variant="meta-dark-sidebar-glass"] dialog::backdrop {
   </dialog>
 
   <nav class="prototype-switcher" aria-label="Điều khiển prototype">
-    <span>C · Premium</span>
+    <span>C · Đã chọn</span>
     <button class="active" type="button" data-screen-target="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</button>
     <button type="button" data-screen-target="login"><i data-lucide="log-in"></i>Đăng nhập</button>
     <button type="button" data-dialog-open="campaign-dialog"><i data-lucide="gallery-horizontal-end"></i>Dialogs</button>

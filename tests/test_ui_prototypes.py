@@ -19,8 +19,8 @@ EXPECTED_VARIANTS = {
         "--primary: #0668e1",
     ),
     "meta-dark-sidebar-glass": (
-        "--sidebar-start: #0f172a",
-        "--primary: #6366f1",
+        "--sidebar-start: #ffffff",
+        "--primary: #0866ff",
     ),
 }
 
@@ -127,3 +127,18 @@ def test_login_prototype_never_embeds_a_plaintext_password() -> None:
         assert 'id="login-password"' in html
         assert 'autocomplete="current-password"' in html
         assert 'value="1234"' not in html
+
+
+def test_selected_direction_uses_meta_light_shell_and_vibrant_login() -> None:
+    """Dark sidebar or a muted monogram must not return after direction C is selected."""
+
+    html = render_variant("meta-dark-sidebar-glass").lower()
+
+    assert "--page: #f5f7fa" in html
+    assert "--surface: #ffffff" in html
+    assert "--sidebar-text: #1c1e21" in html
+    assert "--sidebar-muted: #65676b" in html
+    assert ".brand > .brand-mark" in html
+    assert "background: #0866ff" in html
+    assert "color: #fff" in html
+    assert "linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899)" in html

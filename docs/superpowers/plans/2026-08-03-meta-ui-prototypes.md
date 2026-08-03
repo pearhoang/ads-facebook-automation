@@ -142,3 +142,27 @@
   ```
 
   Keep the branch local until the user selects a direction or requests push/deploy.
+
+### Task 4: Refine the selected direction into Meta Light Focus
+
+**Files:**
+- Modify: `scripts/build_meta_ui_prototypes.py`
+- Modify: `tests/test_ui_prototypes.py`
+- Regenerate: `docs/ui-prototypes/*`
+- Modify: prototype spec, UI system memory, and changelog
+
+- [x] **Step 1: Lock the selected palette contract with a failing test**
+
+  Require a white sidebar, Meta-blue monogram/action, light canvas, and Direction A login gradient for the legacy Direction C slug. Confirm the test fails against the previous navy/glass implementation.
+
+- [x] **Step 2: Implement and regenerate Meta Light Focus**
+
+  Remove dark/glass/glow styling from Direction C, retain its information layout, and preserve semantic danger/success colors and the stable local URL.
+
+- [x] **Step 3: Verify desktop and mobile in browser**
+
+  Confirm the `248px` white desktop sidebar, blue logo tile, no horizontal overflow, mobile white top bar, scrollable tables, and vivid split login identity panel.
+
+- [x] **Step 4: Run the full suite and commit locally**
+
+  Run the generator, full pytest suite, Python compile, UTF-8/mojibake scan, browser console check, and `git diff --check`; keep the branch unpushed until the user requests integration.

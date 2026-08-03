@@ -53,14 +53,15 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 - Login is a restrained split layout with a slate brand panel and blue action emphasis.
 - Dialogs use a normal centered overlay, clear section grouping, and minimal effects.
 
-## Direction C — Meta Dark Sidebar + Glass
+## Direction C — Meta Light Focus (user-selected refinement)
 
-- Sidebar uses `#0F172A → #1E1B4B → #312E81`; glow is limited to selected navigation and primary focus.
-- Main surfaces use translucent white only where underlying contrast remains readable; data tables stay effectively opaque.
-- Primary actions use `#6366F1 → #8B5CF6`; danger remains `#B83A3A` without purple styling.
-- Metrics are separate translucent tiles with controlled inner highlight, not decorative neon cards.
-- Login uses a dark indigo identity panel and a calm light credential form.
-- Dialog overlay may use blur, while dialog content remains a stable, high-contrast surface.
+- The user selected Direction C on 2026-08-03, then requested a calmer Meta-style light shell while preserving its uncluttered structure.
+- Sidebar uses solid white with a soft gray-blue border, dark text, and a pale-blue selected row; the custom monogram uses a `#0866FF` tile with a white glyph.
+- Main canvas uses `#F5F7FA`, opaque white surfaces, shallow neutral shadows, and solid `#0866FF` primary actions.
+- Metrics keep Direction C's separate-tile composition but remove glass, glow, and decorative background haze.
+- Login intentionally borrows Direction A's `#0668E1 → #8B5CF6 → #EC4899` identity panel so authentication does not feel visually empty.
+- Dialog bodies remain opaque and stable; destructive actions remain `#B83A3A` and the backdrop does not use blur.
+- The legacy slug `meta-dark-sidebar-glass` is retained so the existing local review URL remains stable during selection.
 
 ## Interaction And Accessibility
 

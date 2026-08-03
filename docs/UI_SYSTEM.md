@@ -76,7 +76,8 @@
 
 ## Candidate Prototype Directions
 
-- Ba prototype so sánh tại `docs/ui-prototypes/`: `Meta Gradient Vibrant`, `Meta Balanced Elevated` và `Meta Dark Sidebar + Glass`.
+- Ba prototype so sánh tại `docs/ui-prototypes/`: `Meta Gradient Vibrant`, `Meta Balanced Elevated` và bản user đang chọn để tinh chỉnh `Meta Light Focus`.
 - Cả ba giữ sidebar-left/main-content, dùng cùng component anatomy cho Dashboard, Login, native dialogs, tables, empty state, search/filter, popovers và campaign checkpoint progress.
+- `Meta Light Focus` dùng sidebar trắng, canvas `#F5F7FA`, logo tile `#0866FF`, action xanh solid và login lấy identity gradient xanh–tím–hồng từ phương án A; slug cũ `meta-dark-sidebar-glass` được giữ để URL review không đổi.
 - Đây là candidate để user chọn, chưa phải canonical production styling. Không áp dụng token, layout hoặc interaction prototype vào Jinja templates cho đến khi có lựa chọn rõ ràng.
 - Prototype không gọi API, không dùng production data và không nhúng password mẫu; danger/destructive giữ `#B83A3A` ở cả ba hướng.
