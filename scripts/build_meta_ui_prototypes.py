@@ -166,6 +166,12 @@ body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #
 body[data-variant="meta-dark-sidebar-glass"] .content-pane {
   background: var(--page);
 }
+body[data-variant="meta-dark-sidebar-glass"] .content {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-inline: 20px;
+}
 body[data-variant="meta-dark-sidebar-glass"] .sidebar {
   border-right-color: var(--border);
 }
@@ -212,6 +218,11 @@ body[data-variant="meta-dark-sidebar-glass"] .mobilebar {
   background: #fff;
   color: var(--text);
   border-bottom: 1px solid var(--border);
+}
+@media (max-width: 720px) {
+  body[data-variant="meta-dark-sidebar-glass"] .content {
+    padding-inline: 12px;
+  }
 }
 """,
     ),

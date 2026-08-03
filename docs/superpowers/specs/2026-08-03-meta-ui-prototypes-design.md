@@ -58,6 +58,7 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 - The user selected Direction C on 2026-08-03, then requested a calmer Meta-style light shell while preserving its uncluttered structure.
 - Sidebar uses solid white with a soft gray-blue border, dark text, and a pale-blue selected row; the custom monogram uses a `#0866FF` tile with a white glyph.
 - Main canvas uses `#F5F7FA`, opaque white surfaces, shallow neutral shadows, and solid `#0866FF` primary actions.
+- On desktop and tablet, the workspace is fluid rather than centered in a fixed `max-width`: panels use the full main-column width with a `20px` horizontal gutter, matching the denser YouTube control-plane reference. Mobile retains a `12px` gutter.
 - Metrics keep Direction C's separate-tile composition but remove glass, glow, and decorative background haze.
 - Login intentionally borrows Direction A's `#0668E1 → #8B5CF6 → #EC4899` identity panel so authentication does not feel visually empty.
 - Dialog bodies remain opaque and stable; destructive actions remain `#B83A3A` and the backdrop does not use blur.

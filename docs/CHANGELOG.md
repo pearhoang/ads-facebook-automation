@@ -256,3 +256,9 @@
 - Verified: Contract test mới đã fail trên palette navy cũ rồi pass sau thay đổi; full suite `68 passed`. Browser smoke xác nhận sidebar desktop `248px`, logo xanh/chữ trắng, mobile không overflow, login gradient đúng, dialog vừa viewport, danger `rgb(184, 58, 58)` và console không có warning/error.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng vào Jinja production, chưa push hoặc deploy.
 - Safety: Danger vẫn `#B83A3A`; không đổi API, database, worker contract, live data hoặc runtime config.
+
+### 2026-08-03 - Mở rộng workspace Meta Light Focus
+
+- Changed: Bỏ giới hạn content `1420px` của phương án được chọn; panel giãn hết main column với gutter `20px` desktop/tablet và `12px` mobile.
+- Verified: Regression test fail trên fixed-width cũ rồi pass; browser ở `1920×970` đo panel rộng `1632px`, cách hai mép main `20px`, không overflow. Mobile `390×844` giữ panel `351px`, gutter `12px`, không overflow và console sạch.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

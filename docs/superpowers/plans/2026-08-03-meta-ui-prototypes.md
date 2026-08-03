@@ -166,3 +166,7 @@
 - [x] **Step 4: Run the full suite and commit locally**
 
   Run the generator, full pytest suite, Python compile, UTF-8/mojibake scan, browser console check, and `git diff --check`; keep the branch unpushed until the user requests integration.
+
+- [x] **Step 5: Expand selected-direction panels to the main-column edges**
+
+  Replace the centered `1420px` content cap with a fluid workspace for Meta Light Focus only. Keep `20px` desktop/tablet gutters and `12px` mobile gutters, then verify at `1920×970` and `390×844` with no horizontal page overflow.

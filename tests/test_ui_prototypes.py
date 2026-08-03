@@ -142,3 +142,7 @@ def test_selected_direction_uses_meta_light_shell_and_vibrant_login() -> None:
     assert "background: #0866ff" in html
     assert "color: #fff" in html
     assert "linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899)" in html
+    assert 'body[data-variant="meta-dark-sidebar-glass"] .content {' in html
+    assert "width: 100%" in html
+    assert "max-width: none" in html
+    assert "padding-inline: 20px" in html
