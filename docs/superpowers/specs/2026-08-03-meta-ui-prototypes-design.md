@@ -1,0 +1,84 @@
+# Ads Meta Master — Three UI Prototype Directions
+
+## Status
+
+- Approved by the user on 2026-08-03 through the supplied `implementation_plan.md`.
+- This phase produces comparison prototypes only; it does not modify production templates, APIs, worker contracts, database state, or deployment configuration.
+
+## Goal
+
+Create three standalone HTML prototypes for the Ads Meta Master control plane so the user can compare visual directions before selecting one for integration. Every prototype must include the dashboard shell, redesigned native dialogs, and a redesigned login page.
+
+## Reference Hierarchy
+
+1. Product truth and safety copy come from the current Ads Meta Master templates and `docs/UI_SYSTEM.md`.
+2. Layout density, table treatment, typography rhythm, and shallow elevation are informed by `D:/vps mới/Youtube_Upload_Lush/final_user_ui.html`.
+3. The three visual directions, palettes, and sidebar treatments come from the supplied `implementation_plan.md`.
+4. The screenshots are visual references only; the prototype must not imitate Meta Ads Manager so closely that it appears to be an official Meta surface.
+
+## Shared Prototype Contract
+
+- Each direction is a standalone UTF-8 HTML file with inline CSS and JavaScript.
+- Each file uses `lang="vi"`, `<meta charset="UTF-8">`, `Be Vietnam Pro` for display text, `Inter` for dense controls/data, and Lucide icons through the pinned CDN URL.
+- A compact prototype switcher exposes three review states without page reload: `Dashboard`, `Đăng nhập`, and `Dialogs`.
+- Dashboard content uses the real Ads Meta Master information architecture: Facebook accounts, Ad accounts, Campaigns, Báo cáo, Bot VPS, Hermes Agents, and Hermes Dashboard.
+- Dashboard sample content is static and explicitly non-production. It shows a guardrail banner, four operational metrics, campaign/ad-account tables, status badges, an empty resource state, and clear row actions.
+- Dialog coverage includes:
+  - a structured `Tạo campaign draft` form dialog;
+  - the shared `Đổi mật khẩu` dialog;
+  - a destructive confirmation dialog where danger remains red.
+- Login coverage includes username/password, explicit sign-in action, a restrained product value panel, and no public-signup affordance.
+- The custom Ads Meta Master monogram is used instead of an official Meta or Facebook logo.
+- Responsive behavior is evaluated at desktop `1440×900`, tablet `1024×768`, and mobile `390×844`.
+- Animation is limited to 120–200 ms state feedback; `prefers-reduced-motion` disables nonessential transitions.
+
+## Direction A — Meta Gradient Vibrant
+
+- Sidebar uses a vertical `#0668E1 → #8B5CF6 → #EC4899` gradient with white navigation.
+- Primary actions use a restrained blue-to-violet gradient; semantic success/warning/danger colors remain separate.
+- Metrics use four separate raised tiles with narrow color accents and small Lucide icons.
+- Header uses a light translucent surface; cards use shallow shadows and one controlled hover lift.
+- Login uses a vivid brand panel beside a high-contrast white form.
+- Dialogs use a soft gradient header accent but a solid readable body.
+
+## Direction B — Meta Balanced Elevated
+
+- Sidebar uses `#1E293B → #334155` with a thin brand accent line and functional section labels.
+- Primary actions use solid `#0668E1`; gradient appears only in selected navigation.
+- Metrics remain one elevated four-column strip, matching the strongest pattern from the YouTube reference.
+- Tables and forms rely mainly on borders, spacing, and type hierarchy; shadows stay shallow.
+- Login is a restrained split layout with a slate brand panel and blue action emphasis.
+- Dialogs use a normal centered overlay, clear section grouping, and minimal effects.
+
+## Direction C — Meta Dark Sidebar + Glass
+
+- Sidebar uses `#0F172A → #1E1B4B → #312E81`; glow is limited to selected navigation and primary focus.
+- Main surfaces use translucent white only where underlying contrast remains readable; data tables stay effectively opaque.
+- Primary actions use `#6366F1 → #8B5CF6`; danger remains `#B83A3A` without purple styling.
+- Metrics are separate translucent tiles with controlled inner highlight, not decorative neon cards.
+- Login uses a dark indigo identity panel and a calm light credential form.
+- Dialog overlay may use blur, while dialog content remains a stable, high-contrast surface.
+
+## Interaction And Accessibility
+
+- All clickable controls have visible hover and `:focus-visible` states.
+- Dialogs use native `<dialog>`, close on `Escape`, close from explicit cancel/close controls, and return focus to the trigger where supported.
+- Form labels are always visible above fields. Helper text remains concrete and safety-focused.
+- Tables retain semantic `<table>`, `<thead>`, `<tbody>`, and scoped column headers.
+- Color is never the only state indicator; status badges include literal text and icons.
+- Mobile hides the fixed sidebar and exposes a compact top navigation while preserving the primary task and action.
+
+## Non-Goals
+
+- Do not apply a selected direction to Jinja templates in this phase.
+- Do not add runtime dependencies, migrations, API calls, real credentials, or live production data.
+- Do not push or deploy prototypes without a separate user request.
+- Do not redesign the Hermes native dashboard or Meta Ads Manager itself.
+
+## Acceptance Criteria
+
+- Exactly three standalone direction files plus one neutral comparison launcher exist under `output/ui-prototypes/`.
+- Dashboard, login, campaign dialog, password dialog, and destructive dialog can be exercised in every direction.
+- Variant palette signatures are distinct and automated tests reject missing screens, missing UTF-8 declarations, broken Vietnamese text, or absent danger styling.
+- Browser smoke captures each direction at desktop and at least the login/dialog state, with no console errors.
+
