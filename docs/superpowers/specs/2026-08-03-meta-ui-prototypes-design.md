@@ -23,6 +23,9 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 - A compact prototype switcher exposes three review states without page reload: `Dashboard`, `Đăng nhập`, and `Dialogs`.
 - Dashboard content uses the real Ads Meta Master information architecture: Facebook accounts, Ad accounts, Campaigns, Báo cáo, Bot VPS, Hermes Agents, and Hermes Dashboard.
 - Dashboard sample content is static and explicitly non-production. It shows a guardrail banner, four operational metrics, campaign/ad-account tables, status badges, an empty resource state, and clear row actions.
+- The existing left-sidebar plus main-content architecture is preserved. The sidebar becomes denser and more explicit through Lucide icons and the section labels `Điều hướng` and `Quản trị`; no top-navigation redesign is introduced.
+- The topbar adds a compact breadcrumb, global search field, notification bell, and concise Admin menu so the shell can be evaluated as a complete product system.
+- Campaign tables add useful filter/sort chips, literal status pills, and one compact `Campaign → Ad Set → Ad → Review` progress treatment. No fake chart or decorative sparkline is added.
 - Dialog coverage includes:
   - a structured `Tạo campaign draft` form dialog;
   - the shared `Đổi mật khẩu` dialog;
@@ -65,6 +68,7 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 - Dialogs use native `<dialog>`, close on `Escape`, close from explicit cancel/close controls, and return focus to the trigger where supported.
 - Form labels are always visible above fields. Helper text remains concrete and safety-focused.
 - Tables retain semantic `<table>`, `<thead>`, `<tbody>`, and scoped column headers.
+- Search, notification, and Admin menu interactions are local prototype behavior only; they never call a backend.
 - Color is never the only state indicator; status badges include literal text and icons.
 - Mobile hides the fixed sidebar and exposes a compact top navigation while preserving the primary task and action.
 
@@ -77,8 +81,7 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 
 ## Acceptance Criteria
 
-- Exactly three standalone direction files plus one neutral comparison launcher exist under `output/ui-prototypes/`.
+- Exactly three standalone direction files plus one neutral comparison launcher exist under `docs/ui-prototypes/`.
 - Dashboard, login, campaign dialog, password dialog, and destructive dialog can be exercised in every direction.
 - Variant palette signatures are distinct and automated tests reject missing screens, missing UTF-8 declarations, broken Vietnamese text, or absent danger styling.
 - Browser smoke captures each direction at desktop and at least the login/dialog state, with no console errors.
-

@@ -240,3 +240,11 @@
 - Verified: `60 passed`, Python compile và diff check sạch; production checkout sạch tại commit `33ae3d9`, health `ok`, bốn service active. Browser live xác nhận title/brand/subtitle/footer/favicon mới, accent `#1877f2`, body `rgb(243, 246, 251)`, sidebar giữ `rgb(36, 35, 33)` và không có console warning/error.
 - Deploy: Push `main` từ `bf32cf4` lên `33ae3d9`; chỉ restart `meta-ads-copilot-web.service`. Source backup tại `/opt/meta-ads-copilot-runtime/source-backups/meta-ads-ui-predeploy-20260803T044448Z.tar.gz`.
 - Safety: Preflight không có browser session active hoặc job queued/running; PostgreSQL healthy. PID worker và Hermes giữ nguyên, không đổi API, database, worker contract hoặc runtime config.
+
+### 2026-08-03 - Tạo ba prototype redesign Ads Meta Master
+
+- Changed: Tạo launcher và ba HTML prototype standalone `Meta Gradient Vibrant`, `Meta Balanced Elevated`, `Meta Dark Sidebar + Glass`; mỗi phương án có Campaign dashboard, responsive shell, global search/filter, Login và ba native dialog.
+- Affected: `scripts/build_meta_ui_prototypes.py`, `docs/ui-prototypes/*`, prototype contract tests, UI system, spec và implementation plan; không sửa Jinja/CSS production.
+- Verified: `67 passed`, Python compile, diff check và mojibake scan sạch. Browser smoke ở `1440×900`, `1024×768`, `390×844` xác nhận dashboard/login/dialogs, Lucide icon positioning, native dialog fit, search/filter/popover, danger `rgb(184, 58, 58)` và không có console warning/error.
+- Preview: Launcher local tại `http://127.0.0.1:8020/index.html`; branch `codex/meta-ui-prototypes` chưa push hoặc deploy.
+- Safety: Prototype không gọi API, không tự publish, không chứa live data/secret/password plaintext và không thay API, database, worker contract hoặc runtime config.

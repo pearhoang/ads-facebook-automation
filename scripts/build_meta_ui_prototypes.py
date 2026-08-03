@@ -1,0 +1,1052 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = ROOT / "docs" / "ui-prototypes"
+
+
+@dataclass(frozen=True)
+class Variant:
+    slug: str
+    name: str
+    label: str
+    summary: str
+    page: str
+    surface: str
+    surface_soft: str
+    border: str
+    text: str
+    muted: str
+    sidebar_start: str
+    sidebar_mid: str
+    sidebar_end: str
+    sidebar_text: str
+    sidebar_muted: str
+    primary: str
+    primary_2: str
+    shadow_1: str
+    shadow_2: str
+    radius: str
+    variant_css: str
+
+
+VARIANTS = {
+    "meta-gradient-vibrant": Variant(
+        slug="meta-gradient-vibrant",
+        name="Meta Gradient Vibrant",
+        label="A · Rực rỡ",
+        summary="Brand mạnh, gradient Meta rõ nét và KPI tách card, phù hợp khi muốn sản phẩm có năng lượng thị giác cao.",
+        page="#f4f6ff",
+        surface="#ffffff",
+        surface_soft="#f7f8ff",
+        border="#dfe3f2",
+        text="#172033",
+        muted="#667085",
+        sidebar_start="#0668e1",
+        sidebar_mid="#8b5cf6",
+        sidebar_end="#ec4899",
+        sidebar_text="#ffffff",
+        sidebar_muted="rgba(255,255,255,.72)",
+        primary="#0668e1",
+        primary_2="#7c3aed",
+        shadow_1="0 2px 8px rgba(42,54,111,.08)",
+        shadow_2="0 16px 36px rgba(76,70,151,.15)",
+        radius="14px",
+        variant_css="""
+body[data-variant="meta-gradient-vibrant"] .topbar {
+  background: rgba(255,255,255,.84);
+  backdrop-filter: blur(14px);
+}
+body[data-variant="meta-gradient-vibrant"] .primary-button {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+body[data-variant="meta-gradient-vibrant"] .metric {
+  border-top: 3px solid var(--metric-accent);
+}
+body[data-variant="meta-gradient-vibrant"] .metric:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
+body[data-variant="meta-gradient-vibrant"] .brand-panel,
+body[data-variant="meta-gradient-vibrant"] .dialog-head::before {
+  background: linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899);
+}
+body[data-variant="meta-gradient-vibrant"] .active-nav {
+  background: rgba(255,255,255,.17);
+  box-shadow: inset 3px 0 0 #fff;
+}
+""",
+    ),
+    "meta-balanced-elevated": Variant(
+        slug="meta-balanced-elevated",
+        name="Meta Balanced Elevated",
+        label="B · Cân bằng",
+        summary="Chuyên nghiệp và bền lâu: sidebar slate, action xanh solid, KPI dạng strip và depth vừa đủ như app vận hành thật.",
+        page="#f3f6fb",
+        surface="#ffffff",
+        surface_soft="#f7f9fc",
+        border="#d8e0eb",
+        text="#172033",
+        muted="#667085",
+        sidebar_start="#1e293b",
+        sidebar_mid="#283548",
+        sidebar_end="#334155",
+        sidebar_text="#f8fafc",
+        sidebar_muted="#aeb9ca",
+        primary="#0668e1",
+        primary_2="#7c3aed",
+        shadow_1="0 2px 7px rgba(15,23,42,.06)",
+        shadow_2="0 12px 28px rgba(15,23,42,.12)",
+        radius="12px",
+        variant_css="""
+body[data-variant="meta-balanced-elevated"] .sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0668e1, #7c3aed);
+}
+body[data-variant="meta-balanced-elevated"] .metrics {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+body[data-variant="meta-balanced-elevated"] .metric {
+  border: 0;
+  border-right: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+}
+body[data-variant="meta-balanced-elevated"] .metric:last-child { border-right: 0; }
+body[data-variant="meta-balanced-elevated"] .metric::after {
+  content: "";
+  position: absolute;
+  inset: auto 16px 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--metric-accent);
+}
+body[data-variant="meta-balanced-elevated"] .active-nav {
+  background: linear-gradient(90deg, #0668e1, #7c3aed);
+}
+body[data-variant="meta-balanced-elevated"] .brand-panel {
+  background: linear-gradient(155deg, #1e293b, #334155 70%, #0668e1);
+}
+body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #0668e1; }
+""",
+    ),
+    "meta-dark-sidebar-glass": Variant(
+        slug="meta-dark-sidebar-glass",
+        name="Meta Dark Sidebar + Glass",
+        label="C · Premium",
+        summary="Navy–indigo sâu, surface trong nhẹ và focus glow có kiểm soát cho cảm giác premium nhưng dữ liệu vẫn rõ.",
+        page="#eef2ff",
+        surface="rgba(255,255,255,.86)",
+        surface_soft="rgba(248,250,255,.76)",
+        border="rgba(166,177,213,.48)",
+        text="#18213a",
+        muted="#68708a",
+        sidebar_start="#0f172a",
+        sidebar_mid="#1e1b4b",
+        sidebar_end="#312e81",
+        sidebar_text="#f8fafc",
+        sidebar_muted="#b8b7d4",
+        primary="#6366f1",
+        primary_2="#8b5cf6",
+        shadow_1="0 4px 16px rgba(41,46,108,.09)",
+        shadow_2="0 18px 44px rgba(49,46,129,.18)",
+        radius="14px",
+        variant_css="""
+body[data-variant="meta-dark-sidebar-glass"] .content-pane {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(99,102,241,.12), transparent 30%),
+    radial-gradient(circle at 92% 12%, rgba(139,92,246,.10), transparent 28%),
+    var(--page);
+}
+body[data-variant="meta-dark-sidebar-glass"] .topbar,
+body[data-variant="meta-dark-sidebar-glass"] .card,
+body[data-variant="meta-dark-sidebar-glass"] .metric,
+body[data-variant="meta-dark-sidebar-glass"] .login-card {
+  backdrop-filter: blur(12px);
+}
+body[data-variant="meta-dark-sidebar-glass"] .primary-button {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 6px 18px rgba(99,102,241,.24);
+}
+body[data-variant="meta-dark-sidebar-glass"] .active-nav {
+  background: rgba(99,102,241,.27);
+  box-shadow: inset 0 0 0 1px rgba(165,180,252,.26), 0 0 22px rgba(99,102,241,.18);
+}
+body[data-variant="meta-dark-sidebar-glass"] .metric {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.92), var(--shadow-1);
+}
+body[data-variant="meta-dark-sidebar-glass"] .brand-panel,
+body[data-variant="meta-dark-sidebar-glass"] .dialog-head::before {
+  background: linear-gradient(135deg, #0f172a, #312e81 64%, #6366f1);
+}
+body[data-variant="meta-dark-sidebar-glass"] dialog::backdrop {
+  background: rgba(15,23,42,.52);
+  backdrop-filter: blur(7px);
+}
+""",
+    ),
+}
+
+
+DOCUMENT = r'''<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>__NAME__ — Ads Meta Master UI Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --page: __PAGE__;
+      --surface: __SURFACE__;
+      --surface-soft: __SURFACE_SOFT__;
+      --border: __BORDER__;
+      --text: __TEXT__;
+      --muted: __MUTED__;
+      --sidebar-start: __SIDEBAR_START__;
+      --sidebar-mid: __SIDEBAR_MID__;
+      --sidebar-end: __SIDEBAR_END__;
+      --sidebar-text: __SIDEBAR_TEXT__;
+      --sidebar-muted: __SIDEBAR_MUTED__;
+      --primary: __PRIMARY__;
+      --primary-2: __PRIMARY_2__;
+      --success: #16865f;
+      --attention: #4f46e5;
+      --warning: #a76513;
+      --danger: #b83a3a;
+      --shadow-1: __SHADOW_1__;
+      --shadow-2: __SHADOW_2__;
+      --radius: __RADIUS__;
+      --font-display: "Be Vietnam Pro", sans-serif;
+      --font-body: "Inter", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      overflow: hidden;
+      background: var(--page);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.45;
+      text-rendering: optimizeLegibility;
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    .hidden { display: none !important; }
+
+    .prototype-frame { min-height: 100vh; }
+    .screen { min-height: 100vh; }
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
+    .sidebar {
+      position: relative;
+      z-index: 5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, var(--sidebar-start), var(--sidebar-mid) 54%, var(--sidebar-end));
+      color: var(--sidebar-text);
+      border-right: 1px solid rgba(255,255,255,.08);
+    }
+    .brand {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 16px 18px;
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,.11);
+    }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.26);
+      border-radius: 10px;
+      background: rgba(255,255,255,.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
+    }
+    .brand-mark svg { width: 24px; height: 24px; }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 14px;
+      line-height: 1.25;
+      letter-spacing: -.02em;
+    }
+    .brand-copy span { display: block; margin-top: 3px; color: var(--sidebar-muted); font-size: 11px; }
+    .sidebar-scroll { padding: 16px 12px; }
+    .sidebar-section {
+      margin: 14px 10px 7px;
+      color: var(--sidebar-muted);
+      font-size: 10px;
+      font-weight: 650;
+      letter-spacing: .02em;
+    }
+    .sidebar-section:first-child { margin-top: 0; }
+    .nav-link {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 2px 0;
+      padding: 0 12px;
+      border-radius: 9px;
+      color: var(--sidebar-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+    .nav-link:hover { background: rgba(255,255,255,.09); color: var(--sidebar-text); }
+    .nav-link:focus-visible { outline: 3px solid rgba(255,255,255,.42); outline-offset: 2px; }
+    .nav-link svg { width: 17px; height: 17px; flex: 0 0 auto; stroke-width: 1.8; }
+    .active-nav { color: #fff; font-weight: 650; }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 15px 18px 18px;
+      border-top: 1px solid rgba(255,255,255,.11);
+    }
+    .footer-admin { display: flex; align-items: center; gap: 10px; }
+    .online-dot { width: 8px; height: 8px; border-radius: 50%; background: #4fd1a1; box-shadow: 0 0 0 3px rgba(79,209,161,.13); }
+    .footer-admin strong { font-family: var(--font-display); font-size: 12px; }
+    .text-action {
+      margin: 6px 0 0 18px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--sidebar-muted);
+      font-size: 11px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .app-main { min-width: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    .mobilebar { display: none; }
+    .topbar {
+      position: relative;
+      z-index: 4;
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 26px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(15,23,42,.03);
+    }
+    .page-identity { min-width: 210px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
+    .breadcrumb svg { width: 13px; height: 13px; }
+    .page-identity h1 {
+      margin: 4px 0 0;
+      font-family: var(--font-display);
+      font-size: 19px;
+      line-height: 1.25;
+      letter-spacing: -.025em;
+    }
+    .global-search {
+      position: relative;
+      width: min(420px, 36vw);
+      margin-left: auto;
+    }
+    .global-search > svg { position: absolute; z-index: 1; left: 12px; top: 50%; width: 16px; height: 16px; color: var(--muted); transform: translateY(-50%); }
+    .global-search input {
+      width: 100%; height: 40px; padding: 0 42px 0 36px;
+      border: 1px solid var(--border); border-radius: 9px; background: var(--surface-soft); color: var(--text); outline: none;
+    }
+    .global-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent); background: var(--surface); }
+    .search-key { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 10px; border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; }
+    .icon-button, .avatar-button {
+      height: 40px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+    }
+    .icon-button { position: relative; width: 40px; display: inline-grid; place-items: center; }
+    .icon-button svg { width: 17px; height: 17px; }
+    .icon-button:hover, .avatar-button:hover { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); background: var(--surface-soft); }
+    .notification-dot { position: absolute; right: 8px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 2px var(--surface); }
+    .avatar-button { display: flex; align-items: center; gap: 8px; padding: 0 9px 0 5px; }
+    .avatar { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: color-mix(in srgb, var(--primary) 13%, var(--surface)); color: var(--primary); font-weight: 700; }
+    .avatar-copy { text-align: left; line-height: 1.2; }
+    .avatar-copy strong { display: block; font-size: 11px; }
+    .avatar-copy span { color: var(--muted); font-size: 9px; }
+    .avatar-button > svg { width: 14px; height: 14px; color: var(--muted); }
+    .popover-wrap { position: relative; }
+    .popover {
+      position: absolute; right: 0; top: calc(100% + 9px); z-index: 20; width: 260px; padding: 8px;
+      border: 1px solid var(--border); border-radius: 11px; background: #fff; box-shadow: var(--shadow-2); color: #172033;
+    }
+    .popover-title { padding: 8px 9px 7px; font-family: var(--font-display); font-size: 12px; border-bottom: 1px solid #e7ebf1; }
+    .popover-row { display: flex; gap: 10px; padding: 10px 9px; border-radius: 8px; font-size: 11px; }
+    .popover-row:hover { background: #f6f8fb; }
+    .popover-row svg { width: 16px; height: 16px; color: #526075; }
+    .popover-row strong { display: block; margin-bottom: 2px; font-size: 11px; }
+    .popover-row span { color: #667085; }
+    .popover-action { width: 100%; display: flex; align-items: center; gap: 9px; padding: 9px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; text-align: left; font-size: 11px; }
+    .popover-action:hover { background: #f6f8fb; }
+    .popover-action svg { width: 16px; height: 16px; }
+
+    .content-pane { min-height: 0; flex: 1; overflow: auto; background: var(--page); }
+    .content { width: min(1420px, 100%); margin: 0 auto; padding: 22px 26px 42px; }
+    .notice {
+      display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; padding: 11px 13px;
+      border: 1px solid color-mix(in srgb, var(--attention) 24%, var(--border)); border-radius: 10px;
+      background: color-mix(in srgb, var(--attention) 7%, var(--surface)); color: #3730a3; font-size: 11px;
+    }
+    .notice svg { width: 17px; height: 17px; flex: 0 0 auto; }
+    .notice strong { font-weight: 700; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .metric {
+      --metric-accent: var(--primary);
+      position: relative; min-height: 104px; display: grid; grid-template-columns: 42px 1fr; align-items: center; gap: 12px;
+      padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-1);
+      transition: transform 170ms ease, box-shadow 170ms ease;
+    }
+    .metric:nth-child(2) { --metric-accent: #7c3aed; }
+    .metric:nth-child(3) { --metric-accent: #a76513; }
+    .metric:nth-child(4) { --metric-accent: var(--success); }
+    .metric-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; background: color-mix(in srgb, var(--metric-accent) 10%, var(--surface)); color: var(--metric-accent); }
+    .metric-icon svg { width: 19px; height: 19px; }
+    .metric-label { color: var(--muted); font-size: 11px; }
+    .metric-value { margin-top: 3px; font-family: var(--font-display); font-size: 24px; line-height: 1; letter-spacing: -.035em; }
+    .metric-meta { margin-top: 5px; color: var(--muted); font-size: 9px; }
+    .card { margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-1); overflow: hidden; }
+    .card-head { min-height: 62px; display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px; border-bottom: 1px solid var(--border); }
+    .section-icon { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 9px; background: color-mix(in srgb, var(--primary) 10%, var(--surface)); color: var(--primary); }
+    .section-icon svg { width: 17px; height: 17px; }
+    .section-copy { min-width: 0; }
+    .section-copy h2 { margin: 0; font-family: var(--font-display); font-size: 13px; letter-spacing: -.015em; }
+    .section-copy p { margin: 3px 0 0; color: var(--muted); font-size: 10px; }
+    .card-actions { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+    .button {
+      min-height: 36px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 13px;
+      border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 11px; font-weight: 650; cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease, color 150ms ease, transform 150ms ease;
+    }
+    .button:hover { border-color: color-mix(in srgb, var(--primary) 43%, var(--border)); background: var(--surface-soft); }
+    .button:focus-visible, .icon-button:focus-visible, .avatar-button:focus-visible, .chip:focus-visible, .prototype-switcher button:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 24%, transparent); outline-offset: 2px; }
+    .button svg { width: 15px; height: 15px; }
+    .primary-button { border-color: transparent; background: var(--primary); color: #fff; box-shadow: 0 3px 10px color-mix(in srgb, var(--primary) 22%, transparent); }
+    .primary-button:hover { border-color: transparent; background: color-mix(in srgb, var(--primary) 88%, #000); color: #fff; }
+    .danger-button { border-color: var(--danger); background: var(--danger); color: #fff; }
+    .danger-button:hover { border-color: #9c2f2f; background: #9c2f2f; color: #fff; }
+    .danger-ghost { border-color: color-mix(in srgb, var(--danger) 28%, var(--border)); color: var(--danger); }
+    .danger-ghost:hover { border-color: var(--danger); background: #fff5f5; color: var(--danger); }
+    .toolbar { min-height: 48px; display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-bottom: 1px solid var(--border); background: var(--surface-soft); }
+    .toolbar-label { margin-right: 3px; color: var(--muted); font-size: 10px; font-weight: 650; }
+    .chip { height: 30px; padding: 0 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--muted); font-size: 10px; font-weight: 600; cursor: pointer; }
+    .chip:hover, .chip.active { border-color: color-mix(in srgb, var(--primary) 46%, var(--border)); background: color-mix(in srgb, var(--primary) 7%, var(--surface)); color: var(--primary); }
+    .chip svg { width: 13px; height: 13px; vertical-align: -2px; }
+    .toolbar-spacer { margin-left: auto; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 11px; }
+    th { padding: 9px 14px; background: var(--surface-soft); color: var(--muted); font-size: 9px; font-weight: 700; text-align: left; border-bottom: 1px solid var(--border); }
+    td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr { transition: background-color 140ms ease; }
+    tbody tr:hover { background: color-mix(in srgb, var(--primary) 3.5%, var(--surface)); }
+    .item-title { font-weight: 650; font-size: 11px; }
+    .item-meta { margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 7px; font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .status svg { width: 12px; height: 12px; }
+    .status-draft { background: #eef2ff; color: #4338ca; }
+    .status-pending { background: #fff7e8; color: #8a530d; }
+    .status-approved { background: #e7f7f1; color: #126b4d; }
+    .status-online { background: #e7f7f1; color: #126b4d; }
+    .progress-track { min-width: 230px; display: flex; align-items: center; }
+    .progress-step { display: flex; align-items: center; color: var(--muted); font-size: 8px; white-space: nowrap; }
+    .progress-step::before { content: ""; width: 7px; height: 7px; margin-right: 4px; border: 2px solid var(--border); border-radius: 50%; background: var(--surface); }
+    .progress-step.done { color: var(--success); font-weight: 700; }
+    .progress-step.done::before { border-color: var(--success); background: var(--success); }
+    .progress-step.active { color: var(--primary); font-weight: 700; }
+    .progress-step.active::before { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 13%, transparent); }
+    .progress-line { width: 18px; height: 1px; margin: 0 5px; background: var(--border); }
+    .empty-state { min-height: 170px; display: grid; place-items: center; padding: 28px; text-align: center; }
+    .empty-content { max-width: 360px; }
+    .empty-icon { width: 48px; height: 48px; display: grid; place-items: center; margin: 0 auto 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-soft); color: var(--primary); }
+    .empty-icon svg { width: 23px; height: 23px; }
+    .empty-state h3 { margin: 0; font-family: var(--font-display); font-size: 13px; }
+    .empty-state p { margin: 6px 0 13px; color: var(--muted); font-size: 10px; }
+    .row-actions { display: flex; justify-content: flex-end; gap: 5px; }
+    .row-button { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--muted); cursor: pointer; }
+    .row-button:hover { border-color: color-mix(in srgb, var(--primary) 40%, var(--border)); color: var(--primary); }
+    .row-button.danger:hover { border-color: var(--danger); background: #fff5f5; color: var(--danger); }
+    .row-button svg { width: 14px; height: 14px; }
+
+    .login-screen { min-height: 100vh; display: grid; place-items: center; padding: 34px; background: var(--page); }
+    .login-shell { width: min(1020px, 100%); min-height: 620px; display: grid; grid-template-columns: 1.05fr .95fr; overflow: hidden; border: 1px solid var(--border); border-radius: calc(var(--radius) + 2px); background: var(--surface); box-shadow: var(--shadow-2); }
+    .brand-panel { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 46px; color: #fff; }
+    .brand-panel::after { content: ""; position: absolute; right: -100px; bottom: -120px; width: 340px; height: 340px; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; box-shadow: 0 0 0 46px rgba(255,255,255,.045), 0 0 0 92px rgba(255,255,255,.035); }
+    .login-brand { position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; }
+    .login-brand .brand-mark { width: 42px; height: 42px; }
+    .login-brand strong { font-family: var(--font-display); font-size: 16px; }
+    .login-brand span { display: block; margin-top: 2px; color: rgba(255,255,255,.72); font-size: 11px; }
+    .brand-message { position: relative; z-index: 1; max-width: 420px; }
+    .brand-message h2 { margin: 0; font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px); line-height: 1.16; letter-spacing: -.035em; }
+    .brand-message p { max-width: 380px; margin: 16px 0 0; color: rgba(255,255,255,.76); font-size: 13px; line-height: 1.7; }
+    .trust-list { position: relative; z-index: 1; display: grid; gap: 10px; }
+    .trust-row { display: flex; align-items: center; gap: 9px; color: rgba(255,255,255,.82); font-size: 11px; }
+    .trust-row svg { width: 16px; height: 16px; }
+    .login-card { display: flex; flex-direction: column; justify-content: center; padding: 58px; background: var(--surface); }
+    .login-card h1 { margin: 0; font-family: var(--font-display); font-size: 26px; letter-spacing: -.03em; }
+    .login-card > p { margin: 8px 0 28px; color: var(--muted); font-size: 12px; }
+    .field { margin-bottom: 17px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field label { display: block; margin-bottom: 7px; color: var(--text); font-size: 11px; font-weight: 650; }
+    .field input, .field select, .field textarea {
+      width: 100%; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-soft); color: var(--text); outline: 0;
+    }
+    .field input, .field select { height: 43px; padding: 0 12px; }
+    .field textarea { min-height: 88px; padding: 10px 12px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 13%, transparent); }
+    .field-help { margin-top: 6px; color: var(--muted); font-size: 9px; }
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 42px; }
+    .password-toggle { position: absolute; right: 5px; top: 5px; width: 33px; height: 33px; display: grid; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+    .password-toggle svg { width: 16px; height: 16px; }
+    .login-submit { width: 100%; min-height: 43px; margin-top: 5px; }
+    .login-meta { display: flex; justify-content: space-between; margin-top: 18px; color: var(--muted); font-size: 10px; }
+    .login-meta button { padding: 0; border: 0; background: transparent; color: var(--primary); cursor: pointer; }
+
+    dialog { width: min(680px, calc(100vw - 32px)); max-height: min(820px, calc(100vh - 36px)); padding: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: #fff; color: #172033; box-shadow: 0 24px 70px rgba(15,23,42,.24); }
+    dialog.small-dialog { width: min(470px, calc(100vw - 32px)); }
+    dialog::backdrop { background: rgba(15,23,42,.46); }
+    .dialog-head { position: relative; min-height: 70px; display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #e1e6ee; }
+    .dialog-head::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; }
+    .dialog-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 9px; background: #eef4ff; color: #0668e1; }
+    .dialog-icon.danger-icon { background: #fff0f0; color: var(--danger); }
+    .dialog-icon svg { width: 19px; height: 19px; }
+    .dialog-title h2 { margin: 0; font-family: var(--font-display); font-size: 15px; }
+    .dialog-title p { margin: 3px 0 0; color: #667085; font-size: 10px; }
+    .dialog-close { margin-left: auto; width: 34px; height: 34px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #667085; cursor: pointer; }
+    .dialog-close:hover { background: #f3f5f8; color: #172033; }
+    .dialog-close:focus-visible { outline: 3px solid rgba(6,104,225,.2); outline-offset: 2px; }
+    .dialog-close svg { width: 18px; height: 18px; }
+    .dialog-body { max-height: calc(100vh - 210px); overflow: auto; padding: 18px; }
+    .dialog-section { padding: 15px; border: 1px solid #e1e6ee; border-radius: 10px; background: #fff; }
+    .dialog-section + .dialog-section { margin-top: 12px; }
+    .dialog-section h3 { display: flex; align-items: center; gap: 7px; margin: 0 0 12px; font-family: var(--font-display); font-size: 12px; }
+    .dialog-section h3 svg { width: 16px; height: 16px; color: #0668e1; }
+    .dialog-notice { display: flex; gap: 9px; margin-bottom: 13px; padding: 10px 11px; border: 1px solid #c7d2fe; border-radius: 8px; background: #eef2ff; color: #3730a3; font-size: 10px; }
+    .dialog-notice svg { width: 16px; height: 16px; flex: 0 0 auto; }
+    .dialog-foot { min-height: 66px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 13px 18px; border-top: 1px solid #e1e6ee; background: #f8fafc; }
+    .danger-copy { padding: 4px 0 2px; color: #475467; font-size: 12px; line-height: 1.65; }
+    .danger-copy strong { color: #172033; }
+    .confirm-name { margin-top: 14px; padding: 10px 12px; border: 1px solid #f0c7c7; border-radius: 8px; background: #fff7f7; color: #8e2f2f; font-size: 11px; font-weight: 700; }
+
+    .prototype-switcher { position: fixed; right: 16px; bottom: 16px; z-index: 80; display: flex; align-items: center; gap: 4px; padding: 5px; border: 1px solid rgba(100,116,139,.25); border-radius: 10px; background: rgba(15,23,42,.92); box-shadow: 0 12px 28px rgba(15,23,42,.24); color: #fff; backdrop-filter: blur(10px); }
+    .prototype-switcher span { padding: 0 8px; color: #aeb8ca; font-size: 9px; }
+    .prototype-switcher button, .prototype-switcher a { min-height: 30px; display: inline-flex; align-items: center; gap: 6px; padding: 0 9px; border: 0; border-radius: 7px; background: transparent; color: #cbd5e1; font-size: 10px; text-decoration: none; cursor: pointer; }
+    .prototype-switcher button:hover, .prototype-switcher button.active, .prototype-switcher a:hover { background: rgba(255,255,255,.12); color: #fff; }
+    .prototype-switcher svg { width: 13px; height: 13px; }
+    .prototype-toast { position: fixed; left: 50%; bottom: 22px; z-index: 90; display: flex; align-items: center; gap: 8px; padding: 10px 13px; border-radius: 9px; background: #172033; color: #fff; box-shadow: var(--shadow-2); font-size: 11px; transform: translateX(-50%); }
+    .prototype-toast svg { width: 15px; height: 15px; color: #6ee7b7; }
+
+    __VARIANT_CSS__
+
+    @media (max-width: 1120px) {
+      .shell { grid-template-columns: 82px minmax(0, 1fr); }
+      .brand { justify-content: center; padding-inline: 12px; }
+      .brand-copy, .nav-label, .sidebar-section, .footer-admin strong, .text-action { display: none; }
+      .sidebar-scroll { padding-inline: 12px; }
+      .nav-link { justify-content: center; padding: 0; }
+      .sidebar-footer { display: grid; place-items: center; padding-inline: 12px; }
+      .global-search { width: min(320px, 32vw); }
+      .avatar-copy { display: none; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      body[data-variant="meta-balanced-elevated"] .metrics { gap: 0; }
+      body[data-variant="meta-balanced-elevated"] .metric:nth-child(2) { border-right: 0; }
+      body[data-variant="meta-balanced-elevated"] .metric:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+      .content { padding-inline: 20px; }
+      .login-card { padding: 42px; }
+      .brand-panel { padding: 38px; }
+    }
+
+    @media (max-width: 720px) {
+      body { overflow: auto; }
+      .screen, .shell { min-height: 100dvh; }
+      .shell { display: block; }
+      .sidebar { display: none; }
+      .mobilebar { min-height: 58px; display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: linear-gradient(90deg, var(--sidebar-start), var(--sidebar-end)); color: #fff; }
+      .mobilebar .brand-mark { width: 34px; height: 34px; }
+      .mobilebar strong { font-family: var(--font-display); font-size: 12px; }
+      .mobile-nav { display: flex; gap: 5px; margin-left: auto; }
+      .mobile-nav button { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.2); border-radius: 8px; background: rgba(255,255,255,.1); color: #fff; }
+      .mobile-nav svg { width: 16px; height: 16px; }
+      .topbar { min-height: auto; flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+      .page-identity { min-width: 0; flex: 1; }
+      .page-identity h1 { font-size: 17px; }
+      .global-search { order: 3; width: 100%; }
+      .topbar .popover-wrap, .topbar > .avatar-button { display: none; }
+      .content { padding: 14px 12px 78px; }
+      .notice { font-size: 10px; }
+      .metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .metric { min-height: 92px; grid-template-columns: 34px 1fr; gap: 8px; padding: 12px; }
+      .metric-icon { width: 32px; height: 32px; }
+      .metric-value { font-size: 20px; }
+      body[data-variant="meta-balanced-elevated"] .metrics { display: grid; }
+      .card-head { align-items: flex-start; flex-wrap: wrap; }
+      .card-actions { width: 100%; margin-left: 46px; }
+      .toolbar { overflow-x: auto; }
+      .toolbar-label { display: none; }
+      .toolbar-spacer { margin-left: 0; }
+      .login-screen { padding: 12px; }
+      .login-shell { min-height: calc(100dvh - 24px); grid-template-columns: 1fr; }
+      .brand-panel { display: none; }
+      .login-card { padding: 30px 22px; }
+      .field-row { grid-template-columns: 1fr; gap: 0; }
+      dialog { max-height: calc(100dvh - 20px); }
+      .dialog-body { max-height: calc(100dvh - 165px); }
+      .prototype-switcher { right: 8px; bottom: 8px; max-width: calc(100vw - 16px); }
+      .prototype-switcher span { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body data-variant="__SLUG__">
+  <div class="prototype-frame">
+    <section class="screen" data-screen="dashboard">
+      <div class="shell">
+        <aside class="sidebar" aria-label="Điều hướng chính">
+          <a class="brand" href="#" data-screen-target="dashboard" aria-label="Ads Meta Master">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none"><path d="M7 22V10c0-2.4 2.8-3.7 4.6-2.1L16 12l4.4-4.1C22.2 6.3 25 7.6 25 10v12" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 12v7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+            </span>
+            <span class="brand-copy"><strong>Ads Meta Master</strong><span>Meta Ads Automation</span></span>
+          </a>
+          <nav class="sidebar-scroll">
+            <div class="sidebar-section">Điều hướng</div>
+            <a class="nav-link" href="#"><i data-lucide="users-round"></i><span class="nav-label">Tài khoản Facebook</span></a>
+            <a class="nav-link" href="#"><i data-lucide="credit-card"></i><span class="nav-label">Ad accounts</span></a>
+            <a class="nav-link active-nav" href="#"><i data-lucide="layout-dashboard"></i><span class="nav-label">Campaigns</span></a>
+            <a class="nav-link" href="#"><i data-lucide="chart-no-axes-combined"></i><span class="nav-label">Báo cáo</span></a>
+            <div class="sidebar-section">Quản trị</div>
+            <a class="nav-link" href="#"><i data-lucide="server-cog"></i><span class="nav-label">Bot VPS</span></a>
+            <a class="nav-link" href="#"><i data-lucide="bot"></i><span class="nav-label">Hermes Agents</span></a>
+            <a class="nav-link" href="#"><i data-lucide="messages-square"></i><span class="nav-label">Hermes Dashboard</span></a>
+          </nav>
+          <footer class="sidebar-footer">
+            <div class="footer-admin"><span class="online-dot"></span><strong>Admin</strong></div>
+            <button class="text-action" type="button" data-dialog-open="password-dialog">Đổi mật khẩu</button>
+          </footer>
+        </aside>
+
+        <main class="app-main">
+          <div class="mobilebar">
+            <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M7 22V10c0-2.4 2.8-3.7 4.6-2.1L16 12l4.4-4.1C22.2 6.3 25 7.6 25 10v12" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 12v7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></span>
+            <strong>Ads Meta Master</strong>
+            <div class="mobile-nav"><button type="button" aria-label="Tìm kiếm"><i data-lucide="search"></i></button><button type="button" aria-label="Thông báo"><i data-lucide="bell"></i></button></div>
+          </div>
+          <header class="topbar">
+            <div class="page-identity">
+              <div class="breadcrumb"><i data-lucide="layout-dashboard"></i><span>Campaigns</span><i data-lucide="chevron-right"></i><span>Campaign drafts</span></div>
+              <h1>Campaign drafts</h1>
+            </div>
+            <label class="global-search">
+              <i data-lucide="search"></i>
+              <input type="search" data-global-search placeholder="Tìm campaign, ad account…" aria-label="Tìm kiếm toàn cục">
+              <span class="search-key">⌘ K</span>
+            </label>
+            <div class="popover-wrap">
+              <button class="icon-button" type="button" data-popover-toggle="notifications" aria-label="Thông báo"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+              <div class="popover hidden" data-popover="notifications">
+                <div class="popover-title">Thông báo gần đây</div>
+                <div class="popover-row"><i data-lucide="circle-check-big"></i><div><strong>Preflight đã hoàn tất</strong><span>Campaign “Nhận biết thương hiệu” · 4 phút trước</span></div></div>
+                <div class="popover-row"><i data-lucide="clock-3"></i><div><strong>Đang chờ duyệt nội bộ</strong><span>1 campaign draft cần kiểm tra</span></div></div>
+              </div>
+            </div>
+            <div class="popover-wrap">
+              <button class="avatar-button" type="button" data-popover-toggle="admin" aria-label="Mở menu Admin"><span class="avatar">A</span><span class="avatar-copy"><strong>Admin</strong><span>Owner workspace</span></span><i data-lucide="chevron-down"></i></button>
+              <div class="popover hidden" data-popover="admin">
+                <button class="popover-action" type="button" data-screen-target="login"><i data-lucide="log-in"></i> Xem giao diện đăng nhập</button>
+                <button class="popover-action" type="button" data-dialog-open="password-dialog"><i data-lucide="key-round"></i> Đổi mật khẩu</button>
+                <button class="popover-action" type="button"><i data-lucide="log-out"></i> Đăng xuất</button>
+              </div>
+            </div>
+            <button class="button primary-button" type="button" data-dialog-open="campaign-dialog"><i data-lucide="plus"></i>Tạo campaign draft</button>
+          </header>
+
+          <div class="content-pane">
+            <div class="content">
+              <div class="notice"><i data-lucide="shield-check"></i><div><strong>Không tự publish.</strong> Preflight chỉ đọc; Meta draft builder có thể click và điền Campaign/Ad Set/Ad nhưng luôn dừng trước nút Đăng.</div></div>
+
+              <section class="metrics" aria-label="Tổng quan Campaign drafts">
+                <article class="metric"><span class="metric-icon"><i data-lucide="credit-card"></i></span><div><div class="metric-label">Ad accounts</div><div class="metric-value">2</div><div class="metric-meta">1 account sẵn sàng</div></div></article>
+                <article class="metric"><span class="metric-icon"><i data-lucide="files"></i></span><div><div class="metric-label">Campaign drafts</div><div class="metric-value">6</div><div class="metric-meta">3 draft đang xử lý</div></div></article>
+                <article class="metric"><span class="metric-icon"><i data-lucide="clock-3"></i></span><div><div class="metric-label">Chờ duyệt</div><div class="metric-value">1</div><div class="metric-meta">Cần owner kiểm tra</div></div></article>
+                <article class="metric"><span class="metric-icon"><i data-lucide="badge-check"></i></span><div><div class="metric-label">Đã duyệt nội bộ</div><div class="metric-value">3</div><div class="metric-meta">Chưa publish lên Meta</div></div></article>
+              </section>
+
+              <section class="card">
+                <div class="card-head">
+                  <span class="section-icon"><i data-lucide="credit-card"></i></span>
+                  <div class="section-copy"><h2>Ad accounts</h2><p>Liên kết ad account với tài khoản Facebook và đơn vị tiền tệ.</p></div>
+                  <div class="card-actions"><button class="button" type="button"><i data-lucide="plus"></i>Thêm ad account</button></div>
+                </div>
+                <div class="table-scroll">
+                  <table>
+                    <thead><tr><th>Ad account</th><th>Tài khoản Facebook</th><th>Tiền tệ</th><th>Múi giờ</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                    <tbody>
+                      <tr data-search-row><td><div class="item-title">Lush Ads Main</div><div class="item-meta">act_2321387601366948</div></td><td>Stable Diffusion Page</td><td>USD</td><td>Asia/Ho_Chi_Minh</td><td><span class="status status-online"><i data-lucide="circle-check"></i>Sẵn sàng</span></td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Sửa ad account"><i data-lucide="pencil"></i></button><button class="row-button" type="button" aria-label="Xem chi tiết"><i data-lucide="arrow-up-right"></i></button></div></td></tr>
+                      <tr data-search-row><td><div class="item-title">Campaign Lab</div><div class="item-meta">act_981240010348211</div></td><td>Tài khoản Facebook đầu tiên</td><td>VND</td><td>Asia/Ho_Chi_Minh</td><td><span class="status status-pending"><i data-lucide="clock-3"></i>Cần xác minh</span></td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Sửa ad account"><i data-lucide="pencil"></i></button><button class="row-button" type="button" aria-label="Xem chi tiết"><i data-lucide="arrow-up-right"></i></button></div></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="card">
+                <div class="card-head">
+                  <span class="section-icon"><i data-lucide="layout-dashboard"></i></span>
+                  <div class="section-copy"><h2>Campaign drafts</h2><p>Soạn, duyệt, preflight và theo dõi checkpoint trước khi thao tác trên Meta.</p></div>
+                  <div class="card-actions"><button class="button primary-button" type="button" data-dialog-open="campaign-dialog"><i data-lucide="plus"></i>Tạo draft</button></div>
+                </div>
+                <div class="toolbar" aria-label="Bộ lọc campaign">
+                  <span class="toolbar-label">Trạng thái</span>
+                  <button class="chip active" type="button" data-filter="all">Tất cả 6</button>
+                  <button class="chip" type="button" data-filter="draft">Bản nháp 2</button>
+                  <button class="chip" type="button" data-filter="pending">Chờ duyệt 1</button>
+                  <button class="chip" type="button" data-filter="approved">Đã duyệt 3</button>
+                  <span class="toolbar-spacer"></span>
+                  <button class="chip" type="button"><i data-lucide="arrow-up-down"></i> Mới cập nhật</button>
+                  <button class="chip" type="button"><i data-lucide="sliders-horizontal"></i> Bộ lọc</button>
+                </div>
+                <div class="table-scroll">
+                  <table>
+                    <thead><tr><th>Campaign</th><th>Objective</th><th>Tiến trình</th><th>Trạng thái</th><th>Cập nhật</th><th>Thao tác</th></tr></thead>
+                    <tbody>
+                      <tr data-search-row data-status="draft"><td><div class="item-title">E2E Nhận biết — Stable Diffusion</div><div class="item-meta">Ad account: Lush Ads Main</div></td><td>Awareness</td><td><div class="progress-track"><span class="progress-step done">Campaign</span><span class="progress-line"></span><span class="progress-step active">Ad Set</span><span class="progress-line"></span><span class="progress-step">Ad</span><span class="progress-line"></span><span class="progress-step">Review</span></div></td><td><span class="status status-draft"><i data-lucide="file-pen-line"></i>Bản nháp</span></td><td>12 phút trước</td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Mở draft"><i data-lucide="arrow-up-right"></i></button><button class="row-button danger" type="button" data-dialog-open="danger-dialog" aria-label="Xóa bản nháp"><i data-lucide="trash-2"></i></button></div></td></tr>
+                      <tr data-search-row data-status="pending"><td><div class="item-title">Campaign Mức độ nhận biết mới</div><div class="item-meta">Ad account: Lush Ads Main</div></td><td>Awareness</td><td><div class="progress-track"><span class="progress-step done">Campaign</span><span class="progress-line"></span><span class="progress-step done">Ad Set</span><span class="progress-line"></span><span class="progress-step active">Ad</span><span class="progress-line"></span><span class="progress-step">Review</span></div></td><td><span class="status status-pending"><i data-lucide="clock-3"></i>Chờ duyệt</span></td><td>38 phút trước</td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Mở draft"><i data-lucide="arrow-up-right"></i></button><button class="row-button danger" type="button" data-dialog-open="danger-dialog" aria-label="Xóa bản nháp"><i data-lucide="trash-2"></i></button></div></td></tr>
+                      <tr data-search-row data-status="approved"><td><div class="item-title">Traffic — Landing Page Summer</div><div class="item-meta">Ad account: Campaign Lab</div></td><td>Traffic</td><td><div class="progress-track"><span class="progress-step done">Campaign</span><span class="progress-line"></span><span class="progress-step done">Ad Set</span><span class="progress-line"></span><span class="progress-step done">Ad</span><span class="progress-line"></span><span class="progress-step done">Review</span></div></td><td><span class="status status-approved"><i data-lucide="badge-check"></i>Đã duyệt nội bộ</span></td><td>Hôm qua</td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Mở draft"><i data-lucide="arrow-up-right"></i></button><button class="row-button danger" type="button" data-dialog-open="danger-dialog" aria-label="Xóa bản nháp"><i data-lucide="trash-2"></i></button></div></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="card">
+                <div class="card-head">
+                  <span class="section-icon"><i data-lucide="blocks"></i></span>
+                  <div class="section-copy"><h2>Meta resources</h2><p>Page, Instagram, Pixel/Dataset, Instant Form và App dùng exact-match trong Ads Manager.</p></div>
+                  <div class="card-actions"><button class="button" type="button"><i data-lucide="plus"></i>Thêm resource</button></div>
+                </div>
+                <div class="empty-state"><div class="empty-content"><div class="empty-icon"><i data-lucide="database-zap"></i></div><h3>Chưa có Meta resource</h3><p>Thêm resource sau khi bạn nhìn thấy đúng tên hoặc ID trong Ads Manager.</p><button class="button primary-button" type="button"><i data-lucide="plus"></i>Thêm resource</button></div></div>
+              </section>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen login-screen hidden" data-screen="login">
+      <div class="login-shell">
+        <aside class="brand-panel">
+          <div class="login-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M7 22V10c0-2.4 2.8-3.7 4.6-2.1L16 12l4.4-4.1C22.2 6.3 25 7.6 25 10v12" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 12v7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></span><div><strong>Ads Meta Master</strong><span>Meta Ads Automation</span></div></div>
+          <div class="brand-message"><h2>Kiểm soát campaign draft trước khi chạm tới Meta.</h2><p>Quản lý tài khoản, kiểm tra preflight và theo dõi từng checkpoint trong một workspace vận hành rõ ràng.</p></div>
+          <div class="trust-list"><div class="trust-row"><i data-lucide="shield-check"></i>Không tự publish campaign</div><div class="trust-row"><i data-lucide="lock-keyhole"></i>Phiên đăng nhập được bảo vệ</div><div class="trust-row"><i data-lucide="history"></i>Mọi thay đổi đều có audit trail</div></div>
+        </aside>
+        <main class="login-card">
+          <h1>Đăng nhập workspace</h1>
+          <p>Tiếp tục vào Ads Meta Master bằng tài khoản được cấp.</p>
+          <form data-prototype-form="login">
+            <div class="field"><label for="login-username">Tài khoản</label><input id="login-username" name="username" autocomplete="username" value="admin" required></div>
+            <div class="field"><label for="login-password">Mật khẩu</label><div class="password-wrap"><input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required><button class="password-toggle" type="button" data-password-toggle="login-password" aria-label="Hiện mật khẩu"><i data-lucide="eye"></i></button></div></div>
+            <button class="button primary-button login-submit" type="submit"><i data-lucide="log-in"></i>Đăng nhập</button>
+          </form>
+          <div class="login-meta"><span>Không có đăng ký công khai</span><button type="button" data-screen-target="dashboard">Quay lại prototype</button></div>
+        </main>
+      </div>
+    </section>
+  </div>
+
+  <dialog id="campaign-dialog">
+    <form data-prototype-form="campaign">
+      <header class="dialog-head"><span class="dialog-icon"><i data-lucide="file-plus-2"></i></span><div class="dialog-title"><h2>Tạo campaign draft</h2><p>Thiết lập spec trước khi chạy preflight hoặc Meta draft builder.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <div class="dialog-body">
+        <div class="dialog-notice"><i data-lucide="shield-check"></i><div><strong>Phạm vi an toàn:</strong> thao tác này chỉ tạo bản nháp nội bộ và không tự publish lên Meta.</div></div>
+        <section class="dialog-section"><h3><i data-lucide="badge-info"></i>Thông tin campaign</h3><div class="field-row"><div class="field"><label for="campaign-name">Tên campaign</label><input id="campaign-name" value="Awareness — August Launch" required></div><div class="field"><label for="campaign-objective">Objective</label><select id="campaign-objective"><option>Awareness</option><option>Traffic</option><option>Engagement</option><option>Leads</option><option>App promotion</option><option>Sales</option></select></div></div><div class="field"><label for="campaign-account">Ad account</label><select id="campaign-account"><option>Lush Ads Main · USD</option><option>Campaign Lab · VND</option></select><div class="field-help">Resource và asset sẽ được lọc theo đúng ad account.</div></div></section>
+        <section class="dialog-section"><h3><i data-lucide="wallet-cards"></i>Ngân sách và lịch chạy</h3><div class="field-row"><div class="field"><label for="campaign-budget">Ngân sách ngày</label><input id="campaign-budget" inputmode="decimal" value="50.00"></div><div class="field"><label for="campaign-currency">Tiền tệ</label><input id="campaign-currency" value="USD" readonly></div></div><div class="field"><label for="campaign-note">Ghi chú vận hành</label><textarea id="campaign-note">Dừng ở Review để owner kiểm tra trước khi tiếp tục.</textarea></div></section>
+      </div>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit"><i data-lucide="file-plus-2"></i>Tạo bản nháp</button></footer>
+    </form>
+  </dialog>
+
+  <dialog class="small-dialog" id="password-dialog">
+    <form data-prototype-form="password">
+      <header class="dialog-head"><span class="dialog-icon"><i data-lucide="key-round"></i></span><div class="dialog-title"><h2>Đổi mật khẩu</h2><p>Các phiên khác sẽ được đăng xuất sau khi cập nhật.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <div class="dialog-body"><div class="field"><label for="current-password">Mật khẩu hiện tại</label><input id="current-password" type="password" autocomplete="current-password" required></div><div class="field"><label for="new-password">Mật khẩu mới</label><input id="new-password" type="password" autocomplete="new-password" minlength="4" required><div class="field-help">Tối thiểu 4 ký tự. Prototype không gửi hoặc lưu mật khẩu.</div></div><div class="field"><label for="confirm-password">Nhập lại mật khẩu mới</label><input id="confirm-password" type="password" autocomplete="new-password" minlength="4" required></div></div>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit"><i data-lucide="check"></i>Cập nhật mật khẩu</button></footer>
+    </form>
+  </dialog>
+
+  <dialog class="small-dialog" id="danger-dialog">
+    <form data-prototype-form="danger">
+      <header class="dialog-head"><span class="dialog-icon danger-icon"><i data-lucide="triangle-alert"></i></span><div class="dialog-title"><h2>Xóa bản nháp?</h2><p>Hành động nguy hiểm luôn giữ màu đỏ.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <div class="dialog-body"><div class="danger-copy">Bản nháp sẽ bị xóa khỏi Ads Meta Master. Thao tác này <strong>không xóa campaign trên Meta</strong>, nhưng lịch sử chỉnh sửa chưa lưu sẽ không thể khôi phục.</div><div class="confirm-name">E2E Nhận biết — Stable Diffusion</div></div>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Giữ bản nháp</button><button class="button danger-button" type="submit"><i data-lucide="trash-2"></i>Xóa bản nháp</button></footer>
+    </form>
+  </dialog>
+
+  <nav class="prototype-switcher" aria-label="Điều khiển prototype">
+    <span>__LABEL__</span>
+    <button class="active" type="button" data-screen-target="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</button>
+    <button type="button" data-screen-target="login"><i data-lucide="log-in"></i>Đăng nhập</button>
+    <button type="button" data-dialog-open="campaign-dialog"><i data-lucide="gallery-horizontal-end"></i>Dialogs</button>
+    <a href="index.html"><i data-lucide="panel-top"></i>3 phương án</a>
+  </nav>
+  <div class="prototype-toast hidden" role="status" aria-live="polite"><i data-lucide="circle-check"></i><span></span></div>
+
+  <script>
+    (function () {
+      const screens = Array.from(document.querySelectorAll('[data-screen]'));
+      const screenButtons = Array.from(document.querySelectorAll('[data-screen-target]'));
+      const toast = document.querySelector('.prototype-toast');
+      const toastText = toast.querySelector('span');
+
+      function showToast(message) {
+        toastText.textContent = message;
+        toast.classList.remove('hidden');
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(function () { toast.classList.add('hidden'); }, 2400);
+      }
+
+      function setScreen(name) {
+        screens.forEach(function (screen) {
+          screen.classList.toggle('hidden', screen.getAttribute('data-screen') !== name);
+        });
+        document.querySelectorAll('.prototype-switcher [data-screen-target]').forEach(function (button) {
+          button.classList.toggle('active', button.getAttribute('data-screen-target') === name);
+        });
+        document.querySelectorAll('[data-popover]').forEach(function (popover) { popover.classList.add('hidden'); });
+      }
+
+      screenButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          setScreen(button.getAttribute('data-screen-target'));
+        });
+      });
+
+      document.querySelectorAll('[data-dialog-open]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const dialog = document.getElementById(button.getAttribute('data-dialog-open'));
+          if (dialog && !dialog.open) dialog.showModal();
+        });
+      });
+
+      document.querySelectorAll('[data-dialog-close]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const dialog = button.closest('dialog');
+          if (dialog) dialog.close();
+        });
+      });
+
+      document.querySelectorAll('dialog').forEach(function (dialog) {
+        dialog.addEventListener('click', function (event) {
+          if (event.target === dialog) dialog.close();
+        });
+      });
+
+      document.querySelectorAll('[data-prototype-form]').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          const type = form.getAttribute('data-prototype-form');
+          const messages = {
+            login: 'Đăng nhập prototype thành công — không có dữ liệu được gửi.',
+            campaign: 'Đã mô phỏng tạo campaign draft.',
+            password: 'Đã mô phỏng cập nhật mật khẩu.',
+            danger: 'Đã mô phỏng xóa bản nháp.'
+          };
+          const dialog = form.closest('dialog');
+          if (dialog) dialog.close();
+          if (type === 'login') setScreen('dashboard');
+          showToast(messages[type]);
+        });
+      });
+
+      document.querySelectorAll('[data-popover-toggle]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const name = button.getAttribute('data-popover-toggle');
+          document.querySelectorAll('[data-popover]').forEach(function (popover) {
+            const isTarget = popover.getAttribute('data-popover') === name;
+            popover.classList.toggle('hidden', !isTarget || !popover.classList.contains('hidden'));
+          });
+        });
+      });
+
+      document.addEventListener('click', function (event) {
+        if (!event.target.closest('.popover-wrap')) {
+          document.querySelectorAll('[data-popover]').forEach(function (popover) { popover.classList.add('hidden'); });
+        }
+      });
+
+      document.querySelectorAll('[data-filter]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          const filter = chip.getAttribute('data-filter');
+          document.querySelectorAll('[data-filter]').forEach(function (item) { item.classList.toggle('active', item === chip); });
+          document.querySelectorAll('[data-status]').forEach(function (row) {
+            row.classList.toggle('hidden', filter !== 'all' && row.getAttribute('data-status') !== filter);
+          });
+        });
+      });
+
+      const globalSearch = document.querySelector('[data-global-search]');
+      globalSearch.addEventListener('input', function () {
+        const query = globalSearch.value.trim().toLocaleLowerCase('vi');
+        document.querySelectorAll('[data-search-row]').forEach(function (row) {
+          row.classList.toggle('hidden', query.length > 0 && !row.textContent.toLocaleLowerCase('vi').includes(query));
+        });
+      });
+
+      document.querySelectorAll('[data-password-toggle]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const input = document.getElementById(button.getAttribute('data-password-toggle'));
+          const visible = input.type === 'text';
+          input.type = visible ? 'password' : 'text';
+          button.setAttribute('aria-label', visible ? 'Hiện mật khẩu' : 'Ẩn mật khẩu');
+          button.innerHTML = visible ? '<i data-lucide="eye"></i>' : '<i data-lucide="eye-off"></i>';
+          lucide.createIcons();
+        });
+      });
+
+      lucide.createIcons();
+    }());
+  </script>
+</body>
+</html>
+'''
+
+
+INDEX_DOCUMENT = r'''<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Ads Meta Master — Chọn phương án UI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 32px; background: #f3f6fb; color: #172033; font-family: Inter, sans-serif; }
+    main { width: min(1040px, 100%); }
+    h1 { margin: 0; font-family: "Be Vietnam Pro", sans-serif; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.04em; }
+    .intro { max-width: 720px; margin: 10px 0 28px; color: #667085; line-height: 1.7; }
+    .directions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .direction-link { min-height: 280px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #d8e0eb; border-radius: 12px; background: #fff; color: inherit; text-decoration: none; box-shadow: 0 2px 8px rgba(15,23,42,.06); transition: border-color 160ms ease, box-shadow 160ms ease; }
+    .direction-link:hover { border-color: #9ab5dd; box-shadow: 0 10px 26px rgba(15,23,42,.1); }
+    .preview { height: 92px; background: var(--preview); border-bottom: 1px solid rgba(255,255,255,.2); }
+    .direction-copy { display: flex; flex: 1; flex-direction: column; padding: 20px; }
+    .option { color: #667085; font-size: 11px; font-weight: 600; }
+    h2 { margin: 8px 0 0; font-family: "Be Vietnam Pro", sans-serif; font-size: 18px; letter-spacing: -.025em; }
+    p { margin: 10px 0 20px; color: #667085; font-size: 13px; line-height: 1.6; }
+    .open { margin-top: auto; color: #0668e1; font-size: 12px; font-weight: 700; }
+    .note { margin-top: 18px; color: #667085; font-size: 11px; }
+    @media (max-width: 820px) { .directions { grid-template-columns: 1fr; } .direction-link { min-height: 220px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Chọn hướng giao diện để xem</h1>
+    <p class="intro">Ba prototype dùng cùng một cấu trúc Dashboard, Login và Dialogs. Hãy so sánh độ đậm màu, chiều sâu, khả năng đọc dữ liệu và cảm giác tổng thể — chưa phương án nào được áp dụng vào app thật.</p>
+    <section class="directions">
+      __DIRECTION_LINKS__
+    </section>
+    <div class="note">Mỗi prototype có thanh chuyển nhanh ở góc phải dưới để mở Dashboard, Đăng nhập và Dialogs.</div>
+  </main>
+</body>
+</html>
+'''
+
+
+def _css_vars(variant: Variant) -> dict[str, str]:
+    return {
+        "__SLUG__": variant.slug,
+        "__NAME__": variant.name,
+        "__LABEL__": variant.label,
+        "__PAGE__": variant.page,
+        "__SURFACE__": variant.surface,
+        "__SURFACE_SOFT__": variant.surface_soft,
+        "__BORDER__": variant.border,
+        "__TEXT__": variant.text,
+        "__MUTED__": variant.muted,
+        "__SIDEBAR_START__": variant.sidebar_start,
+        "__SIDEBAR_MID__": variant.sidebar_mid,
+        "__SIDEBAR_END__": variant.sidebar_end,
+        "__SIDEBAR_TEXT__": variant.sidebar_text,
+        "__SIDEBAR_MUTED__": variant.sidebar_muted,
+        "__PRIMARY__": variant.primary,
+        "__PRIMARY_2__": variant.primary_2,
+        "__SHADOW_1__": variant.shadow_1,
+        "__SHADOW_2__": variant.shadow_2,
+        "__RADIUS__": variant.radius,
+        "__VARIANT_CSS__": variant.variant_css.strip(),
+    }
+
+
+def render_variant(slug: str) -> str:
+    variant = VARIANTS[slug]
+    html = DOCUMENT
+    for marker, value in _css_vars(variant).items():
+        html = html.replace(marker, value)
+    return html
+
+
+def render_index() -> str:
+    links = []
+    for index, variant in enumerate(VARIANTS.values(), start=1):
+        preview = (
+            f"linear-gradient(135deg,{variant.sidebar_start},"
+            f"{variant.sidebar_mid} 54%,{variant.sidebar_end})"
+        )
+        links.append(
+            f'''<a class="direction-link" href="{variant.slug}.html" style="--preview:{preview}">
+        <div class="preview"></div>
+        <div class="direction-copy"><span class="option">Phương án {index}</span><h2>{variant.name}</h2><p>{variant.summary}</p><span class="open">Mở prototype →</span></div>
+      </a>'''
+        )
+    return INDEX_DOCUMENT.replace("__DIRECTION_LINKS__", "\n      ".join(links))
+
+
+def build(output_dir: Path = OUTPUT_DIR) -> list[Path]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    files = {"index.html": render_index()}
+    files.update({f"{slug}.html": render_variant(slug) for slug in VARIANTS})
+    written = []
+    for filename, content in files.items():
+        path = output_dir / filename
+        path.write_text(content, encoding="utf-8", newline="\n")
+        written.append(path)
+    return written
+
+
+if __name__ == "__main__":
+    for generated in build():
+        print(generated.relative_to(ROOT))

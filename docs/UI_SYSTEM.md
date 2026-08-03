@@ -73,3 +73,10 @@
 - Copy `Đã duyệt nội bộ` phải được dùng trong Phase 2 để không tạo ấn tượng campaign đã chạy trên Meta.
 - Copy Phase 3 phải nói rõ `preflight read-only`, `không click` và `không publish`.
 - Copy Phase 4 phải dùng `Tạo Meta draft`, `Cần người dùng` và `Không tự publish`; không gọi draft là campaign đang chạy.
+
+## Candidate Prototype Directions
+
+- Ba prototype so sánh tại `docs/ui-prototypes/`: `Meta Gradient Vibrant`, `Meta Balanced Elevated` và `Meta Dark Sidebar + Glass`.
+- Cả ba giữ sidebar-left/main-content, dùng cùng component anatomy cho Dashboard, Login, native dialogs, tables, empty state, search/filter, popovers và campaign checkpoint progress.
+- Đây là candidate để user chọn, chưa phải canonical production styling. Không áp dụng token, layout hoặc interaction prototype vào Jinja templates cho đến khi có lựa chọn rõ ràng.
+- Prototype không gọi API, không dùng production data và không nhúng password mẫu; danger/destructive giữ `#B83A3A` ở cả ba hướng.
