@@ -54,6 +54,7 @@
     .prototype-frame { min-height: 100vh; }
     .screen { min-height: 100vh; }
     .shell {
+      height: 100vh;
       min-height: 100vh;
       display: grid;
       grid-template-columns: 248px minmax(0, 1fr);
@@ -128,23 +129,19 @@
     .active-nav { color: #fff; font-weight: 650; }
     .sidebar-footer {
       margin-top: auto;
-      padding: 15px 18px 18px;
+      padding: 12px;
       border-top: 1px solid rgba(255,255,255,.11);
     }
-    .footer-admin { display: flex; align-items: center; gap: 10px; }
-    .online-dot { width: 8px; height: 8px; border-radius: 50%; background: #4fd1a1; box-shadow: 0 0 0 3px rgba(79,209,161,.13); }
-    .footer-admin strong { font-family: var(--font-display); font-size: 12px; }
-    .text-action {
-      margin: 6px 0 0 18px;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: var(--sidebar-muted);
-      font-size: 11px;
-      text-decoration: underline;
-      cursor: pointer;
+    .sidebar-account-button {
+      width: 100%; min-height: 50px; display: flex; align-items: center; gap: 10px; padding: 7px 9px;
+      border: 0; border-radius: 9px; background: transparent; color: inherit; text-align: left; cursor: pointer;
+      transition: background-color 150ms ease;
     }
-
+    .sidebar-account-button:hover { background: rgba(255,255,255,.09); }
+    .sidebar-account-button > svg { width: 14px; height: 14px; margin-left: auto; color: var(--sidebar-muted); }
+    .sidebar-account-copy { min-width: 0; line-height: 1.25; }
+    .sidebar-account-copy strong { display: block; font-family: var(--font-display); font-size: 12px; }
+    .sidebar-account-copy span { display: block; margin-top: 2px; color: var(--sidebar-muted); font-size: 9px; }
     .app-main { min-width: 0; min-height: 100vh; display: flex; flex-direction: column; }
     .mobilebar { display: none; }
     .topbar {
@@ -176,30 +173,25 @@
     }
     .global-search > svg { position: absolute; z-index: 1; left: 12px; top: 50%; width: 16px; height: 16px; color: var(--muted); transform: translateY(-50%); }
     .global-search input {
-      width: 100%; height: 40px; padding: 0 42px 0 36px;
+      width: 100%; height: 40px; padding: 0 12px 0 36px;
       border: 1px solid var(--border); border-radius: 9px; background: var(--surface-soft); color: var(--text); outline: none;
     }
     .global-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent); background: var(--surface); }
-    .search-key { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 10px; border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px; }
-    .icon-button, .avatar-button {
+    .icon-button {
       height: 40px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); cursor: pointer;
       transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
     }
     .icon-button { position: relative; width: 40px; display: inline-grid; place-items: center; }
     .icon-button svg { width: 17px; height: 17px; }
-    .icon-button:hover, .avatar-button:hover { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); background: var(--surface-soft); }
+    .icon-button:hover { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); background: var(--surface-soft); }
     .notification-dot { position: absolute; right: 8px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 2px var(--surface); }
-    .avatar-button { display: flex; align-items: center; gap: 8px; padding: 0 9px 0 5px; }
     .avatar { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: color-mix(in srgb, var(--primary) 13%, var(--surface)); color: var(--primary); font-weight: 700; }
-    .avatar-copy { text-align: left; line-height: 1.2; }
-    .avatar-copy strong { display: block; font-size: 11px; }
-    .avatar-copy span { color: var(--muted); font-size: 9px; }
-    .avatar-button > svg { width: 14px; height: 14px; color: var(--muted); }
     .popover-wrap { position: relative; }
     .popover {
       position: absolute; right: 0; top: calc(100% + 9px); z-index: 20; width: 260px; padding: 8px;
       border: 1px solid var(--border); border-radius: 11px; background: #fff; box-shadow: var(--shadow-2); color: #172033;
     }
+    .sidebar-account-popover { top: auto; right: 12px; bottom: calc(100% + 8px); left: 12px; width: auto; min-width: 220px; }
     .popover-title { padding: 8px 9px 7px; font-family: var(--font-display); font-size: 12px; border-bottom: 1px solid #e7ebf1; }
     .popover-row { display: flex; gap: 10px; padding: 10px 9px; border-radius: 8px; font-size: 11px; }
     .popover-row:hover { background: #f6f8fb; }
@@ -212,13 +204,6 @@
 
     .content-pane { min-height: 0; flex: 1; overflow: auto; background: var(--page); }
     .content { width: min(1420px, 100%); margin: 0 auto; padding: 22px 26px 42px; }
-    .notice {
-      display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; padding: 11px 13px;
-      border: 1px solid color-mix(in srgb, var(--attention) 24%, var(--border)); border-radius: 10px;
-      background: color-mix(in srgb, var(--attention) 7%, var(--surface)); color: #3730a3; font-size: 11px;
-    }
-    .notice svg { width: 17px; height: 17px; flex: 0 0 auto; }
-    .notice strong { font-weight: 700; }
     .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
     .metric {
       --metric-accent: var(--primary);
@@ -248,7 +233,7 @@
       transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease, color 150ms ease, transform 150ms ease;
     }
     .button:hover { border-color: color-mix(in srgb, var(--primary) 43%, var(--border)); background: var(--surface-soft); }
-    .button:focus-visible, .icon-button:focus-visible, .avatar-button:focus-visible, .chip:focus-visible, .prototype-switcher button:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 24%, transparent); outline-offset: 2px; }
+    .button:focus-visible, .icon-button:focus-visible, .sidebar-account-button:focus-visible, .chip:focus-visible, .prototype-switcher button:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 24%, transparent); outline-offset: 2px; }
     .button svg { width: 15px; height: 15px; }
     .primary-button { border-color: transparent; background: var(--primary); color: #fff; box-shadow: 0 3px 10px color-mix(in srgb, var(--primary) 22%, transparent); }
     .primary-button:hover { border-color: transparent; background: color-mix(in srgb, var(--primary) 88%, #000); color: #fff; }
@@ -336,7 +321,6 @@
     dialog.small-dialog { width: min(470px, calc(100vw - 32px)); }
     dialog::backdrop { background: rgba(15,23,42,.46); }
     .dialog-head { position: relative; min-height: 70px; display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #e1e6ee; }
-    .dialog-head::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; }
     .dialog-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 9px; background: #eef4ff; color: #0668e1; }
     .dialog-icon.danger-icon { background: #fff0f0; color: var(--danger); }
     .dialog-icon svg { width: 19px; height: 19px; }
@@ -351,8 +335,6 @@
     .dialog-section + .dialog-section { margin-top: 12px; }
     .dialog-section h3 { display: flex; align-items: center; gap: 7px; margin: 0 0 12px; font-family: var(--font-display); font-size: 12px; }
     .dialog-section h3 svg { width: 16px; height: 16px; color: #0668e1; }
-    .dialog-notice { display: flex; gap: 9px; margin-bottom: 13px; padding: 10px 11px; border: 1px solid #c7d2fe; border-radius: 8px; background: #eef2ff; color: #3730a3; font-size: 10px; }
-    .dialog-notice svg { width: 16px; height: 16px; flex: 0 0 auto; }
     .dialog-foot { min-height: 66px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 13px 18px; border-top: 1px solid #e1e6ee; background: #f8fafc; }
     .danger-copy { padding: 4px 0 2px; color: #475467; font-size: 12px; line-height: 1.65; }
     .danger-copy strong { color: #172033; }
@@ -402,17 +384,17 @@ body[data-variant="meta-balanced-elevated"] .active-nav {
 body[data-variant="meta-balanced-elevated"] .brand-panel {
   background: linear-gradient(155deg, #1e293b, #334155 70%, #0668e1);
 }
-body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #0668e1; }
 
     @media (max-width: 1120px) {
       .shell { grid-template-columns: 82px minmax(0, 1fr); }
       .brand { justify-content: center; padding-inline: 12px; }
-      .brand-copy, .nav-label, .sidebar-section, .footer-admin strong, .text-action { display: none; }
+      .brand-copy, .nav-label, .sidebar-section, .sidebar-account-copy, .sidebar-account-button > svg { display: none; }
       .sidebar-scroll { padding-inline: 12px; }
       .nav-link { justify-content: center; padding: 0; }
       .sidebar-footer { display: grid; place-items: center; padding-inline: 12px; }
+      .sidebar-account-button { width: 50px; justify-content: center; padding-inline: 0; }
+      .sidebar-account-popover { top: auto; left: calc(100% + 8px); right: auto; bottom: 12px; width: 230px; }
       .global-search { width: min(320px, 32vw); }
-      .avatar-copy { display: none; }
       .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       body[data-variant="meta-balanced-elevated"] .metrics { gap: 0; }
       body[data-variant="meta-balanced-elevated"] .metric:nth-child(2) { border-right: 0; }
@@ -424,7 +406,8 @@ body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #
 
     @media (max-width: 720px) {
       body { overflow: auto; }
-      .screen, .shell { min-height: 100dvh; }
+      .screen { min-height: 100dvh; }
+      .shell { height: auto; min-height: 100dvh; }
       .shell { display: block; }
       .sidebar { display: none; }
       .mobilebar { min-height: 58px; display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: linear-gradient(90deg, var(--sidebar-start), var(--sidebar-end)); color: #fff; }
@@ -437,9 +420,8 @@ body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #
       .page-identity { min-width: 0; flex: 1; }
       .page-identity h1 { font-size: 17px; }
       .global-search { order: 3; width: 100%; }
-      .topbar .popover-wrap, .topbar > .avatar-button { display: none; }
+      .topbar .popover-wrap { display: none; }
       .content { padding: 14px 12px 78px; }
-      .notice { font-size: 10px; }
       .metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
       .metric { min-height: 92px; grid-template-columns: 34px 1fr; gap: 8px; padding: 12px; }
       .metric-icon { width: 32px; height: 32px; }
@@ -488,9 +470,17 @@ body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #
             <a class="nav-link" href="#"><i data-lucide="bot"></i><span class="nav-label">Hermes Agents</span></a>
             <a class="nav-link" href="#"><i data-lucide="messages-square"></i><span class="nav-label">Hermes Dashboard</span></a>
           </nav>
-          <footer class="sidebar-footer">
-            <div class="footer-admin"><span class="online-dot"></span><strong>Admin</strong></div>
-            <button class="text-action" type="button" data-dialog-open="password-dialog">Đổi mật khẩu</button>
+          <footer class="sidebar-footer popover-wrap">
+            <button class="sidebar-account-button" type="button" data-popover-toggle="admin" aria-label="Mở menu Admin">
+              <span class="avatar">A</span>
+              <span class="sidebar-account-copy"><strong>Admin</strong><span>Tài khoản</span></span>
+              <i data-lucide="chevron-up"></i>
+            </button>
+            <div class="popover sidebar-account-popover hidden" data-popover="admin">
+              <button class="popover-action" type="button" data-screen-target="login"><i data-lucide="log-in"></i> Xem giao diện đăng nhập</button>
+              <button class="popover-action" type="button" data-dialog-open="password-dialog"><i data-lucide="key-round"></i> Đổi mật khẩu</button>
+              <button class="popover-action" type="button"><i data-lucide="log-out"></i> Đăng xuất</button>
+            </div>
           </footer>
         </aside>
 
@@ -508,7 +498,6 @@ body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #
             <label class="global-search">
               <i data-lucide="search"></i>
               <input type="search" data-global-search placeholder="Tìm campaign, ad account…" aria-label="Tìm kiếm toàn cục">
-              <span class="search-key">⌘ K</span>
             </label>
             <div class="popover-wrap">
               <button class="icon-button" type="button" data-popover-toggle="notifications" aria-label="Thông báo"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
@@ -518,21 +507,11 @@ body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #
                 <div class="popover-row"><i data-lucide="clock-3"></i><div><strong>Đang chờ duyệt nội bộ</strong><span>1 campaign draft cần kiểm tra</span></div></div>
               </div>
             </div>
-            <div class="popover-wrap">
-              <button class="avatar-button" type="button" data-popover-toggle="admin" aria-label="Mở menu Admin"><span class="avatar">A</span><span class="avatar-copy"><strong>Admin</strong><span>Owner workspace</span></span><i data-lucide="chevron-down"></i></button>
-              <div class="popover hidden" data-popover="admin">
-                <button class="popover-action" type="button" data-screen-target="login"><i data-lucide="log-in"></i> Xem giao diện đăng nhập</button>
-                <button class="popover-action" type="button" data-dialog-open="password-dialog"><i data-lucide="key-round"></i> Đổi mật khẩu</button>
-                <button class="popover-action" type="button"><i data-lucide="log-out"></i> Đăng xuất</button>
-              </div>
-            </div>
             <button class="button primary-button" type="button" data-dialog-open="campaign-dialog"><i data-lucide="plus"></i>Tạo campaign draft</button>
           </header>
 
           <div class="content-pane">
             <div class="content">
-              <div class="notice"><i data-lucide="shield-check"></i><div><strong>Không tự publish.</strong> Preflight chỉ đọc; Meta draft builder có thể click và điền Campaign/Ad Set/Ad nhưng luôn dừng trước nút Đăng.</div></div>
-
               <section class="metrics" aria-label="Tổng quan Campaign drafts">
                 <article class="metric"><span class="metric-icon"><i data-lucide="credit-card"></i></span><div><div class="metric-label">Ad accounts</div><div class="metric-value">2</div><div class="metric-meta">1 account sẵn sàng</div></div></article>
                 <article class="metric"><span class="metric-icon"><i data-lucide="files"></i></span><div><div class="metric-label">Campaign drafts</div><div class="metric-value">6</div><div class="metric-meta">3 draft đang xử lý</div></div></article>
@@ -624,7 +603,6 @@ body[data-variant="meta-balanced-elevated"] .dialog-head::before { background: #
     <form data-prototype-form="campaign">
       <header class="dialog-head"><span class="dialog-icon"><i data-lucide="file-plus-2"></i></span><div class="dialog-title"><h2>Tạo campaign draft</h2><p>Thiết lập spec trước khi chạy preflight hoặc Meta draft builder.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
       <div class="dialog-body">
-        <div class="dialog-notice"><i data-lucide="shield-check"></i><div><strong>Phạm vi an toàn:</strong> thao tác này chỉ tạo bản nháp nội bộ và không tự publish lên Meta.</div></div>
         <section class="dialog-section"><h3><i data-lucide="badge-info"></i>Thông tin campaign</h3><div class="field-row"><div class="field"><label for="campaign-name">Tên campaign</label><input id="campaign-name" value="Awareness — August Launch" required></div><div class="field"><label for="campaign-objective">Objective</label><select id="campaign-objective"><option>Awareness</option><option>Traffic</option><option>Engagement</option><option>Leads</option><option>App promotion</option><option>Sales</option></select></div></div><div class="field"><label for="campaign-account">Ad account</label><select id="campaign-account"><option>Lush Ads Main · USD</option><option>Campaign Lab · VND</option></select><div class="field-help">Resource và asset sẽ được lọc theo đúng ad account.</div></div></section>
         <section class="dialog-section"><h3><i data-lucide="wallet-cards"></i>Ngân sách và lịch chạy</h3><div class="field-row"><div class="field"><label for="campaign-budget">Ngân sách ngày</label><input id="campaign-budget" inputmode="decimal" value="50.00"></div><div class="field"><label for="campaign-currency">Tiền tệ</label><input id="campaign-currency" value="USD" readonly></div></div><div class="field"><label for="campaign-note">Ghi chú vận hành</label><textarea id="campaign-note">Dừng ở Review để owner kiểm tra trước khi tiếp tục.</textarea></div></section>
       </div>

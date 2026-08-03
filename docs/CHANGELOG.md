@@ -262,3 +262,10 @@
 - Changed: Bỏ giới hạn content `1420px` của phương án được chọn; panel giãn hết main column với gutter `20px` desktop/tablet và `12px` mobile.
 - Verified: Regression test fail trên fixed-width cũ rồi pass; browser ở `1920×970` đo panel rộng `1632px`, cách hai mép main `20px`, không overflow. Mobile `390×844` giữ panel `351px`, gutter `12px`, không overflow và console sạch.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-03 - Tinh gọn navigation và dialog Meta Light Focus
+
+- Changed: Bỏ safety banner ở dashboard lẫn campaign dialog và badge phím tắt search; chuyển Admin xuống footer sidebar, selected navigation sang Meta blue `#0866FF` đồng bộ primary button; bỏ accent line trên đầu toàn bộ dialog nhưng giữ action `Tạo bản nháp`, workflow dừng ở Review và danger red.
+- Affected: Prototype generator, ba HTML generated, contract tests, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
+- Verified: `70 passed`, Python compile và diff check sạch; browser local tại `1047×910` xác nhận shell/footer nằm trọn viewport, account popover mở lên và không tràn, modal không còn banner/top accent, page không overflow ngang và console không có log lỗi.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

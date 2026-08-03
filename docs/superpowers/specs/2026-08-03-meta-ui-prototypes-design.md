@@ -22,14 +22,15 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 - Each file uses `lang="vi"`, `<meta charset="UTF-8">`, `Be Vietnam Pro` for display text, `Inter` for dense controls/data, and Lucide icons through the pinned CDN URL.
 - A compact prototype switcher exposes three review states without page reload: `Dashboard`, `Đăng nhập`, and `Dialogs`.
 - Dashboard content uses the real Ads Meta Master information architecture: Facebook accounts, Ad accounts, Campaigns, Báo cáo, Bot VPS, Hermes Agents, and Hermes Dashboard.
-- Dashboard sample content is static and explicitly non-production. It shows a guardrail banner, four operational metrics, campaign/ad-account tables, status badges, an empty resource state, and clear row actions.
+- Dashboard sample content is static and explicitly non-production. It shows four operational metrics, campaign/ad-account tables, status badges, an empty resource state, and clear row actions without repeated safety banners.
 - The existing left-sidebar plus main-content architecture is preserved. The sidebar becomes denser and more explicit through Lucide icons and the section labels `Điều hướng` and `Quản trị`; no top-navigation redesign is introduced.
-- The topbar adds a compact breadcrumb, global search field, notification bell, and concise Admin menu so the shell can be evaluated as a complete product system.
+- The topbar adds a compact breadcrumb, global search field without a decorative shortcut badge, and notification bell. The concise Admin menu lives at the bottom of the sidebar so account controls have one stable home.
 - Campaign tables add useful filter/sort chips, literal status pills, and one compact `Campaign → Ad Set → Ad → Review` progress treatment. No fake chart or decorative sparkline is added.
 - Dialog coverage includes:
   - a structured `Tạo campaign draft` form dialog;
   - the shared `Đổi mật khẩu` dialog;
   - a destructive confirmation dialog where danger remains red.
+- Dialog headers use a simple bottom divider and no decorative top accent line; campaign forms do not add an extra safety-banner block.
 - Login coverage includes username/password, explicit sign-in action, a restrained product value panel, and no public-signup affordance.
 - The custom Ads Meta Master monogram is used instead of an official Meta or Facebook logo.
 - Responsive behavior is evaluated at desktop `1440×900`, tablet `1024×768`, and mobile `390×844`.
@@ -42,7 +43,7 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 - Metrics use four separate raised tiles with narrow color accents and small Lucide icons.
 - Header uses a light translucent surface; cards use shallow shadows and one controlled hover lift.
 - Login uses a vivid brand panel beside a high-contrast white form.
-- Dialogs use a soft gradient header accent but a solid readable body.
+- Dialogs keep a solid readable body and a plain header without an ornamental accent line.
 
 ## Direction B — Meta Balanced Elevated
 
@@ -56,12 +57,12 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 ## Direction C — Meta Light Focus (user-selected refinement)
 
 - The user selected Direction C on 2026-08-03, then requested a calmer Meta-style light shell while preserving its uncluttered structure.
-- Sidebar uses solid white with a soft gray-blue border, dark text, and a pale-blue selected row; the custom monogram uses a `#0866FF` tile with a white glyph.
+- Sidebar uses solid white with a soft gray-blue border and dark text; the selected row uses the same solid Meta blue `#0866FF` as primary actions, with white text and a restrained shadow. The custom monogram uses a matching `#0866FF` tile with a white glyph.
 - Main canvas uses `#F5F7FA`, opaque white surfaces, shallow neutral shadows, and solid `#0866FF` primary actions.
 - On desktop and tablet, the workspace is fluid rather than centered in a fixed `max-width`: panels use the full main-column width with a `20px` horizontal gutter, matching the denser YouTube control-plane reference. Mobile retains a `12px` gutter.
 - Metrics keep Direction C's separate-tile composition but remove glass, glow, and decorative background haze.
 - Login intentionally borrows Direction A's `#0668E1 → #8B5CF6 → #EC4899` identity panel so authentication does not feel visually empty.
-- Dialog bodies remain opaque and stable; destructive actions remain `#B83A3A` and the backdrop does not use blur.
+- Dialog bodies remain opaque and stable; headers have no top accent line, destructive actions remain `#B83A3A`, and the backdrop does not use blur.
 - The legacy slug `meta-dark-sidebar-glass` is retained so the existing local review URL remains stable during selection.
 
 ## Interaction And Accessibility

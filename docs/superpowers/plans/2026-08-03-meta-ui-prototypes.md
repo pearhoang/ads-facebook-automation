@@ -170,3 +170,7 @@
 - [x] **Step 5: Expand selected-direction panels to the main-column edges**
 
   Replace the centered `1420px` content cap with a fluid workspace for Meta Light Focus only. Keep `20px` desktop/tablet gutters and `12px` mobile gutters, then verify at `1920×970` and `390×844` with no horizontal page overflow.
+
+- [x] **Step 6: Simplify navigation, account controls, and dialog chrome**
+
+  Remove the persistent dashboard safety banner, campaign-dialog safety banner, and search shortcut badge; move the Admin popover to a viewport-pinned sidebar footer; change the selected Direction C nav item to the same solid Meta blue as primary actions with white text; remove decorative top accent lines from every dialog while retaining semantic danger red. Verify the collapsed-sidebar popover stays inside a `1047×910` viewport.

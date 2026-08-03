@@ -146,3 +146,30 @@ def test_selected_direction_uses_meta_light_shell_and_vibrant_login() -> None:
     assert "width: 100%" in html
     assert "max-width: none" in html
     assert "padding-inline: 20px" in html
+
+
+def test_selected_workspace_removes_decorative_chrome_and_uses_sidebar_account() -> None:
+    """The selected shell must stay product-like without banner or topbar account clutter."""
+
+    html = render_variant("meta-dark-sidebar-glass").lower()
+
+    assert '<div class="notice">' not in html
+    assert 'class="search-key"' not in html
+    assert '<button class="avatar-button"' not in html
+    assert 'class="sidebar-account-button"' in html
+    assert 'class="popover sidebar-account-popover hidden"' in html
+    assert 'data-popover-toggle="admin"' in html
+    assert 'class="dialog-notice"' not in html
+    assert "background: #0866ff" in html
+    assert "box-shadow: inset 3px 0 0 #0866ff" not in html
+    assert "dialog-head::before" not in html
+
+
+def test_sidebar_account_stays_inside_the_viewport_shell() -> None:
+    """Letting the desktop shell grow with content would push the account footer off-screen."""
+
+    html = render_variant("meta-dark-sidebar-glass").lower()
+
+    assert "height: 100vh" in html
+    assert ".shell { height: auto; min-height: 100dvh; }" in html
+    assert ".sidebar-account-popover { top: auto" in html

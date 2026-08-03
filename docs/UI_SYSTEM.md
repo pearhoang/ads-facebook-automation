@@ -37,7 +37,7 @@
 - Phase 7 đặt `Meta resources` và `Creative assets` thành hai registry table riêng; resource mới phải hiển thị `Chưa xác minh`, asset hiển thị loại, dung lượng và SHA-256.
 - Campaign form chọn Page/Dataset/Form/App/asset từ registry theo ad account, không cho nhập label rời rạc rồi suy đoán.
 - Job `Cần người dùng` có action `Mở noVNC xử lý` tại exact Ads Manager URL do worker trả về; action này không retry hoặc publish job.
-- Safety banner luôn nói rõ draft builder có thể click/điền nhưng không tự `Publish`.
+- Không dùng persistent safety banner trên page hoặc form dialog. Ý nghĩa an toàn phải nằm trong tên action và workflow cụ thể như `Tạo bản nháp`, `Dừng ở Review`; confirm publish/budget thật vẫn phải hiển thị account, campaign và số tiền trước khi thực thi.
 - Trang Báo cáo dùng table-first layout: ad account filter, bốn KPI gần nhất, snapshot history, schedule và report job history.
 - Manual report dialog luôn yêu cầu `THU THẬP KPI`; schedule nói rõ timezone, lookback và Telegram token không được nhập trên UI.
 - Report job tách trạng thái thu thập khỏi trạng thái Telegram để lỗi gửi tin không làm mất snapshot.
@@ -48,7 +48,7 @@
 - Popup cài worker điền sẵn canonical GitHub repo nhưng vẫn là input sửa được; DeepSeek V4 Flash 0731 là preset đầu tiên, còn model API canonical giữ `deepseek-v4-flash`.
 - Hermes Agents và popup cài Bot VPS dùng cùng hai control `Thinking` và `Reasoning effort`; popup sửa Bot VPS không lặp lại provider settings.
 - Hermes Agents có control `Quyền Agent` theo worker. `Ads Safe` là mặc định; `Experimental Full Access` hiển thị cảnh báo inline về quyền terminal/file/code/browser/computer/delegation và nói rõ session mới hoặc `/reset` mới nhận bộ quyền.
-- Footer sidebar chỉ hiển thị `Admin` và action chữ `Đổi mật khẩu`; không hiển thị tenant name, role hoặc module/session context. Dialog dùng chung xác minh mật khẩu hiện tại, yêu cầu tối thiểu 4 ký tự và báo rõ các phiên khác sẽ bị đăng xuất.
+- Footer sidebar dùng account button `Admin` mở menu tài khoản; không hiển thị tenant name, role hoặc module/session context. Menu chứa action đăng nhập preview, đổi mật khẩu và đăng xuất; dialog đổi mật khẩu dùng chung phải xác minh mật khẩu hiện tại, yêu cầu tối thiểu 4 ký tự và báo rõ các phiên khác sẽ bị đăng xuất.
 - Login dùng nhãn `Tài khoản` với text input và `autocomplete=username`; không ép identifier phải có định dạng email.
 - Copy DeepSeek phải nói rõ default thinking High và Low/Medium được provider ánh xạ lên High; không hứa mức suy luận mà endpoint không hỗ trợ.
 - Native Hermes Dashboard là Web chat/agent surface. Control-plane không tái tạo chat workspace; route legacy `/ai-copilot` chỉ chuyển hướng sau khi kiểm tra đăng nhập.
@@ -80,5 +80,7 @@
 - Cả ba giữ sidebar-left/main-content, dùng cùng component anatomy cho Dashboard, Login, native dialogs, tables, empty state, search/filter, popovers và campaign checkpoint progress.
 - `Meta Light Focus` dùng sidebar trắng, canvas `#F5F7FA`, logo tile `#0866FF`, action xanh solid và login lấy identity gradient xanh–tím–hồng từ phương án A; slug cũ `meta-dark-sidebar-glass` được giữ để URL review không đổi.
 - Workspace của `Meta Light Focus` không giới hạn `max-width`; panel giãn theo toàn bộ main column với gutter `20px` ở desktop/tablet và `12px` ở mobile để dữ liệu lớn, rõ và sát mép hơn.
+- `Meta Light Focus` dùng selected navigation Meta blue `#0866FF` đồng bộ primary button, với chữ trắng và shadow nhẹ; account menu nằm ở đáy sidebar, search không hiện phím tắt trang trí, dashboard không có persistent safety banner.
+- Dialog dùng header phẳng với border phân tách mảnh, không có accent line hoặc safety banner trang trí; danger/destructive vẫn giữ `#B83A3A`.
 - Đây là candidate để user chọn, chưa phải canonical production styling. Không áp dụng token, layout hoặc interaction prototype vào Jinja templates cho đến khi có lựa chọn rõ ràng.
 - Prototype không gọi API, không dùng production data và không nhúng password mẫu; danger/destructive giữ `#B83A3A` ở cả ba hướng.
