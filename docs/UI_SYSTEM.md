@@ -78,9 +78,10 @@
 
 - Ba prototype so sánh tại `docs/ui-prototypes/`: `Meta Gradient Vibrant`, `Meta Balanced Elevated` và bản user đang chọn để tinh chỉnh `Meta Light Focus`.
 - Cả ba giữ sidebar-left/main-content, dùng cùng component anatomy cho Dashboard, Login, native dialogs, tables, empty state, search/filter, popovers và campaign checkpoint progress.
-- `Meta Light Focus` dùng sidebar trắng, canvas `#F5F7FA`, logo tile `#0866FF`, action xanh solid và login lấy identity gradient xanh–tím–hồng từ phương án A; slug cũ `meta-dark-sidebar-glass` được giữ để URL review không đổi.
+- `Meta Light Focus` dùng sidebar trắng, canvas `#F1F4F8`, logo tile/primary action `#0866FF` và login lấy identity gradient xanh–tím–hồng từ phương án A; slug cũ `meta-dark-sidebar-glass` được giữ để URL review không đổi.
 - Workspace của `Meta Light Focus` không giới hạn `max-width`; panel giãn theo toàn bộ main column với gutter `20px` ở desktop/tablet và `12px` ở mobile để dữ liệu lớn, rõ và sát mép hơn.
-- `Meta Light Focus` dùng selected navigation Meta blue `#0866FF` đồng bộ primary button, với chữ trắng và shadow nhẹ; account menu nằm ở đáy sidebar, search không hiện phím tắt trang trí, dashboard không có persistent safety banner.
+- `Meta Light Focus` tách vai trò màu để tăng scanability: logo/CTA/ad-account dùng Meta blue `#0866FF`; selected navigation/campaign draft dùng indigo `#4F46E5`; pending dùng amber; approved/resource dùng green. Inactive sidebar text dùng slate `#344054`, selected row dùng chữ trắng và shadow nhẹ.
+- KPI dùng value, icon tile và vạch đáy cùng semantic accent. Mỗi panel chỉ có một section accent ngắn ở header: Ad accounts xanh, Campaign drafts indigo, Meta resources green; table header và border có contrast cao hơn nhưng shadow vẫn shallow.
 - Dialog dùng header phẳng với border phân tách mảnh, không có accent line hoặc safety banner trang trí; danger/destructive vẫn giữ `#B83A3A`.
 - Đây là candidate để user chọn, chưa phải canonical production styling. Không áp dụng token, layout hoặc interaction prototype vào Jinja templates cho đến khi có lựa chọn rõ ràng.
 - Prototype không gọi API, không dùng production data và không nhúng password mẫu; danger/destructive giữ `#B83A3A` ở cả ba hướng.

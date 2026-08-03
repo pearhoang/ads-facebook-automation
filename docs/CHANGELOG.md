@@ -269,3 +269,10 @@
 - Affected: Prototype generator, ba HTML generated, contract tests, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
 - Verified: `70 passed`, Python compile và diff check sạch; browser local tại `1047×910` xác nhận shell/footer nằm trọn viewport, account popover mở lên và không tràn, modal không còn banner/top accent, page không overflow ngang và console không có log lỗi.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-03 - Tăng hierarchy màu Meta Light Focus
+
+- Changed: Tách Meta blue cho logo/CTA/account, indigo cho selected navigation/campaign, amber cho pending và green cho approved/resource; tăng contrast chữ sidebar/table, border panel và semantic KPI marker.
+- Affected: Prototype generator, ba HTML generated, contract test, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
+- Verified: `71 passed`, Python compile và diff check sạch; browser local `1280×720` xác nhận accent ba panel lần lượt `#0866FF`, `#4F46E5`, `#0F8F6F`, bốn KPI value có màu riêng, contrast active nav `6.29:1`, inactive nav `10.46:1`, metric meta `4.97:1`, không overflow ngang và console sạch.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

@@ -57,10 +57,11 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 ## Direction C — Meta Light Focus (user-selected refinement)
 
 - The user selected Direction C on 2026-08-03, then requested a calmer Meta-style light shell while preserving its uncluttered structure.
-- Sidebar uses solid white with a soft gray-blue border and dark text; the selected row uses the same solid Meta blue `#0866FF` as primary actions, with white text and a restrained shadow. The custom monogram uses a matching `#0866FF` tile with a white glyph.
-- Main canvas uses `#F5F7FA`, opaque white surfaces, shallow neutral shadows, and solid `#0866FF` primary actions.
+- Sidebar uses solid white with a soft gray-blue border and slate `#344054` navigation text. The selected row uses indigo `#4F46E5` with white text and a restrained shadow so it remains distinct from the custom monogram and primary actions, which stay Meta blue `#0866FF`.
+- Main canvas uses `#F1F4F8`, opaque white surfaces, stronger neutral borders, shallow neutral shadows, and solid `#0866FF` primary actions.
 - On desktop and tablet, the workspace is fluid rather than centered in a fixed `max-width`: panels use the full main-column width with a `20px` horizontal gutter, matching the denser YouTube control-plane reference. Mobile retains a `12px` gutter.
 - Metrics keep Direction C's separate-tile composition but remove glass, glow, and decorative background haze.
+- Information hierarchy uses a restrained blue–indigo–amber–green system: blue for account/action, indigo for campaign/selection, amber for pending attention, and green for ready/approved/resource. KPI values and short bottom markers carry these roles; panel headers repeat only their relevant section accent.
 - Login intentionally borrows Direction A's `#0668E1 → #8B5CF6 → #EC4899` identity panel so authentication does not feel visually empty.
 - Dialog bodies remain opaque and stable; headers have no top accent line, destructive actions remain `#B83A3A`, and the backdrop does not use blur.
 - The legacy slug `meta-dark-sidebar-glass` is retained so the existing local review URL remains stable during selection.

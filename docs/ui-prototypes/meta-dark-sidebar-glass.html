@@ -11,24 +11,24 @@
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <style>
     :root {
-      --page: #f5f7fa;
+      --page: #f1f4f8;
       --surface: #ffffff;
-      --surface-soft: #f7f8fa;
-      --border: #d8dde6;
-      --text: #1c1e21;
-      --muted: #65676b;
+      --surface-soft: #f5f7fa;
+      --border: #cfd7e3;
+      --text: #172033;
+      --muted: #475467;
       --sidebar-start: #ffffff;
       --sidebar-mid: #ffffff;
       --sidebar-end: #ffffff;
-      --sidebar-text: #1c1e21;
-      --sidebar-muted: #65676b;
+      --sidebar-text: #172033;
+      --sidebar-muted: #344054;
       --primary: #0866ff;
       --primary-2: #1877f2;
       --success: #16865f;
       --attention: #4f46e5;
       --warning: #a76513;
       --danger: #b83a3a;
-      --shadow-1: 0 1px 4px rgba(15,23,42,.05);
+      --shadow-1: 0 2px 8px rgba(15,23,42,.07);
       --shadow-2: 0 14px 34px rgba(15,23,42,.13);
       --radius: 12px;
       --font-display: "Be Vietnam Pro", sans-serif;
@@ -364,6 +364,10 @@ body[data-variant="meta-dark-sidebar-glass"] .brand,
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer {
   border-color: var(--border);
 }
+body[data-variant="meta-dark-sidebar-glass"] .brand-copy span,
+body[data-variant="meta-dark-sidebar-glass"] .sidebar-account-copy span {
+  color: #667085;
+}
 body[data-variant="meta-dark-sidebar-glass"] .brand > .brand-mark,
 body[data-variant="meta-dark-sidebar-glass"] .mobilebar > .brand-mark {
   border-color: #0866ff;
@@ -372,8 +376,20 @@ body[data-variant="meta-dark-sidebar-glass"] .mobilebar > .brand-mark {
   box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .nav-link:hover {
-  background: #f0f2f5;
+  background: #edf1f6;
   color: var(--sidebar-text);
+}
+body[data-variant="meta-dark-sidebar-glass"] .sidebar-section {
+  color: #667085;
+  font-weight: 700;
+}
+body[data-variant="meta-dark-sidebar-glass"] .nav-link {
+  color: #344054;
+  font-size: 14px;
+  font-weight: 600;
+}
+body[data-variant="meta-dark-sidebar-glass"] .nav-link svg {
+  color: #667085;
 }
 body[data-variant="meta-dark-sidebar-glass"] .nav-link:focus-visible {
   outline-color: rgba(8,102,255,.24);
@@ -383,19 +399,125 @@ body[data-variant="meta-dark-sidebar-glass"] .primary-button {
   box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav {
-  background: #0866ff;
+  background: #4f46e5;
   color: #fff;
-  box-shadow: 0 4px 12px rgba(8,102,255,.22);
+  box-shadow: 0 4px 12px rgba(79,70,229,.24);
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav:hover {
-  background: #075bd8;
+  background: #4338ca;
+  color: #fff;
+}
+body[data-variant="meta-dark-sidebar-glass"] .active-nav svg {
   color: #fff;
 }
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-account-button:hover {
   background: #f0f2f5;
 }
 body[data-variant="meta-dark-sidebar-glass"] .metric {
+  overflow: hidden;
+  border-color: #cbd5e1;
   box-shadow: var(--shadow-1);
+}
+body[data-variant="meta-dark-sidebar-glass"] .metric::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 16px;
+  width: 44px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--metric-accent);
+}
+body[data-variant="meta-dark-sidebar-glass"] .metric-icon {
+  border: 1px solid color-mix(in srgb, var(--metric-accent) 22%, transparent);
+  background: color-mix(in srgb, var(--metric-accent) 15%, #fff);
+}
+body[data-variant="meta-dark-sidebar-glass"] .metric-label {
+  color: #344054;
+  font-weight: 600;
+}
+body[data-variant="meta-dark-sidebar-glass"] .metric-value {
+  color: var(--metric-accent);
+}
+body[data-variant="meta-dark-sidebar-glass"] .metric-meta {
+  color: #667085;
+}
+body[data-variant="meta-dark-sidebar-glass"] .card {
+  --section-accent: var(--primary);
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15,23,42,.07);
+}
+body[data-variant="meta-dark-sidebar-glass"] .card-head {
+  position: relative;
+}
+body[data-variant="meta-dark-sidebar-glass"] .card-head::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 16px;
+  width: 54px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--section-accent);
+}
+body[data-variant="meta-dark-sidebar-glass"] .card-accounts { --section-accent: #0866ff; }
+body[data-variant="meta-dark-sidebar-glass"] .card-campaigns { --section-accent: #4f46e5; }
+body[data-variant="meta-dark-sidebar-glass"] .card-resources { --section-accent: #0f8f6f; }
+body[data-variant="meta-dark-sidebar-glass"] .section-icon {
+  border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
+  background: color-mix(in srgb, var(--section-accent) 13%, #fff);
+  color: var(--section-accent);
+}
+body[data-variant="meta-dark-sidebar-glass"] .section-copy h2,
+body[data-variant="meta-dark-sidebar-glass"] .item-title {
+  color: #101828;
+}
+body[data-variant="meta-dark-sidebar-glass"] .toolbar,
+body[data-variant="meta-dark-sidebar-glass"] th {
+  background: #f3f5f8;
+}
+body[data-variant="meta-dark-sidebar-glass"] th {
+  color: #344054;
+}
+body[data-variant="meta-dark-sidebar-glass"] td {
+  color: #344054;
+}
+body[data-variant="meta-dark-sidebar-glass"] .chip.active {
+  border-color: #a5b4fc;
+  background: #eef2ff;
+  color: #4338ca;
+}
+body[data-variant="meta-dark-sidebar-glass"] .card-campaigns .progress-step.active {
+  color: #4f46e5;
+}
+body[data-variant="meta-dark-sidebar-glass"] .card-campaigns .progress-step.active::before {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79,70,229,.14);
+}
+body[data-variant="meta-dark-sidebar-glass"] .status-draft {
+  border: 1px solid #d8d5ff;
+  background: #eeedff;
+  color: #4338ca;
+}
+body[data-variant="meta-dark-sidebar-glass"] .status-pending {
+  border: 1px solid #f2d7a8;
+  background: #fff3dc;
+  color: #8a4b08;
+}
+body[data-variant="meta-dark-sidebar-glass"] .status-approved,
+body[data-variant="meta-dark-sidebar-glass"] .status-online {
+  border: 1px solid #b9dfd2;
+  background: #e2f5ee;
+  color: #0f6b50;
+}
+body[data-variant="meta-dark-sidebar-glass"] .card-resources .empty-icon {
+  border-color: #b9dfd2;
+  background: #eaf8f3;
+  color: #0f8f6f;
+}
+body[data-variant="meta-dark-sidebar-glass"] .topbar {
+  border-bottom-color: #cbd5e1;
+  box-shadow: 0 2px 6px rgba(15,23,42,.05);
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand-panel {
   background: linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899);
@@ -548,7 +670,7 @@ body[data-variant="meta-dark-sidebar-glass"] .mobilebar {
                 <article class="metric"><span class="metric-icon"><i data-lucide="badge-check"></i></span><div><div class="metric-label">Đã duyệt nội bộ</div><div class="metric-value">3</div><div class="metric-meta">Chưa publish lên Meta</div></div></article>
               </section>
 
-              <section class="card">
+              <section class="card card-accounts">
                 <div class="card-head">
                   <span class="section-icon"><i data-lucide="credit-card"></i></span>
                   <div class="section-copy"><h2>Ad accounts</h2><p>Liên kết ad account với tài khoản Facebook và đơn vị tiền tệ.</p></div>
@@ -565,7 +687,7 @@ body[data-variant="meta-dark-sidebar-glass"] .mobilebar {
                 </div>
               </section>
 
-              <section class="card">
+              <section class="card card-campaigns">
                 <div class="card-head">
                   <span class="section-icon"><i data-lucide="layout-dashboard"></i></span>
                   <div class="section-copy"><h2>Campaign drafts</h2><p>Soạn, duyệt, preflight và theo dõi checkpoint trước khi thao tác trên Meta.</p></div>
@@ -593,7 +715,7 @@ body[data-variant="meta-dark-sidebar-glass"] .mobilebar {
                 </div>
               </section>
 
-              <section class="card">
+              <section class="card card-resources">
                 <div class="card-head">
                   <span class="section-icon"><i data-lucide="blocks"></i></span>
                   <div class="section-copy"><h2>Meta resources</h2><p>Page, Instagram, Pixel/Dataset, Instant Form và App dùng exact-match trong Ads Manager.</p></div>

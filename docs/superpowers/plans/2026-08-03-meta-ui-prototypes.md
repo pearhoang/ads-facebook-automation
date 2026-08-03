@@ -173,4 +173,8 @@
 
 - [x] **Step 6: Simplify navigation, account controls, and dialog chrome**
 
-  Remove the persistent dashboard safety banner, campaign-dialog safety banner, and search shortcut badge; move the Admin popover to a viewport-pinned sidebar footer; change the selected Direction C nav item to the same solid Meta blue as primary actions with white text; remove decorative top accent lines from every dialog while retaining semantic danger red. Verify the collapsed-sidebar popover stays inside a `1047×910` viewport.
+  Remove the persistent dashboard safety banner, campaign-dialog safety banner, and search shortcut badge; move the Admin popover to a viewport-pinned sidebar footer; change the selected Direction C nav item to a solid filled state with white text; remove decorative top accent lines from every dialog while retaining semantic danger red. Verify the collapsed-sidebar popover stays inside a `1047×910` viewport.
+
+- [x] **Step 7: Restore scannable color and information hierarchy**
+
+  Separate the Meta-blue logo/CTA from an indigo selected navigation state; darken inactive sidebar and dense-data text; strengthen surface borders; give KPI values and markers semantic blue/indigo/amber/green roles; add one matching accent per Ad accounts, Campaign drafts, and Meta resources panel. Verify computed section colors, contrast, and horizontal overflow in browser.
