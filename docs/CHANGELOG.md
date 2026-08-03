@@ -310,3 +310,9 @@
 - Changed: Thay monogram `M` dạng tile bằng custom loop/infinity mark không nền; đồng bộ footer account và login; đổi selected navigation sang indigo đậm để tách khỏi CTA Meta blue.
 - Verified: `13 passed`, diff check sạch và browser local xác nhận logo sidebar xanh thoáng, account mark indigo dịu.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-03 - Đồng bộ primary CTA với selected navigation
+
+- Changed: Chuyển toàn bộ `primary-button` của `Meta Light Focus` sang indigo `#4F46E5`, hover `#4338CA`; giữ outline action và semantic status colors độc lập.
+- Verified: `13 passed` và diff check sạch.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

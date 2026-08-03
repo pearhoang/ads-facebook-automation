@@ -187,6 +187,8 @@ def test_selected_workspace_has_scannable_color_hierarchy() -> None:
     assert "background: #4f46e5" in html
     assert "background: #4338ca" in html
     assert "box-shadow: 0 4px 10px rgba(79,70,229,.22)" in html
+    assert 'body[data-variant="meta-dark-sidebar-glass"] .primary-button {' in html
+    assert 'body[data-variant="meta-dark-sidebar-glass"] .primary-button:hover {' in html
     assert "linear-gradient(115deg" not in html
     assert ".metric::after" in html
     assert ".metric-value" in html and "color: var(--metric-accent)" in html

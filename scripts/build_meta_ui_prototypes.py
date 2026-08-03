@@ -225,8 +225,13 @@ body[data-variant="meta-dark-sidebar-glass"] .nav-link:focus-visible {
   outline-color: rgba(8,102,255,.24);
 }
 body[data-variant="meta-dark-sidebar-glass"] .primary-button {
-  background: var(--primary);
+  border-color: #4f46e5;
+  background: #4f46e5;
   box-shadow: none;
+}
+body[data-variant="meta-dark-sidebar-glass"] .primary-button:hover {
+  border-color: #4338ca;
+  background: #4338ca;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav {
   border: 1px solid #4f46e5;

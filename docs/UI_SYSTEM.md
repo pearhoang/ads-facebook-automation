@@ -12,7 +12,7 @@
 
 - Nhận diện sản phẩm là `Ads Meta Master`, dùng subtitle `Meta Ads Automation` và custom SVG loop/infinity mark màu xanh; brand trong sidebar không dùng tile nền, footer account dùng cùng biểu tượng ở kích thước nhỏ và màu indigo dịu. Đây là biểu tượng riêng, không dùng logo chính thức của Meta/Facebook.
 - Sidebar cố định giữ dark neutral `#242321`, top bar gọn, white surfaces trên nền blue-gray rất nhạt.
-- Tone `Meta Balanced`: action/focus dùng blue `#1877F2`, attention/safety dùng indigo `#4F46E5`, success/online dùng green `#16865F`; error, blocker và destructive action giữ red `#B83A3A`.
+- Tone `Meta Balanced`: brand/data accent dùng blue `#1877F2`, primary action và selected navigation dùng indigo `#4F46E5`, success/online dùng green `#16865F`; error, blocker và destructive action giữ red `#B83A3A`.
 
 ## Shared Patterns
 
@@ -78,10 +78,10 @@
 
 - Ba prototype so sánh tại `docs/ui-prototypes/`: `Meta Gradient Vibrant`, `Meta Balanced Elevated` và bản user đang chọn để tinh chỉnh `Meta Light Focus`.
 - Cả ba giữ sidebar-left/main-content, dùng cùng component anatomy cho Dashboard, Login, native dialogs, tables, empty state, search/filter, popovers và campaign checkpoint progress.
-- `Meta Light Focus` dùng sidebar trắng, canvas `#F1F4F8`, logo tile/primary action `#0866FF` và login lấy identity gradient xanh–tím–hồng từ phương án A; slug cũ `meta-dark-sidebar-glass` được giữ để URL review không đổi.
+- `Meta Light Focus` dùng sidebar trắng, canvas `#F1F4F8`, custom loop mark `#0866FF`, primary action `#4F46E5` và login lấy identity gradient xanh–tím–hồng từ phương án A; slug cũ `meta-dark-sidebar-glass` được giữ để URL review không đổi.
 - Brand và footer sidebar dùng nền trắng trung tính để navigation là vùng điều hướng chính. Custom loop mark đứng độc lập, không có tile; footer dùng cùng mark với màu indigo dịu, không tạo thêm mảng màu cạnh tranh với selected navigation.
 - Workspace của `Meta Light Focus` không giới hạn `max-width`; panel giãn theo toàn bộ main column với gutter `20px` ở desktop/tablet và `12px` ở mobile để dữ liệu lớn, rõ và sát mép hơn.
-- `Meta Light Focus` tách vai trò màu để tăng scanability: logo/CTA/ad-account dùng Meta blue `#0866FF`; selected navigation dùng indigo đậm `#4F46E5` với chữ/icon trắng để tách khỏi CTA; campaign draft dùng indigo; pending dùng amber; approved/resource dùng green. Inactive sidebar text dùng slate `#344054`; brand/footer trung tính để selected row là điểm neo duy nhất trong sidebar.
+- `Meta Light Focus` tách vai trò màu để tăng scanability: logo/ad-account dùng Meta blue `#0866FF`; primary CTA và selected navigation dùng indigo đậm `#4F46E5` với hover `#4338CA`; campaign draft dùng indigo; pending dùng amber; approved/resource dùng green. Inactive sidebar text dùng slate `#344054`; brand/footer trung tính để selected row là điểm neo duy nhất trong sidebar.
 - Canvas dùng gradient xanh–tím gần trắng để tách nền khỏi surface trắng. Panel dùng border và shadow nông; header bỏ accent line, icon bỏ tile nền và helper copy được ẩn ở dashboard để giảm nhiễu. Table/KPI tăng cỡ chữ metadata, row height và spacing thay vì thêm panel trang trí.
 - KPI dùng value và vạch đáy cùng semantic accent. Mỗi panel chỉ giữ một section icon màu ở header: Ad accounts xanh, Campaign drafts indigo, Meta resources green; table header và border có contrast cao hơn nhưng shadow vẫn shallow.
 - KPI của `Meta Light Focus` dùng một strip liền có vertical divider; icon nhỏ nằm cạnh label, không có tile nền. Value là focal point và vạch semantic accent được căn giữa đáy từng ô; mobile chuyển thành lưới `2×2` trong cùng một surface.
