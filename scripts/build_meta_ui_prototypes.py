@@ -191,13 +191,19 @@ body[data-variant="meta-dark-sidebar-glass"] .sidebar-account-copy span {
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand > .brand-mark,
 body[data-variant="meta-dark-sidebar-glass"] .mobilebar > .brand-mark {
-  border-color: #0866ff;
-  background: #0866ff;
-  color: #fff;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #0866ff;
   box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand > .brand-mark {
-  box-shadow: 0 1px 4px rgba(8,102,255,.18);
+  width: 40px;
+  height: 30px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .brand > .brand-mark svg {
+  width: 38px;
+  height: 26px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .nav-link:hover {
   background: #f3f5f8;
@@ -223,14 +229,14 @@ body[data-variant="meta-dark-sidebar-glass"] .primary-button {
   box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav {
-  border: 1px solid #0866ff;
-  background: #0866ff;
+  border: 1px solid #4f46e5;
+  background: #4f46e5;
   color: #fff;
-  box-shadow: 0 4px 10px rgba(8,102,255,.22);
+  box-shadow: 0 4px 10px rgba(79,70,229,.22);
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav:hover {
-  border-color: #075ce6;
-  background: #075ce6;
+  border-color: #4338ca;
+  background: #4338ca;
   color: #fff;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav svg {
@@ -239,10 +245,17 @@ body[data-variant="meta-dark-sidebar-glass"] .active-nav svg {
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-account-button:hover {
   background: #f0f2f5;
 }
-body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer .avatar {
-  background: #eef4ff;
-  color: #0866ff;
+body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer .account-brand-mark {
+  width: 30px;
+  height: 24px;
+  border-radius: 0;
+  background: transparent;
+  color: #6674d9;
   box-shadow: none;
+}
+body[data-variant="meta-dark-sidebar-glass"] .account-brand-mark svg {
+  width: 28px;
+  height: 19px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .metrics {
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -587,7 +600,7 @@ DOCUMENT = r'''<!DOCTYPE html>
       background: rgba(255,255,255,.12);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
     }
-    .brand-mark svg { width: 24px; height: 24px; }
+    .brand-mark svg { width: 28px; height: 20px; }
     .brand-copy { min-width: 0; }
     .brand-copy strong {
       display: block;
@@ -917,7 +930,7 @@ DOCUMENT = r'''<!DOCTYPE html>
         <aside class="sidebar" aria-label="Điều hướng chính">
           <a class="brand" href="#" data-screen-target="dashboard" aria-label="Ads Meta Master">
             <span class="brand-mark" aria-hidden="true">
-              <svg viewBox="0 0 32 32" fill="none"><path d="M7 22V10c0-2.4 2.8-3.7 4.6-2.1L16 12l4.4-4.1C22.2 6.3 25 7.6 25 10v12" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 12v7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+              <svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
             <span class="brand-copy"><strong>Ads Meta Master</strong><span>Meta Ads Automation</span></span>
           </a>
@@ -934,7 +947,7 @@ DOCUMENT = r'''<!DOCTYPE html>
           </nav>
           <footer class="sidebar-footer popover-wrap">
             <button class="sidebar-account-button" type="button" data-popover-toggle="admin" aria-label="Mở menu Admin">
-              <span class="avatar">A</span>
+              <span class="avatar account-brand-mark" aria-hidden="true"><svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
               <span class="sidebar-account-copy"><strong>Admin</strong><span>Tài khoản</span></span>
               <i data-lucide="chevron-up"></i>
             </button>
@@ -948,7 +961,7 @@ DOCUMENT = r'''<!DOCTYPE html>
 
         <main class="app-main">
           <div class="mobilebar">
-            <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M7 22V10c0-2.4 2.8-3.7 4.6-2.1L16 12l4.4-4.1C22.2 6.3 25 7.6 25 10v12" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 12v7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></span>
+            <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             <strong>Ads Meta Master</strong>
             <div class="mobile-nav"><button type="button" aria-label="Tìm kiếm"><i data-lucide="search"></i></button><button type="button" aria-label="Thông báo"><i data-lucide="bell"></i></button></div>
           </div>
@@ -1043,7 +1056,7 @@ DOCUMENT = r'''<!DOCTYPE html>
     <section class="screen login-screen hidden" data-screen="login">
       <div class="login-shell">
         <aside class="brand-panel">
-          <div class="login-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M7 22V10c0-2.4 2.8-3.7 4.6-2.1L16 12l4.4-4.1C22.2 6.3 25 7.6 25 10v12" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 12v7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></span><div><strong>Ads Meta Master</strong><span>Meta Ads Automation</span></div></div>
+          <div class="login-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><strong>Ads Meta Master</strong><span>Meta Ads Automation</span></div></div>
           <div class="brand-message"><h2>Kiểm soát campaign draft trước khi chạm tới Meta.</h2><p>Quản lý tài khoản, kiểm tra preflight và theo dõi từng checkpoint trong một workspace vận hành rõ ràng.</p></div>
           <div class="trust-list"><div class="trust-row"><i data-lucide="shield-check"></i>Không tự publish campaign</div><div class="trust-row"><i data-lucide="lock-keyhole"></i>Phiên đăng nhập được bảo vệ</div><div class="trust-row"><i data-lucide="history"></i>Mọi thay đổi đều có audit trail</div></div>
         </aside>

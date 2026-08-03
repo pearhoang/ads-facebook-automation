@@ -160,7 +160,7 @@ def test_selected_workspace_removes_decorative_chrome_and_uses_sidebar_account()
     assert 'class="popover sidebar-account-popover hidden"' in html
     assert 'data-popover-toggle="admin"' in html
     assert 'class="dialog-notice"' not in html
-    assert "background: #0866ff" in html
+    assert "background: #4f46e5" in html
     assert "box-shadow: inset 3px 0 0 #0866ff" not in html
     assert "dialog-head::before" not in html
 
@@ -183,10 +183,10 @@ def test_selected_workspace_has_scannable_color_hierarchy() -> None:
     assert "--page: #f1f4f8" in html
     assert "--muted: #475467" in html
     assert "--sidebar-muted: #344054" in html
-    assert "border: 1px solid #0866ff" in html
-    assert "background: #0866ff" in html
-    assert "background: #075ce6" in html
-    assert "box-shadow: 0 4px 10px rgba(8,102,255,.22)" in html
+    assert "border: 1px solid #4f46e5" in html
+    assert "background: #4f46e5" in html
+    assert "background: #4338ca" in html
+    assert "box-shadow: 0 4px 10px rgba(79,70,229,.22)" in html
     assert "linear-gradient(115deg" not in html
     assert ".metric::after" in html
     assert ".metric-value" in html and "color: var(--metric-accent)" in html
@@ -204,9 +204,13 @@ def test_selected_workspace_uses_quiet_sidebar_and_data_first_kpi_strip() -> Non
     html = render_variant("meta-dark-sidebar-glass").lower()
 
     assert "linear-gradient(110deg, #e6f0ff 0%, #f0ebff 54%, #ffe9f3 100%)" not in html
-    assert "box-shadow: 0 1px 4px rgba(8,102,255,.18)" in html
-    assert ".sidebar-footer .avatar" in html
-    assert "background: #eef4ff" in html
+    assert 'viewbox="0 0 42 28"' in html
+    assert 'd="m3 14c7 4 13 4 21 14c29 24 35 24 39 14c35 4 29 4 21 14c13 24 7 24 3 14z"' in html
+    assert 'class="avatar account-brand-mark"' in html
+    assert '<span class="avatar">a</span>' not in html
+    assert ".sidebar-footer .account-brand-mark" in html
+    assert "background: transparent" in html
+    assert "color: #6674d9" in html
     assert "linear-gradient(135deg, #0866ff 0%, #7c3aed 56%, #ec4899 100%)" not in html
     assert ".metrics {" in html
     assert "gap: 0" in html

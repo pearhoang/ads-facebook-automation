@@ -304,3 +304,9 @@
 - Readability: Tăng cỡ chữ KPI, table, metadata, status, button và row spacing; giữ semantic blue/indigo/amber/green cho dữ liệu và trạng thái thay vì trang trí chrome.
 - Verified: `73 passed`, Python compile và diff check sạch; browser local ở `1212px`, `1920px` và mobile `390px` xác nhận UTF-8, console sạch, không page overflow, mobile KPI `2×2` và table tự scroll.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-03 - Tinh chỉnh brand mark cho Meta Light Focus
+
+- Changed: Thay monogram `M` dạng tile bằng custom loop/infinity mark không nền; đồng bộ footer account và login; đổi selected navigation sang indigo đậm để tách khỏi CTA Meta blue.
+- Verified: `13 passed`, diff check sạch và browser local xác nhận logo sidebar xanh thoáng, account mark indigo dịu.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
