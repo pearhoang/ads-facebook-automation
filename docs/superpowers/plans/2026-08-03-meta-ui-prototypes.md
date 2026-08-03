@@ -190,3 +190,7 @@
 - [x] **Step 10: Rebalance selected navigation as a near-white raised surface**
 
   Remove the selected-row gradient after the brand band and Admin avatar became the sidebar identity anchors. Use one near-white fill, a cool-gray border, blue-slate content, and shallow neutral elevation so selection remains readable without becoming a third strong color block.
+
+- [x] **Step 11: Rebuild the visual hierarchy around one sidebar anchor**
+
+  Return brand and Admin footer to neutral white, make selected navigation the single strong Meta-blue block, and move the subtle blue–violet gradient to the canvas where it separates white panels. Remove panel accent lines and icon tiles, hide dashboard helper copy, and increase KPI/table typography and row spacing so dense information remains readable without adding more chrome.

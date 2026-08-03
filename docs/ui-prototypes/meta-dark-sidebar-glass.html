@@ -349,15 +349,17 @@
     .prototype-toast svg { width: 15px; height: 15px; color: #6ee7b7; }
 
     body[data-variant="meta-dark-sidebar-glass"] .content-pane {
-  background: var(--page);
+  background: linear-gradient(145deg, #f7f9fc 0%, #eef4ff 52%, #f6f3fb 100%);
 }
 body[data-variant="meta-dark-sidebar-glass"] .content {
   width: 100%;
   max-width: none;
   margin: 0;
+  padding-top: 24px;
   padding-inline: 20px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .sidebar {
+  background: #fff;
   border-right-color: var(--border);
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand,
@@ -365,7 +367,10 @@ body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer {
   border-color: var(--border);
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand {
-  background: linear-gradient(110deg, #e6f0ff 0%, #f0ebff 54%, #ffe9f3 100%);
+  background: #fff;
+}
+body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer {
+  background: #fff;
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand-copy span,
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-account-copy span {
@@ -379,15 +384,15 @@ body[data-variant="meta-dark-sidebar-glass"] .mobilebar > .brand-mark {
   box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand > .brand-mark {
-  box-shadow: 0 0 0 3px rgba(255,255,255,.86), 0 2px 6px rgba(30,64,175,.18);
+  box-shadow: 0 1px 4px rgba(8,102,255,.18);
 }
 body[data-variant="meta-dark-sidebar-glass"] .nav-link:hover {
-  background: #edf1f6;
+  background: #f3f5f8;
   color: var(--sidebar-text);
 }
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-section {
-  color: #667085;
-  font-weight: 700;
+  color: #98a2b3;
+  font-weight: 600;
 }
 body[data-variant="meta-dark-sidebar-glass"] .nav-link {
   color: #344054;
@@ -405,39 +410,40 @@ body[data-variant="meta-dark-sidebar-glass"] .primary-button {
   box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav {
-  border: 1px solid #d6dfeb;
-  background: #f7f9fc;
-  color: #295b9c;
-  box-shadow: 0 3px 10px rgba(15,23,42,.09), inset 0 1px 0 rgba(255,255,255,.92);
+  border: 1px solid #0866ff;
+  background: #0866ff;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(8,102,255,.22);
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav:hover {
-  border-color: #c8d6e8;
-  background: #eef4fb;
-  color: #214f8d;
+  border-color: #075ce6;
+  background: #075ce6;
+  color: #fff;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav svg {
-  color: #3373c4;
+  color: #fff;
 }
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-account-button:hover {
   background: #f0f2f5;
 }
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer .avatar {
-  background: linear-gradient(135deg, #0866ff 0%, #7c3aed 56%, #ec4899 100%);
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(79,70,229,.2);
+  background: #eef4ff;
+  color: #0866ff;
+  box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .metrics {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0;
+  margin-bottom: 18px;
   overflow: hidden;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d5deea;
   border-radius: var(--radius);
   background: #fff;
-  box-shadow: 0 2px 8px rgba(15,23,42,.07);
+  box-shadow: 0 5px 14px rgba(15,23,42,.06);
 }
 body[data-variant="meta-dark-sidebar-glass"] .metric {
   overflow: hidden;
-  min-height: 116px;
+  min-height: 124px;
   grid-template-columns: auto auto;
   grid-template-areas:
     "label icon"
@@ -447,7 +453,7 @@ body[data-variant="meta-dark-sidebar-glass"] .metric {
   justify-content: center;
   column-gap: 6px;
   row-gap: 0;
-  padding: 14px 18px 20px;
+  padding: 18px 20px 22px;
   border: 0;
   border-right: 1px solid #d7dee8;
   border-radius: 0;
@@ -488,58 +494,108 @@ body[data-variant="meta-dark-sidebar-glass"] .metric-icon svg {
 body[data-variant="meta-dark-sidebar-glass"] .metric-label {
   grid-area: label;
   color: #344054;
+  font-size: 12px;
   font-weight: 600;
 }
 body[data-variant="meta-dark-sidebar-glass"] .metric-value {
   grid-area: value;
   margin-top: 6px;
   color: var(--metric-accent);
-  font-size: 28px;
+  font-size: 30px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .metric-meta {
   grid-area: meta;
   margin-top: 7px;
   color: #667085;
+  font-size: 10.5px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .card {
   --section-accent: var(--primary);
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 8px rgba(15,23,42,.07);
+  margin-bottom: 18px;
+  border-color: #d5deea;
+  box-shadow: 0 5px 14px rgba(15,23,42,.06);
 }
 body[data-variant="meta-dark-sidebar-glass"] .card-head {
   position: relative;
+  min-height: 66px;
+  gap: 10px;
+  padding: 14px 16px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .card-head::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: 16px;
-  width: 54px;
-  height: 3px;
-  border-radius: 0 0 3px 3px;
-  background: var(--section-accent);
+  content: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .card-accounts { --section-accent: #0866ff; }
 body[data-variant="meta-dark-sidebar-glass"] .card-campaigns { --section-accent: #4f46e5; }
 body[data-variant="meta-dark-sidebar-glass"] .card-resources { --section-accent: #0f8f6f; }
 body[data-variant="meta-dark-sidebar-glass"] .section-icon {
-  border: 1px solid color-mix(in srgb, var(--section-accent) 22%, transparent);
-  background: color-mix(in srgb, var(--section-accent) 13%, #fff);
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--section-accent);
+}
+body[data-variant="meta-dark-sidebar-glass"] .section-icon svg {
+  width: 18px;
+  height: 18px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .section-copy h2,
 body[data-variant="meta-dark-sidebar-glass"] .item-title {
   color: #101828;
 }
+body[data-variant="meta-dark-sidebar-glass"] .section-copy h2 {
+  font-size: 15px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .section-copy p {
+  display: none;
+}
 body[data-variant="meta-dark-sidebar-glass"] .toolbar,
 body[data-variant="meta-dark-sidebar-glass"] th {
-  background: #f3f5f8;
+  background: #f7f9fc;
+}
+body[data-variant="meta-dark-sidebar-glass"] .toolbar {
+  min-height: 52px;
+  padding-inline: 16px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .toolbar-label {
+  font-size: 11px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .chip {
+  height: 32px;
+  font-size: 11px;
 }
 body[data-variant="meta-dark-sidebar-glass"] th {
   color: #344054;
+  padding: 10px 16px;
+  font-size: 10.5px;
 }
 body[data-variant="meta-dark-sidebar-glass"] td {
   color: #344054;
+  padding: 14px 16px;
+}
+body[data-variant="meta-dark-sidebar-glass"] table {
+  font-size: 12.5px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .item-title {
+  font-size: 12.5px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .item-meta {
+  margin-top: 4px;
+  font-size: 10.5px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .status {
+  padding: 5px 8px;
+  font-size: 10.5px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .progress-step {
+  font-size: 9.5px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .row-button {
+  width: 32px;
+  height: 32px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .button {
+  font-size: 12px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .chip.active {
   border-color: #a5b4fc;
@@ -574,9 +630,24 @@ body[data-variant="meta-dark-sidebar-glass"] .card-resources .empty-icon {
   background: #eaf8f3;
   color: #0f8f6f;
 }
+body[data-variant="meta-dark-sidebar-glass"] .empty-state h3 {
+  font-size: 14px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .empty-state p {
+  font-size: 11.5px;
+}
 body[data-variant="meta-dark-sidebar-glass"] .topbar {
   border-bottom-color: #cbd5e1;
   box-shadow: 0 2px 6px rgba(15,23,42,.05);
+}
+body[data-variant="meta-dark-sidebar-glass"] .page-identity h1 {
+  font-size: 20px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .breadcrumb {
+  font-size: 12px;
+}
+body[data-variant="meta-dark-sidebar-glass"] .global-search input {
+  font-size: 13px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand-panel {
   background: linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899);

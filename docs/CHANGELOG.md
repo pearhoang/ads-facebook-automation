@@ -297,3 +297,10 @@
 - Affected: Prototype generator, HTML Direction C generated, contract test, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
 - Verified: `72 passed`, Python compile và diff check sạch; browser local xác nhận `background-image: none`, UTF-8, không overflow ngang và console không có warning/error.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-03 - Cân lại hierarchy Meta Light Focus
+
+- Changed: Trả brand/footer sidebar về nền trắng, avatar về xanh nhạt và dùng selected navigation Meta blue làm điểm neo duy nhất. Chuyển gradient xanh–tím rất nhẹ xuống canvas; panel bỏ accent line, section icon bỏ tile nền và helper copy dashboard được ẩn.
+- Readability: Tăng cỡ chữ KPI, table, metadata, status, button và row spacing; giữ semantic blue/indigo/amber/green cho dữ liệu và trạng thái thay vì trang trí chrome.
+- Verified: `73 passed`, Python compile và diff check sạch; browser local ở `1212px`, `1920px` và mobile `390px` xác nhận UTF-8, console sạch, không page overflow, mobile KPI `2×2` và table tự scroll.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

@@ -139,7 +139,7 @@ def test_selected_direction_uses_meta_light_shell_and_vibrant_login() -> None:
     assert "--sidebar-text: #172033" in html
     assert "--sidebar-muted: #344054" in html
     assert ".brand > .brand-mark" in html
-    assert "background: #f7f9fc" in html
+    assert "linear-gradient(145deg, #f7f9fc 0%, #eef4ff 52%, #f6f3fb 100%)" in html
     assert "color: #fff" in html
     assert "linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899)" in html
     assert 'body[data-variant="meta-dark-sidebar-glass"] .content {' in html
@@ -183,10 +183,10 @@ def test_selected_workspace_has_scannable_color_hierarchy() -> None:
     assert "--page: #f1f4f8" in html
     assert "--muted: #475467" in html
     assert "--sidebar-muted: #344054" in html
-    assert "border: 1px solid #d6dfeb" in html
-    assert "background: #f7f9fc" in html
-    assert "background: #eef4fb" in html
-    assert "box-shadow: 0 3px 10px rgba(15,23,42,.09), inset 0 1px 0 rgba(255,255,255,.92)" in html
+    assert "border: 1px solid #0866ff" in html
+    assert "background: #0866ff" in html
+    assert "background: #075ce6" in html
+    assert "box-shadow: 0 4px 10px rgba(8,102,255,.22)" in html
     assert "linear-gradient(115deg" not in html
     assert ".metric::after" in html
     assert ".metric-value" in html and "color: var(--metric-accent)" in html
@@ -198,15 +198,16 @@ def test_selected_workspace_has_scannable_color_hierarchy() -> None:
     assert 'class="card card-resources"' in html
 
 
-def test_selected_workspace_uses_meta_brand_band_and_data_first_kpi_strip() -> None:
-    """Brand treatment may be expressive, while KPI icons must stay subordinate to data."""
+def test_selected_workspace_uses_quiet_sidebar_and_data_first_kpi_strip() -> None:
+    """Brand and account chrome must stay quiet so selected navigation and data lead."""
 
     html = render_variant("meta-dark-sidebar-glass").lower()
 
-    assert "linear-gradient(110deg, #e6f0ff 0%, #f0ebff 54%, #ffe9f3 100%)" in html
-    assert "box-shadow: 0 0 0 3px rgba(255,255,255,.86)" in html
+    assert "linear-gradient(110deg, #e6f0ff 0%, #f0ebff 54%, #ffe9f3 100%)" not in html
+    assert "box-shadow: 0 1px 4px rgba(8,102,255,.18)" in html
     assert ".sidebar-footer .avatar" in html
-    assert "linear-gradient(135deg, #0866ff 0%, #7c3aed 56%, #ec4899 100%)" in html
+    assert "background: #eef4ff" in html
+    assert "linear-gradient(135deg, #0866ff 0%, #7c3aed 56%, #ec4899 100%)" not in html
     assert ".metrics {" in html
     assert "gap: 0" in html
     assert ".metric-icon" in html
@@ -214,3 +215,15 @@ def test_selected_workspace_uses_meta_brand_band_and_data_first_kpi_strip() -> N
     assert "background: transparent" in html
     assert "left: 50%" in html
     assert "transform: translatex(-50%)" in html
+
+
+def test_selected_workspace_reduces_panel_chrome_and_increases_readability() -> None:
+    """Dense workspace content needs stronger type and fewer decorative header layers."""
+
+    html = render_variant("meta-dark-sidebar-glass").lower()
+
+    assert ".card-head::before" in html and "content: none" in html
+    assert ".section-copy p" in html and "display: none" in html
+    assert "table {\n  font-size: 12.5px" in html
+    assert ".item-meta" in html and "font-size: 10.5px" in html
+    assert ".section-icon" in html and "background: transparent" in html
