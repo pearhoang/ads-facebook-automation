@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ads Lush — Tài khoản Facebook</title>
+  <title>Ads Meta Master — Tài khoản Facebook</title>
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,9 +12,9 @@
 </head>
 <body data-csrf-token="{{ csrf_token }}">
   <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Ads Lush">
-      <span class="brand-mark">A</span>
-      <span><strong>Ads Lush</strong><small>Automation workspace</small></span>
+    <a class="brand" href="/" aria-label="Ads Meta Master">
+      <img class="brand-mark" src="/static/ads-meta-master.svg" alt="">
+      <span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span>
     </a>
     <nav aria-label="Điều hướng chính">
       <a class="nav-item is-active" href="/">Tài khoản Facebook</a>
@@ -26,7 +27,7 @@
     </nav>
     <div class="sidebar-footer">
       <span class="environment-dot"></span>
-      <span class="sidebar-footer-copy"><strong>{{ principal.tenant_name }}</strong><small>{{ principal.role }} · Account Session</small><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span>
+      <span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span>
     </div>
   </aside>
 

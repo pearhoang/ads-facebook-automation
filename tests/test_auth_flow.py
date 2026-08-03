@@ -39,6 +39,51 @@ def provision(client: TestClient) -> None:
         )
 
 
+def test_ads_meta_master_branding_is_consistent_across_rendered_pages():
+    with build_production_client() as client:
+        provision(client)
+
+        login_page = client.get("/login")
+        assert login_page.status_code == 200
+        assert "Ads Meta Master" in login_page.text
+        assert "Meta Ads Automation" in login_page.text
+        assert (
+            'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg"'
+            in login_page.text
+        )
+        assert "Ads Lush" not in login_page.text
+        assert "Automation workspace" not in login_page.text
+
+        logged_in = client.post(
+            "/api/auth/login",
+            headers={"Origin": "https://testserver"},
+            json={"email": "admin", "password": PASSWORD},
+        )
+        assert logged_in.status_code == 200
+
+        for path in ("/", "/campaigns", "/reports", "/bot-nodes", "/hermes-agents"):
+            page = client.get(path)
+            assert page.status_code == 200
+            assert "Ads Meta Master" in page.text, path
+            assert "Meta Ads Automation" in page.text, path
+            assert "<strong>Admin</strong>" in page.text, path
+            assert (
+                'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg"'
+                in page.text
+            ), path
+            assert "Ads Lush" not in page.text, path
+            assert "Automation workspace" not in page.text, path
+            assert "Lush Media" not in page.text, path
+
+        asset = client.get("/static/ads-meta-master.svg")
+        assert asset.status_code == 200
+        assert asset.headers["content-type"].startswith("image/svg+xml")
+        assert 'viewBox="0 0 32 32"' in asset.text
+        assert "<script" not in asset.text
+        assert "xlink:href" not in asset.text
+        assert "data:" not in asset.text
+
+
 def test_login_cookie_csrf_logout_and_workspace_guard():
     with build_production_client() as client:
         provision(client)
@@ -86,7 +131,10 @@ def test_login_cookie_csrf_logout_and_workspace_guard():
         workspace = client.get("/")
         assert workspace.status_code == 200
         assert "Quản trị viên" in workspace.text
-        assert "Lush Media" in workspace.text
+        assert "Ads Meta Master" in workspace.text
+        assert "Meta Ads Automation" in workspace.text
+        assert "<strong>Admin</strong>" in workspace.text
+        assert "Lush Media" not in workspace.text
         assert "Hermes Dashboard" in workspace.text
         assert "data-open-password-dialog" in workspace.text
         assert 'id="password-dialog"' in workspace.text

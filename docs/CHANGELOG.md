@@ -216,3 +216,11 @@
 - Verified: `58 passed`; đăng nhập Hermes mới `admin / 1234` trả `200`, API session đã xác thực trả `200`, mật khẩu cũ trả `401` và Dashboard health `overall=ok`.
 - Deploy: Commit `aadd2b1`; password rotation operation thành công, chỉ restart Hermes Dashboard. Source/database backup tại `/var/backups/meta-ads-copilot/20260801T184243Z-hermes-password-1234`.
 - Safety: Password at rest vẫn là scrypt hash; khi đổi vẫn xoay signing secret để thu hồi phiên Dashboard cũ và không restart gateway/Telegram/browser worker.
+
+### 2026-08-03 - Đổi nhận diện control-plane sang Ads Meta Master
+
+- Changed: Đổi visible brand thành `Ads Meta Master`, subtitle `Meta Ads Automation`, thêm custom SVG monogram `M` dùng chung cho sidebar/login/favicon và rút gọn footer còn `Admin` với action `Đổi mật khẩu`.
+- Affected: Bảy Jinja template, shared workspace/auth CSS, static brand asset, auth integration test và UI system memory.
+- Verified: `59 passed`, Python compile sạch, local `/health` trả `200`; browser smoke xác nhận title, brand, subtitle, footer và favicon trên `http://127.0.0.1:8010/`.
+- Deploy: Chưa push hoặc deploy; thay đổi chỉ nằm trên branch local `codex/ads-meta-master-branding`.
+- Safety: Giữ nguyên domain, tenant database, cookie `ads_lush_*`, API/worker contract và toàn bộ runtime/deployment identifiers.

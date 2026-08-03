@@ -10,7 +10,7 @@
 
 ## Visual Direction
 
-- Kế thừa độ sáng, mật độ và bố cục control-plane từ `Youtube_Upload_Lush`, nhưng tạo nhận diện riêng cho Meta Ads SaaS.
+- Nhận diện sản phẩm là `Ads Meta Master`, dùng subtitle `Meta Ads Automation` và custom SVG monogram `M` màu xanh cho brand mark lẫn favicon; không dùng logo chính thức của Meta/Facebook.
 - Sidebar cố định, top bar gọn, white surfaces trên nền xám rất nhạt.
 - Màu trạng thái nhất quán: success xanh, warning amber, failure đỏ, action accent cam đất.
 
@@ -48,10 +48,10 @@
 - Popup cài worker điền sẵn canonical GitHub repo nhưng vẫn là input sửa được; DeepSeek V4 Flash 0731 là preset đầu tiên, còn model API canonical giữ `deepseek-v4-flash`.
 - Hermes Agents và popup cài Bot VPS dùng cùng hai control `Thinking` và `Reasoning effort`; popup sửa Bot VPS không lặp lại provider settings.
 - Hermes Agents có control `Quyền Agent` theo worker. `Ads Safe` là mặc định; `Experimental Full Access` hiển thị cảnh báo inline về quyền terminal/file/code/browser/computer/delegation và nói rõ session mới hoặc `/reset` mới nhận bộ quyền.
-- Footer `Lush Media` ở sidebar có action chữ `Đổi mật khẩu`; dialog dùng chung xác minh mật khẩu hiện tại, yêu cầu tối thiểu 4 ký tự và báo rõ các phiên khác sẽ bị đăng xuất.
+- Footer sidebar chỉ hiển thị `Admin` và action chữ `Đổi mật khẩu`; không hiển thị tenant name, role hoặc module/session context. Dialog dùng chung xác minh mật khẩu hiện tại, yêu cầu tối thiểu 4 ký tự và báo rõ các phiên khác sẽ bị đăng xuất.
 - Login dùng nhãn `Tài khoản` với text input và `autocomplete=username`; không ép identifier phải có định dạng email.
 - Copy DeepSeek phải nói rõ default thinking High và Low/Medium được provider ánh xạ lên High; không hứa mức suy luận mà endpoint không hỗ trợ.
-- Native Hermes Dashboard là Web chat/agent surface. Ads Lush không tái tạo chat workspace; route legacy `/ai-copilot` chỉ chuyển hướng sau khi kiểm tra đăng nhập.
+- Native Hermes Dashboard là Web chat/agent surface. Control-plane không tái tạo chat workspace; route legacy `/ai-copilot` chỉ chuyển hướng sau khi kiểm tra đăng nhập.
 - Navigation dùng nhãn `Hermes Dashboard` mở tab mới; `Hermes Agents` có action `Mở Hermes Dashboard` cạnh trạng thái provider.
 - `Hermes Agents` có action `Đổi mật khẩu Dashboard` theo Bot VPS đang chọn. Dialog chấp nhận password từ 4 ký tự, giải thích SSH password chỉ dùng một lần, xoay signing secret sẽ đăng xuất phiên cũ và gateway/Telegram/browser worker không bị restart.
 - Natural language là primary interaction. Không hiện generic menu button sau mọi câu trả lời.

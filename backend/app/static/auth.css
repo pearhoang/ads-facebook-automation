@@ -30,6 +30,9 @@
   font-size: 17px;
 }
 
+.auth-brand-row strong, .auth-brand-row small { display: block; }
+.auth-brand-row small { margin-top: 2px; color: #aaa69f; font-size: 11px; }
+
 .auth-brand > p {
   margin-top: 36px;
   color: #d2cfc9;
