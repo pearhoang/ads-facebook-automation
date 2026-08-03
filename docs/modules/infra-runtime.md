@@ -29,6 +29,7 @@
 
 ## Current Deployment
 
+- UI branding `Ads Meta Master` và palette Meta Balanced đã deploy ngày 2026-08-03 từ commit `33ae3d9`; chỉ restart web service. Source backup: `/opt/meta-ads-copilot-runtime/source-backups/meta-ads-ui-predeploy-20260803T044448Z.tar.gz`.
 - Deployed: 2026-07-31.
 - Web và worker đang `active`.
 - Caddy Basic Auth đã được gỡ; app redirect user chưa đăng nhập tới `/login`.

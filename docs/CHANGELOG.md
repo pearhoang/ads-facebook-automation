@@ -232,3 +232,11 @@
 - Verified: `60 passed`, Python compile và diff check sạch; local browser smoke trên Workspace, Campaigns và Hermes Agents xác nhận primary `rgb(24, 119, 242)`, indigo safety `rgb(238, 242, 255)`, danger `rgb(184, 58, 58)` và sidebar giữ `rgb(36, 35, 33)`.
 - Deploy: Chưa push hoặc deploy; local preview tiếp tục chạy tại `http://127.0.0.1:8010` trên branch `codex/ads-meta-master-branding`.
 - Safety: Không đổi layout, copy, API, database, worker contract, runtime identifier hoặc deployment config.
+
+### 2026-08-03 - Deploy Ads Meta Master và Meta Balanced lên production
+
+- Changed: Fast-forward `main` qua bộ nhận diện `Ads Meta Master` và palette Meta Balanced blue-indigo-green, sau đó triển khai lên `https://ads.lushmedia.net`.
+- Affected: Jinja templates, shared workspace/auth/Copilot CSS, SVG brand asset và project UI memory; không có migration hoặc dependency mới.
+- Verified: `60 passed`, Python compile và diff check sạch; production checkout sạch tại commit `33ae3d9`, health `ok`, bốn service active. Browser live xác nhận title/brand/subtitle/footer/favicon mới, accent `#1877f2`, body `rgb(243, 246, 251)`, sidebar giữ `rgb(36, 35, 33)` và không có console warning/error.
+- Deploy: Push `main` từ `bf32cf4` lên `33ae3d9`; chỉ restart `meta-ads-copilot-web.service`. Source backup tại `/opt/meta-ads-copilot-runtime/source-backups/meta-ads-ui-predeploy-20260803T044448Z.tar.gz`.
+- Safety: Preflight không có browser session active hoặc job queued/running; PostgreSQL healthy. PID worker và Hermes giữ nguyên, không đổi API, database, worker contract hoặc runtime config.
