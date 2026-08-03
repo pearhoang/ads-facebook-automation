@@ -290,3 +290,10 @@
 - Affected: Prototype generator, HTML Direction C generated, contract test, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
 - Verified: `72 passed`, Python compile và diff check sạch; browser local `1280×720` xác nhận gradient `#EAF2FF → #EEF0FF → #F4ECFF`, indigo text/icon, border `#CBD5FF`, shadow 12%, không overflow ngang và console sạch.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-03 - Làm nhẹ selected navigation theo surface gần trắng
+
+- Changed: Bỏ gradient khỏi active sidebar row; thay bằng nền đơn sắc `#F7F9FC`, viền xanh-xám nhạt, chữ/icon xanh slate và shadow nông có highlight trắng để tạo cảm giác surface nổi nhẹ.
+- Affected: Prototype generator, HTML Direction C generated, contract test, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
+- Verified: `72 passed`, Python compile và diff check sạch; browser local xác nhận `background-image: none`, UTF-8, không overflow ngang và console không có warning/error.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

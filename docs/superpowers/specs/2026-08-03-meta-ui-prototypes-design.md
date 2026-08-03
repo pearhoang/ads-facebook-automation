@@ -57,7 +57,7 @@ Create three standalone HTML prototypes for the Ads Meta Master control plane so
 ## Direction C — Meta Light Focus (user-selected refinement)
 
 - The user selected Direction C on 2026-08-03, then requested a calmer Meta-style light shell while preserving its uncluttered structure.
-- Sidebar uses solid white with a soft gray-blue border and slate `#344054` navigation text. The selected row uses a pale blue–lavender gradient, indigo text/icon, a thin periwinkle border, and a shallow shadow; it reads as selection without competing with solid Meta-blue CTAs. Pink remains reserved for brand/avatar identity.
+- Sidebar uses solid white with a soft gray-blue border and slate `#344054` navigation text. The selected row uses a near-white solid surface, blue-slate text/icon, a cool-gray border, and shallow neutral elevation with a white inset highlight; it reads as a raised selection without competing with the brand band, avatar, or solid Meta-blue CTAs. Pink remains reserved for brand/avatar identity.
 - The sidebar brand band uses a light blue–violet–pink Meta gradient. The blue monogram keeps a white halo for separation, while the Admin avatar uses the saturated version of the same gradient with white text.
 - Main canvas uses `#F1F4F8`, opaque white surfaces, stronger neutral borders, shallow neutral shadows, and solid `#0866FF` primary actions.
 - On desktop and tablet, the workspace is fluid rather than centered in a fixed `max-width`: panels use the full main-column width with a `20px` horizontal gutter, matching the denser YouTube control-plane reference. Mobile retains a `12px` gutter.

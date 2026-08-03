@@ -186,3 +186,7 @@
 - [x] **Step 9: Connect selected navigation to the Meta brand band**
 
   Replace the flat indigo selected row with a pale blue–lavender gradient, indigo content, a thin periwinkle border, a shallow shadow, and a slightly stronger pastel hover state. Keep pink out of navigation so the selected state remains functional rather than promotional.
+
+- [x] **Step 10: Rebalance selected navigation as a near-white raised surface**
+
+  Remove the selected-row gradient after the brand band and Admin avatar became the sidebar identity anchors. Use one near-white fill, a cool-gray border, blue-slate content, and shallow neutral elevation so selection remains readable without becoming a third strong color block.
