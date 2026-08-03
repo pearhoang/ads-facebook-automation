@@ -11,8 +11,8 @@
 ## Visual Direction
 
 - Nhận diện sản phẩm là `Ads Meta Master`, dùng subtitle `Meta Ads Automation` và custom SVG monogram `M` màu xanh cho brand mark lẫn favicon; không dùng logo chính thức của Meta/Facebook.
-- Sidebar cố định, top bar gọn, white surfaces trên nền xám rất nhạt.
-- Màu trạng thái nhất quán: success xanh, warning amber, failure đỏ, action accent cam đất.
+- Sidebar cố định giữ dark neutral `#242321`, top bar gọn, white surfaces trên nền blue-gray rất nhạt.
+- Tone `Meta Balanced`: action/focus dùng blue `#1877F2`, attention/safety dùng indigo `#4F46E5`, success/online dùng green `#16865F`; error, blocker và destructive action giữ red `#B83A3A`.
 
 ## Shared Patterns
 

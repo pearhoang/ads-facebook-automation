@@ -3,7 +3,7 @@
   min-height: 100vh;
   place-items: center;
   padding: 24px;
-  background: #efeeeb;
+  background: var(--background);
 }
 
 .auth-shell {
@@ -14,7 +14,7 @@
   border: 1px solid var(--border-strong);
   border-radius: 10px;
   background: var(--surface);
-  box-shadow: 0 4px 16px rgba(28, 25, 23, .1);
+  box-shadow: 0 4px 16px rgba(23, 32, 51, .1);
 }
 
 .auth-brand {

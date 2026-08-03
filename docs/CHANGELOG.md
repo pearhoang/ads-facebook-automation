@@ -224,3 +224,11 @@
 - Verified: `59 passed`, Python compile sạch, local `/health` trả `200`; browser smoke xác nhận title, brand, subtitle, footer và favicon trên `http://127.0.0.1:8010/`.
 - Deploy: Chưa push hoặc deploy; thay đổi chỉ nằm trên branch local `codex/ads-meta-master-branding`.
 - Safety: Giữ nguyên domain, tenant database, cookie `ads_lush_*`, API/worker contract và toàn bộ runtime/deployment identifiers.
+
+### 2026-08-03 - Chuyển tone UI sang Meta Balanced
+
+- Changed: Thay action/focus cam bằng Meta blue, chuyển safety/approval/warning vàng sang indigo, giữ success green và danger red; light surfaces dùng cool blue-gray, sidebar dark neutral giữ nguyên.
+- Affected: Shared workspace tokens, auth/Copilot light surfaces, theme integration test và UI system memory.
+- Verified: `60 passed`, Python compile và diff check sạch; local browser smoke trên Workspace, Campaigns và Hermes Agents xác nhận primary `rgb(24, 119, 242)`, indigo safety `rgb(238, 242, 255)`, danger `rgb(184, 58, 58)` và sidebar giữ `rgb(36, 35, 33)`.
+- Deploy: Chưa push hoặc deploy; local preview tiếp tục chạy tại `http://127.0.0.1:8010` trên branch `codex/ads-meta-master-branding`.
+- Safety: Không đổi layout, copy, API, database, worker contract, runtime identifier hoặc deployment config.

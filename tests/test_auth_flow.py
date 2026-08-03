@@ -84,6 +84,46 @@ def test_ads_meta_master_branding_is_consistent_across_rendered_pages():
         assert "data:" not in asset.text
 
 
+def test_meta_balanced_theme_css_contract_is_served():
+    with build_production_client() as client:
+        response = client.get("/static/workspace.css")
+        assert response.status_code == 200
+        css = response.text.lower()
+
+        for token in (
+            "--background: #f3f6fb;",
+            "--surface-subtle: #f7f9fc;",
+            "--border: #d8e0eb;",
+            "--border-strong: #b8c4d4;",
+            "--text: #172033;",
+            "--muted: #667085;",
+            "--accent: #1877f2;",
+            "--accent-hover: #166fe5;",
+            "--success: #16865f;",
+            "--warning: #4f46e5;",
+            "--danger: #b83a3a;",
+        ):
+            assert token in css
+
+        for retired in (
+            "#d85c36",
+            "#bd4827",
+            "rgba(216,92,54,.12)",
+            "#a76513",
+            "#fff1dc",
+            "#edcf9f",
+            "#fff8ed",
+            "#fff6e9",
+            "#714813",
+        ):
+            assert retired not in css
+
+        assert "background: #242321;" in css
+        assert ".nav-item.is-active { background: #3a3733;" in css
+        assert ".button-danger" in css
+        assert "color: var(--danger);" in css
+
+
 def test_login_cookie_csrf_logout_and_workspace_guard():
     with build_production_client() as client:
         provision(client)
