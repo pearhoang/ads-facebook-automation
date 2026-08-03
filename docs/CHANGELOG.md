@@ -276,3 +276,10 @@
 - Affected: Prototype generator, ba HTML generated, contract test, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
 - Verified: `71 passed`, Python compile và diff check sạch; browser local `1280×720` xác nhận accent ba panel lần lượt `#0866FF`, `#4F46E5`, `#0F8F6F`, bốn KPI value có màu riêng, contrast active nav `6.29:1`, inactive nav `10.46:1`, metric meta `4.97:1`, không overflow ngang và console sạch.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-03 - Tinh gọn KPI và tăng nhận diện sidebar
+
+- Changed: Brand sidebar dùng gradient Meta pastel với logo halo trắng, avatar Admin dùng gradient đậm; KPI chuyển thành một strip liền, icon 14px không tile nền, value làm focal point và semantic line căn giữa đáy từng ô.
+- Affected: Prototype generator, ba HTML generated, contract test, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
+- Verified: `72 passed`, Python compile và diff check sạch; browser local `1280×720` xác nhận logo không chìm, avatar gradient, KPI gap `0`, icon `15×15px` không nền/border, line rộng `46px` căn giữa, page không overflow ngang và console sạch.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

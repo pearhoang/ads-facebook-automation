@@ -193,3 +193,21 @@ def test_selected_workspace_has_scannable_color_hierarchy() -> None:
     assert 'class="card card-accounts"' in html
     assert 'class="card card-campaigns"' in html
     assert 'class="card card-resources"' in html
+
+
+def test_selected_workspace_uses_meta_brand_band_and_data_first_kpi_strip() -> None:
+    """Brand treatment may be expressive, while KPI icons must stay subordinate to data."""
+
+    html = render_variant("meta-dark-sidebar-glass").lower()
+
+    assert "linear-gradient(110deg, #e6f0ff 0%, #f0ebff 54%, #ffe9f3 100%)" in html
+    assert "box-shadow: 0 0 0 3px rgba(255,255,255,.86)" in html
+    assert ".sidebar-footer .avatar" in html
+    assert "linear-gradient(135deg, #0866ff 0%, #7c3aed 56%, #ec4899 100%)" in html
+    assert ".metrics {" in html
+    assert "gap: 0" in html
+    assert ".metric-icon" in html
+    assert "width: 15px" in html
+    assert "background: transparent" in html
+    assert "left: 50%" in html
+    assert "transform: translatex(-50%)" in html

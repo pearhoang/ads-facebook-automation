@@ -79,9 +79,11 @@
 - Ba prototype so sánh tại `docs/ui-prototypes/`: `Meta Gradient Vibrant`, `Meta Balanced Elevated` và bản user đang chọn để tinh chỉnh `Meta Light Focus`.
 - Cả ba giữ sidebar-left/main-content, dùng cùng component anatomy cho Dashboard, Login, native dialogs, tables, empty state, search/filter, popovers và campaign checkpoint progress.
 - `Meta Light Focus` dùng sidebar trắng, canvas `#F1F4F8`, logo tile/primary action `#0866FF` và login lấy identity gradient xanh–tím–hồng từ phương án A; slug cũ `meta-dark-sidebar-glass` được giữ để URL review không đổi.
+- Brand band ở đầu sidebar dùng gradient Meta pastel xanh–tím–hồng; logo xanh giữ tile riêng với halo trắng để không chìm. Avatar Admin dùng gradient Meta đậm với chữ trắng.
 - Workspace của `Meta Light Focus` không giới hạn `max-width`; panel giãn theo toàn bộ main column với gutter `20px` ở desktop/tablet và `12px` ở mobile để dữ liệu lớn, rõ và sát mép hơn.
 - `Meta Light Focus` tách vai trò màu để tăng scanability: logo/CTA/ad-account dùng Meta blue `#0866FF`; selected navigation/campaign draft dùng indigo `#4F46E5`; pending dùng amber; approved/resource dùng green. Inactive sidebar text dùng slate `#344054`, selected row dùng chữ trắng và shadow nhẹ.
-- KPI dùng value, icon tile và vạch đáy cùng semantic accent. Mỗi panel chỉ có một section accent ngắn ở header: Ad accounts xanh, Campaign drafts indigo, Meta resources green; table header và border có contrast cao hơn nhưng shadow vẫn shallow.
+- KPI dùng value và vạch đáy cùng semantic accent. Mỗi panel chỉ có một section accent ngắn ở header: Ad accounts xanh, Campaign drafts indigo, Meta resources green; table header và border có contrast cao hơn nhưng shadow vẫn shallow.
+- KPI của `Meta Light Focus` dùng một strip liền có vertical divider; icon nhỏ nằm cạnh label, không có tile nền. Value là focal point và vạch semantic accent được căn giữa đáy từng ô; mobile chuyển thành lưới `2×2` trong cùng một surface.
 - Dialog dùng header phẳng với border phân tách mảnh, không có accent line hoặc safety banner trang trí; danger/destructive vẫn giữ `#B83A3A`.
 - Đây là candidate để user chọn, chưa phải canonical production styling. Không áp dụng token, layout hoặc interaction prototype vào Jinja templates cho đến khi có lựa chọn rõ ràng.
 - Prototype không gọi API, không dùng production data và không nhúng password mẫu; danger/destructive giữ `#B83A3A` ở cả ba hướng.

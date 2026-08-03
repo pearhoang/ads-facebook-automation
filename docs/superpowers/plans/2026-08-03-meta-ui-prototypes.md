@@ -178,3 +178,7 @@
 - [x] **Step 7: Restore scannable color and information hierarchy**
 
   Separate the Meta-blue logo/CTA from an indigo selected navigation state; darken inactive sidebar and dense-data text; strengthen surface borders; give KPI values and markers semantic blue/indigo/amber/green roles; add one matching accent per Ad accounts, Campaign drafts, and Meta resources panel. Verify computed section colors, contrast, and horizontal overflow in browser.
+
+- [x] **Step 8: Refine the brand band and make KPI data primary**
+
+  Add a light Meta blue–violet–pink sidebar brand gradient with a white monogram halo and a saturated gradient Admin avatar. Consolidate KPI cards into one divided strip, remove icon tiles, place compact icons beside labels, center semantic markers, and retain a `2×2` mobile layout.
