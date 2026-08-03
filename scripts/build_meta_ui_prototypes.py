@@ -218,16 +218,18 @@ body[data-variant="meta-dark-sidebar-glass"] .primary-button {
   box-shadow: none;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav {
-  background: #4f46e5;
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(79,70,229,.24);
+  border: 1px solid #cbd5ff;
+  background: linear-gradient(115deg, #eaf2ff 0%, #eef0ff 55%, #f4ecff 100%);
+  color: #4338ca;
+  box-shadow: 0 3px 9px rgba(79,70,229,.12);
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav:hover {
-  background: #4338ca;
-  color: #fff;
+  border-color: #a5b4fc;
+  background: linear-gradient(115deg, #e0ebff 0%, #e8eaff 55%, #eee5ff 100%);
+  color: #3730a3;
 }
 body[data-variant="meta-dark-sidebar-glass"] .active-nav svg {
-  color: #fff;
+  color: #4f46e5;
 }
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-account-button:hover {
   background: #f0f2f5;

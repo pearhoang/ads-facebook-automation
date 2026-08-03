@@ -139,7 +139,7 @@ def test_selected_direction_uses_meta_light_shell_and_vibrant_login() -> None:
     assert "--sidebar-text: #172033" in html
     assert "--sidebar-muted: #344054" in html
     assert ".brand > .brand-mark" in html
-    assert "background: #4f46e5" in html
+    assert "linear-gradient(115deg, #eaf2ff 0%, #eef0ff 55%, #f4ecff 100%)" in html
     assert "color: #fff" in html
     assert "linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899)" in html
     assert 'body[data-variant="meta-dark-sidebar-glass"] .content {' in html
@@ -183,8 +183,9 @@ def test_selected_workspace_has_scannable_color_hierarchy() -> None:
     assert "--page: #f1f4f8" in html
     assert "--muted: #475467" in html
     assert "--sidebar-muted: #344054" in html
-    assert "background: #4f46e5" in html
-    assert "box-shadow: 0 4px 12px rgba(79,70,229,.24)" in html
+    assert "linear-gradient(115deg, #eaf2ff 0%, #eef0ff 55%, #f4ecff 100%)" in html
+    assert "linear-gradient(115deg, #e0ebff 0%, #e8eaff 55%, #eee5ff 100%)" in html
+    assert "box-shadow: 0 3px 9px rgba(79,70,229,.12)" in html
     assert ".metric::after" in html
     assert ".metric-value" in html and "color: var(--metric-accent)" in html
     assert ".card-accounts { --section-accent: #0866ff; }" in html

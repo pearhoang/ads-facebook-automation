@@ -283,3 +283,10 @@
 - Affected: Prototype generator, ba HTML generated, contract test, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
 - Verified: `72 passed`, Python compile và diff check sạch; browser local `1280×720` xác nhận logo không chìm, avatar gradient, KPI gap `0`, icon `15×15px` không nền/border, line rộng `46px` căn giữa, page không overflow ngang và console sạch.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-03 - Đồng bộ active navigation với brand gradient
+
+- Changed: Active sidebar row chuyển từ indigo phẳng sang gradient pastel xanh–lavender; dùng chữ/icon indigo, border periwinkle và shadow rất nhẹ để không cạnh tranh với CTA. Pink vẫn chỉ dành cho brand/avatar.
+- Affected: Prototype generator, HTML Direction C generated, contract test, design spec, implementation plan và UI system memory; không sửa Jinja/CSS production.
+- Verified: `72 passed`, Python compile và diff check sạch; browser local `1280×720` xác nhận gradient `#EAF2FF → #EEF0FF → #F4ECFF`, indigo text/icon, border `#CBD5FF`, shadow 12%, không overflow ngang và console sạch.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

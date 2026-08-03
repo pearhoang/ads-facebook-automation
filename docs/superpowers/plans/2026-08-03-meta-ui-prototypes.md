@@ -182,3 +182,7 @@
 - [x] **Step 8: Refine the brand band and make KPI data primary**
 
   Add a light Meta blue–violet–pink sidebar brand gradient with a white monogram halo and a saturated gradient Admin avatar. Consolidate KPI cards into one divided strip, remove icon tiles, place compact icons beside labels, center semantic markers, and retain a `2×2` mobile layout.
+
+- [x] **Step 9: Connect selected navigation to the Meta brand band**
+
+  Replace the flat indigo selected row with a pale blue–lavender gradient, indigo content, a thin periwinkle border, a shallow shadow, and a slightly stronger pastel hover state. Keep pink out of navigation so the selected state remains functional rather than promotional.
