@@ -175,6 +175,22 @@ def test_selected_workspace_removes_decorative_chrome_and_uses_sidebar_account()
     assert "dialog-head::before" not in html
 
 
+def test_dialogs_use_flat_field_first_visual_hierarchy() -> None:
+    """Dialog chrome must not compete with the form fields or required actions."""
+
+    html = render_variant("meta-dark-sidebar-glass")
+
+    assert 'class="dialog-icon"' not in html
+    assert 'class="dialog-section"' not in html
+    assert 'class="dialog-fields"' in html
+    assert "Ngân sách mỗi ngày (USD)" in html
+    assert "Ghi chú (không bắt buộc)" in html
+    assert '<button class="button primary-button" type="submit">Tạo bản nháp</button>' in html
+    assert '<i data-lucide="file-plus-2"></i>Tạo bản nháp' not in html
+    assert "const preferredFocus = dialog.querySelector" in html
+    assert "if (preferredFocus) preferredFocus.focus()" in html
+
+
 def test_sidebar_account_stays_inside_the_viewport_shell() -> None:
     """Letting the desktop shell grow with content would push the account footer off-screen."""
 

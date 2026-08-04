@@ -318,25 +318,27 @@
     .login-meta { display: flex; justify-content: space-between; margin-top: 18px; color: var(--muted); font-size: 10px; }
     .login-meta button { padding: 0; border: 0; background: transparent; color: var(--primary); cursor: pointer; }
 
-    dialog { width: min(680px, calc(100vw - 32px)); max-height: min(820px, calc(100vh - 36px)); padding: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 14px; background: #fff; color: #172033; box-shadow: 0 24px 70px rgba(15,23,42,.24); }
+    dialog { width: min(660px, calc(100vw - 32px)); max-height: min(820px, calc(100vh - 36px)); padding: 0; overflow: hidden; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; color: #172033; box-shadow: 0 18px 50px rgba(15,23,42,.22); }
     dialog.small-dialog { width: min(470px, calc(100vw - 32px)); }
-    dialog::backdrop { background: rgba(15,23,42,.46); }
-    .dialog-head { position: relative; min-height: 70px; display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #e1e6ee; }
-    .dialog-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 9px; background: #eef4ff; color: #0668e1; }
-    .dialog-icon.danger-icon { background: #fff0f0; color: var(--danger); }
-    .dialog-icon svg { width: 19px; height: 19px; }
-    .dialog-title h2 { margin: 0; font-family: var(--font-display); font-size: 15px; }
-    .dialog-title p { margin: 3px 0 0; color: #667085; font-size: 10px; }
-    .dialog-close { margin-left: auto; width: 34px; height: 34px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #667085; cursor: pointer; }
-    .dialog-close:hover { background: #f3f5f8; color: #172033; }
+    dialog > form { display: flex; max-height: inherit; flex-direction: column; }
+    dialog::backdrop { background: rgba(15,23,42,.42); }
+    .dialog-head { position: relative; min-height: 74px; display: flex; align-items: center; gap: 0; padding: 17px 20px; border-bottom: 1px solid #e1e6ee; }
+    .dialog-title h2 { margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 1.25; letter-spacing: -.015em; }
+    .dialog-title p { margin: 4px 0 0; color: #667085; font-size: 12px; line-height: 1.45; }
+    .dialog-close { margin-left: auto; width: 32px; height: 32px; display: grid; place-items: center; border: 0; border-radius: 8px; background: #f3f5f8; color: #667085; cursor: pointer; }
+    .dialog-close:hover { background: #e8ecf2; color: #172033; }
     .dialog-close:focus-visible { outline: 3px solid rgba(6,104,225,.2); outline-offset: 2px; }
-    .dialog-close svg { width: 18px; height: 18px; }
-    .dialog-body { max-height: calc(100vh - 210px); overflow: auto; padding: 18px; }
-    .dialog-section { padding: 15px; border: 1px solid #e1e6ee; border-radius: 10px; background: #fff; }
-    .dialog-section + .dialog-section { margin-top: 12px; }
-    .dialog-section h3 { display: flex; align-items: center; gap: 7px; margin: 0 0 12px; font-family: var(--font-display); font-size: 12px; }
-    .dialog-section h3 svg { width: 16px; height: 16px; color: #0668e1; }
-    .dialog-foot { min-height: 66px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 13px 18px; border-top: 1px solid #e1e6ee; background: #f8fafc; }
+    .dialog-close svg { width: 17px; height: 17px; }
+    .dialog-body { max-height: calc(100vh - 210px); overflow: auto; padding: 20px; }
+    .dialog-fields { display: grid; gap: 18px; }
+    .dialog-fields .field { margin-bottom: 0; }
+    dialog .field label { margin-bottom: 8px; font-size: 12px; }
+    dialog .field input, dialog .field select, dialog .field textarea { border-color: #b9c5d6; background: #fff; }
+    dialog .field input, dialog .field select { height: 44px; }
+    dialog .field-help { margin-top: 7px; font-size: 10.5px; line-height: 1.45; }
+    .required-mark { margin-left: 2px; color: #b83a3a; }
+    .dialog-inline-meta { margin-top: -5px; color: #667085; font-size: 10.5px; line-height: 1.5; }
+    .dialog-foot { min-height: 64px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid #e1e6ee; background: #fff; }
     .danger-copy { padding: 4px 0 2px; color: #475467; font-size: 12px; line-height: 1.65; }
     .danger-copy strong { color: #172033; }
     .confirm-name { margin-top: 14px; padding: 10px 12px; border: 1px solid #f0c7c7; border-radius: 8px; background: #fff7f7; color: #8e2f2f; font-size: 11px; font-weight: 700; }
@@ -587,28 +589,27 @@ body[data-variant="meta-gradient-vibrant"] .active-nav {
 
   <dialog id="campaign-dialog">
     <form data-prototype-form="campaign">
-      <header class="dialog-head"><span class="dialog-icon"><i data-lucide="file-plus-2"></i></span><div class="dialog-title"><h2>Tạo campaign draft</h2><p>Thiết lập spec trước khi chạy preflight hoặc Meta draft builder.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <header class="dialog-head"><div class="dialog-title"><h2>Tạo campaign draft</h2><p>Chỉ lưu bản nháp trong Ads Meta Master.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
       <div class="dialog-body">
-        <section class="dialog-section"><h3><i data-lucide="badge-info"></i>Thông tin campaign</h3><div class="field-row"><div class="field"><label for="campaign-name">Tên campaign</label><input id="campaign-name" value="Awareness — August Launch" required></div><div class="field"><label for="campaign-objective">Objective</label><select id="campaign-objective"><option>Awareness</option><option>Traffic</option><option>Engagement</option><option>Leads</option><option>App promotion</option><option>Sales</option></select></div></div><div class="field"><label for="campaign-account">Ad account</label><select id="campaign-account"><option>Lush Ads Main · USD</option><option>Campaign Lab · VND</option></select><div class="field-help">Resource và asset sẽ được lọc theo đúng ad account.</div></div></section>
-        <section class="dialog-section"><h3><i data-lucide="wallet-cards"></i>Ngân sách và lịch chạy</h3><div class="field-row"><div class="field"><label for="campaign-budget">Ngân sách ngày</label><input id="campaign-budget" inputmode="decimal" value="50.00"></div><div class="field"><label for="campaign-currency">Tiền tệ</label><input id="campaign-currency" value="USD" readonly></div></div><div class="field"><label for="campaign-note">Ghi chú vận hành</label><textarea id="campaign-note">Dừng ở Review để owner kiểm tra trước khi tiếp tục.</textarea></div></section>
+        <div class="dialog-fields"><div class="field"><label for="campaign-account">Ad account<span class="required-mark" aria-hidden="true">*</span></label><select id="campaign-account" required><option>Lush Ads Main · USD</option><option>Campaign Lab · VND</option></select><div class="field-help">Resource và asset sẽ được lọc theo ad account này.</div></div><div class="field"><label for="campaign-name">Tên campaign<span class="required-mark" aria-hidden="true">*</span></label><input id="campaign-name" value="Awareness — August Launch" required></div><div class="field-row"><div class="field"><label for="campaign-objective">Objective<span class="required-mark" aria-hidden="true">*</span></label><select id="campaign-objective" required><option>Awareness</option><option>Traffic</option><option>Engagement</option><option>Leads</option><option>App promotion</option><option>Sales</option></select></div><div class="field"><label for="campaign-budget">Ngân sách mỗi ngày (USD)<span class="required-mark" aria-hidden="true">*</span></label><input id="campaign-budget" inputmode="decimal" value="50.00" required></div></div><div class="dialog-inline-meta">Bản nháp sẽ dừng ở Review để bạn kiểm tra trước khi tiếp tục.</div><div class="field"><label for="campaign-note">Ghi chú (không bắt buộc)</label><textarea id="campaign-note" placeholder="Ví dụ: Kiểm tra nội dung và ngân sách trước khi tiếp tục."></textarea></div></div>
       </div>
-      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit"><i data-lucide="file-plus-2"></i>Tạo bản nháp</button></footer>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit">Tạo bản nháp</button></footer>
     </form>
   </dialog>
 
   <dialog class="small-dialog" id="password-dialog">
     <form data-prototype-form="password">
-      <header class="dialog-head"><span class="dialog-icon"><i data-lucide="key-round"></i></span><div class="dialog-title"><h2>Đổi mật khẩu</h2><p>Các phiên khác sẽ được đăng xuất sau khi cập nhật.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <header class="dialog-head"><div class="dialog-title"><h2>Đổi mật khẩu</h2><p>Các phiên khác sẽ được đăng xuất sau khi cập nhật.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
       <div class="dialog-body"><div class="field"><label for="current-password">Mật khẩu hiện tại</label><input id="current-password" type="password" autocomplete="current-password" required></div><div class="field"><label for="new-password">Mật khẩu mới</label><input id="new-password" type="password" autocomplete="new-password" minlength="4" required><div class="field-help">Tối thiểu 4 ký tự. Prototype không gửi hoặc lưu mật khẩu.</div></div><div class="field"><label for="confirm-password">Nhập lại mật khẩu mới</label><input id="confirm-password" type="password" autocomplete="new-password" minlength="4" required></div></div>
-      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit"><i data-lucide="check"></i>Cập nhật mật khẩu</button></footer>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit">Cập nhật mật khẩu</button></footer>
     </form>
   </dialog>
 
   <dialog class="small-dialog" id="danger-dialog">
     <form data-prototype-form="danger">
-      <header class="dialog-head"><span class="dialog-icon danger-icon"><i data-lucide="triangle-alert"></i></span><div class="dialog-title"><h2>Xóa bản nháp?</h2><p>Hành động nguy hiểm luôn giữ màu đỏ.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <header class="dialog-head"><div class="dialog-title"><h2>Xóa bản nháp?</h2><p>Bạn không thể khôi phục thao tác này.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
       <div class="dialog-body"><div class="danger-copy">Bản nháp sẽ bị xóa khỏi Ads Meta Master. Thao tác này <strong>không xóa campaign trên Meta</strong>, nhưng lịch sử chỉnh sửa chưa lưu sẽ không thể khôi phục.</div><div class="confirm-name">E2E Nhận biết — Stable Diffusion</div></div>
-      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Giữ bản nháp</button><button class="button danger-button" type="submit"><i data-lucide="trash-2"></i>Xóa bản nháp</button></footer>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Giữ bản nháp</button><button class="button danger-button" type="submit">Xóa bản nháp</button></footer>
     </form>
   </dialog>
 
@@ -655,7 +656,12 @@ body[data-variant="meta-gradient-vibrant"] .active-nav {
       document.querySelectorAll('[data-dialog-open]').forEach(function (button) {
         button.addEventListener('click', function () {
           const dialog = document.getElementById(button.getAttribute('data-dialog-open'));
-          if (dialog && !dialog.open) dialog.showModal();
+          if (dialog && !dialog.open) {
+            dialog.showModal();
+            const preferredFocus = dialog.querySelector('input:not([readonly]), select:not([disabled]), textarea:not([readonly])')
+              || dialog.querySelector('.dialog-foot [data-dialog-close]');
+            if (preferredFocus) preferredFocus.focus();
+          }
         });
       });
 

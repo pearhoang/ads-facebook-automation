@@ -334,3 +334,10 @@
 - Changed: Dùng cùng ellipse `820×390` với tâm chung tại góc viewport để warm glow nối liền từ sidebar qua vùng breadcrumb/title trên topbar; responsive rail dùng offset `82px`.
 - Verified: `13 passed`, diff check sạch; browser local xác nhận sidebar/topbar có cùng computed radial gradient với offset `0px`/`-248px` và console không có warning/error.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-04 - Đơn giản hóa dialog theo Meta Light Focus
+
+- Changed: Bỏ icon tile ở header, icon section, card lồng và icon CTA; chuyển campaign dialog thành form phẳng, tăng cỡ label/input và đánh dấu rõ trường bắt buộc.
+- Behavior: Khi mở dialog, focus chuyển thẳng tới field đầu tiên; dialog nguy hiểm ưu tiên focus action hủy an toàn khi không có field.
+- Verified: `14 passed`, Python compile và diff check sạch; browser local xác nhận field-first hierarchy, UTF-8 đúng và không có warning/error.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
