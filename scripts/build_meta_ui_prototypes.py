@@ -162,9 +162,7 @@ body[data-variant="meta-balanced-elevated"] .brand-panel {
         radius="12px",
         variant_css="""
 body[data-variant="meta-dark-sidebar-glass"] .content-pane {
-  background:
-    radial-gradient(ellipse 720px 330px at 0 0, rgba(169,244,220,.46) 0%, rgba(202,244,239,.27) 32%, rgba(219,232,255,.17) 52%, rgba(255,255,255,0) 76%),
-    linear-gradient(145deg, #fbfcfe 0%, #f7f8fb 54%, #f8f7fb 100%);
+  background: linear-gradient(145deg, #fbfcfe 0%, #f7f8fb 54%, #f8f7fb 100%);
 }
 body[data-variant="meta-dark-sidebar-glass"] .content {
   width: 100%;

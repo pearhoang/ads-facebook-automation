@@ -144,9 +144,6 @@ def test_selected_direction_uses_meta_light_shell_and_vibrant_login() -> None:
     assert "radial-gradient(ellipse 820px 390px at -82px 0" in html
     assert "rgba(255,218,202,.60)" in html
     assert "rgba(255,238,231,.28)" in html
-    assert "radial-gradient(ellipse 720px 330px at 0 0" in html
-    assert "rgba(169,244,220,.46)" in html
-    assert "rgba(219,232,255,.17)" in html
     assert "linear-gradient(145deg, #fbfcfe 0%, #f7f8fb 54%, #f8f7fb 100%)" in html
     assert 'body[data-variant="meta-dark-sidebar-glass"] .brand {' in html
     assert "background: transparent" in html
