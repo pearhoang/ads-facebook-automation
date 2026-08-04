@@ -129,6 +129,20 @@ class WorkerOperationView(ORMModel):
     created_at: datetime
 
 
+class WorkerOperationPage(BaseModel):
+    items: list[WorkerOperationView]
+    page: int
+    page_size: int
+    total: int
+    total_pages: int
+    deletable_count: int
+
+
+class WorkerOperationPageDeletion(BaseModel):
+    deleted_count: int
+    protected_count: int
+
+
 class BotNodeEnrollmentView(BaseModel):
     id: str
     worker_key: str

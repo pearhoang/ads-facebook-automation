@@ -96,7 +96,7 @@ function renderTable() {
       <td><strong>${escapeHtml(stageLabels[item.stage] || item.stage)}</strong><span class="cell-subtext">${escapeHtml(item.progress_message)}</span></td>
       <td><span class="status-pill status-${statusClass(item.status)}">${escapeHtml(statusLabels[item.status] || item.status)}</span></td>
       <td>${escapeHtml(formatDate(item.updated_at))}</td>
-      <td class="actions-cell"><button class="button button-secondary button-small" type="button" data-view-work="${escapeHtml(item.id)}">Xem tiến độ</button></td>
+      <td class="actions-cell"><button class="icon-button" type="button" data-view-work="${escapeHtml(item.id)}" aria-label="Xem tiến độ"><svg aria-hidden="true"><use href="/static/ui-icons.svg#arrow-up-right"></use></svg></button></td>
     </tr>`).join("");
 }
 
@@ -165,9 +165,6 @@ document.addEventListener("click", (event) => {
 
 byId("status-filter").addEventListener("change", renderTable);
 byId("refresh-button").addEventListener("click", () => loadPage("Đã đồng bộ tiến độ mới nhất."));
-byId("logout-button").addEventListener("click", async () => {
-  try { await api("/api/auth/logout", { method: "POST", body: "{}" }); window.location.href = "/login"; } catch (error) { showNotice(error.message); }
-});
 
 loadPage();
 setInterval(() => {

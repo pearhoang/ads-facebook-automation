@@ -1,0 +1,56 @@
+<aside class="sidebar" aria-label="Điều hướng chính">
+  <a class="brand" href="/" aria-label="Ads Meta Master">
+    <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+    <span class="brand-copy"><strong>Ads Meta Master</strong><span>Meta Ads Automation</span></span>
+  </a>
+  <nav class="sidebar-scroll">
+    <div class="sidebar-section">Điều hướng</div>
+    <a class="nav-item nav-link{% if active_nav == 'accounts' %} is-active active-nav{% endif %}" href="/">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/></svg>
+      <span class="nav-label">Tài khoản Facebook</span>
+    </a>
+    <a class="nav-item nav-link{% if active_nav == 'ad_accounts' %} is-active active-nav{% endif %}" href="/ad-accounts">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/><path d="M7 15h4"/></svg>
+      <span class="nav-label">Ad accounts</span>
+    </a>
+    <a class="nav-item nav-link{% if active_nav == 'campaigns' %} is-active active-nav{% endif %}" href="/campaigns">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <span class="nav-label">Công việc quảng cáo</span>
+    </a>
+    <a class="nav-item nav-link{% if active_nav == 'reports' %} is-active active-nav{% endif %}" href="/reports">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/></svg>
+      <span class="nav-label">Báo cáo</span>
+    </a>
+    <div class="sidebar-section">Quản trị</div>
+    <a class="nav-item nav-link{% if active_nav == 'bot_nodes' %} is-active active-nav{% endif %}" href="/bot-nodes">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5"/><path d="M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5"/><path d="M6 6h.01M6 18h.01"/><path d="m15.7 13.4-.9-.3M9.2 10.9l-.9-.3M10.6 15.7l.3-.9M13.6 15.7l-.4-1M10.8 9.3l-.4-1M8.3 13.6l1-.4M14.7 10.8l1-.4M13.4 8.3l-.3.9"/></svg>
+      <span class="nav-label">Bot VPS</span>
+    </a>
+    <a class="nav-item nav-link{% if active_nav == 'hermes_agents' %} is-active active-nav{% endif %}" href="/hermes-agents">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
+      <span class="nav-label">Hermes Agents</span>
+    </a>
+    <a class="nav-item nav-link" href="/ai-copilot" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></svg>
+      <span class="nav-label">Hermes Dashboard</span>
+    </a>
+  </nav>
+  <footer class="sidebar-footer">
+    <button class="sidebar-account-button" type="button" data-account-menu-toggle aria-expanded="false" aria-controls="sidebar-account-menu">
+      <span class="avatar account-brand-mark" aria-hidden="true"><svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+      <span class="sidebar-account-copy"><strong>Admin</strong><span>Tài khoản</span></span>
+      <span class="visually-hidden">Quản trị viên</span>
+      <svg class="account-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+    </button>
+    <div id="sidebar-account-menu" class="sidebar-account-menu" hidden>
+      <button type="button" data-open-password-dialog>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M15 8l2 2M17 6l2 2"/></svg>
+        Đổi mật khẩu
+      </button>
+      <button id="logout-button" type="button" data-global-logout>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
+        Đăng xuất
+      </button>
+    </div>
+  </footer>
+</aside>

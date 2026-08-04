@@ -173,13 +173,6 @@ byId("open-novnc-button").addEventListener("click", () => {
   const session = sessionById(state.selectedSessionId);
   if (session?.novnc_url) window.open(session.novnc_url, "_blank", "noopener");
 });
-byId("logout-button").addEventListener("click", async () => {
-  try {
-    await api("/api/auth/logout", { method: "POST" });
-    window.location.assign("/login");
-  } catch (error) { showNotice(error.message); }
-});
-
 setInterval(() => {
   if (byId("session-dialog").open && state.selectedSessionId) refreshSelectedSession();
 }, 3000);

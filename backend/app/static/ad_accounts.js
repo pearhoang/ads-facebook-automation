@@ -26,7 +26,7 @@ function render() {
   byId("ad-accounts-empty").hidden = state.adAccounts.length > 0;
   byId("resources-empty").hidden = state.resources.length > 0;
   byId("ad-accounts-body").innerHTML = state.adAccounts.map((item) => `
-    <tr><td><strong>${escapeHtml(item.label)}</strong></td><td>${escapeHtml(facebookLabel(item.facebook_account_id))}</td><td class="mono-text">${escapeHtml(item.meta_ad_account_id)}</td><td>${escapeHtml(item.currency)}</td><td>${escapeHtml(item.timezone_name)}</td><td><span class="status-pill status-${item.status === "active" ? "success" : "neutral"}">${escapeHtml(item.status)}</span></td><td class="actions-cell"><button class="button button-secondary button-small" type="button" data-edit-ad-account="${escapeHtml(item.id)}">Sửa</button></td></tr>`).join("");
+    <tr><td><strong>${escapeHtml(item.label)}</strong></td><td>${escapeHtml(facebookLabel(item.facebook_account_id))}</td><td class="mono-text">${escapeHtml(item.meta_ad_account_id)}</td><td>${escapeHtml(item.currency)}</td><td>${escapeHtml(item.timezone_name)}</td><td><span class="status-pill status-${item.status === "active" ? "success" : "neutral"}">${escapeHtml(item.status)}</span></td><td class="actions-cell"><button class="row-button" type="button" data-edit-ad-account="${escapeHtml(item.id)}" aria-label="Sửa ad account"><svg aria-hidden="true"><use href="/static/ui-icons.svg#pencil"></use></svg></button></td></tr>`).join("");
   byId("resources-body").innerHTML = state.resources.map((item) => `
     <tr><td><strong>${escapeHtml(item.label)}</strong></td><td>${escapeHtml(resourceLabels[item.kind] || item.kind)}</td><td>${escapeHtml(accountLabel(item.ad_account_id))}</td><td class="mono-text">${escapeHtml(item.external_id || "—")}</td><td><span class="status-pill status-${item.status === "verified" ? "success" : "warning"}">${item.status === "verified" ? "Đã xác minh" : "Chưa xác minh"}</span></td><td class="actions-cell">${item.status === "verified" ? "—" : `<button class="button button-secondary button-small" type="button" data-verify-resource="${escapeHtml(item.id)}">Xác minh</button>`}</td></tr>`).join("");
   const accountOptions = state.adAccounts.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.label)}</option>`).join("");
@@ -111,6 +111,4 @@ byId("ad-account-form").addEventListener("submit", saveAdAccount);
 byId("resource-form").addEventListener("submit", saveResource);
 byId("confirm-resource-verify-button").addEventListener("click", verifyResource);
 byId("refresh-button").addEventListener("click", () => loadPage("Đã làm mới account và resource."));
-byId("logout-button").addEventListener("click", async () => { try { await api("/api/auth/logout", { method: "POST", body: "{}" }); window.location.href = "/login"; } catch (error) { showNotice(error.message); } });
-
 loadPage();

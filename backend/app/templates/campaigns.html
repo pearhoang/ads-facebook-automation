@@ -4,87 +4,69 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Công việc quảng cáo</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css?v=agent-work-1">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
-  <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Ads Meta Master">
-      <img class="brand-mark" src="/static/ads-meta-master.svg" alt="">
-      <span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span>
-    </a>
-    <nav aria-label="Điều hướng chính">
-      <a class="nav-item" href="/">Tài khoản Facebook</a>
-      <a class="nav-item" href="/ad-accounts">Ad accounts &amp; Resources</a>
-      <a class="nav-item is-active" href="/campaigns">Công việc quảng cáo</a>
-      <a class="nav-item" href="/reports">Báo cáo</a>
-      <a class="nav-item" href="/bot-nodes">Bot VPS</a>
-      <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
-      <a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
-    </nav>
-    <div class="sidebar-footer">
-      <span class="environment-dot"></span>
-      <span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span>
-    </div>
-  </aside>
+  {% set active_nav = "campaigns" %}
+  {% include "_sidebar.html" %}
 
   <main class="main">
     <header class="topbar">
-      <div>
+      <div class="page-identity">
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#layout"></use></svg><span>Automation</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Công việc quảng cáo</span></div>
         <h1>Công việc quảng cáo</h1>
-        <p>Theo dõi yêu cầu mà Hermes đang giao cho worker, không thay thế Ads Manager.</p>
       </div>
       <div class="topbar-actions">
-        <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
-        <button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button>
-        <button id="refresh-button" class="button button-primary" type="button">Làm mới tiến độ</button>
+        {% set global_search_placeholder = "Tìm yêu cầu, ad account…" %}
+        {% include "_topbar_tools.html" %}
+        <button id="refresh-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg>Làm mới tiến độ</button>
       </div>
     </header>
 
-    <div class="workflow-banner">
-      <div class="workflow-banner-index">01</div>
-      <div><strong>Ra lệnh và gửi media trên Telegram hoặc Hermes Dashboard.</strong><span>Hermes tự phân giải account/resource, worker thao tác Ads Manager và cập nhật kết quả tại đây. noVNC chỉ mở khi Meta yêu cầu login, 2FA hoặc challenge.</span></div>
+    <div class="content-pane">
+      <div class="content">
+        <div class="safety-banner"><strong>Telegram/Hermes là nơi ra lệnh.</strong> Agent tự phân giải account và resource, worker thao tác Ads Manager. Trang này chỉ theo dõi; noVNC chỉ mở khi Meta yêu cầu login, 2FA hoặc challenge.</div>
+
+        <section class="summary" aria-label="Tổng quan công việc">
+          <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg></span><div><div class="metric-label">Đang xử lý</div><div class="metric-value" id="active-count">0</div><div class="metric-meta">Worker đang thực thi</div></div></article>
+          <article class="metric" data-notification-label="công việc cần xử lý" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg></span><div><div class="metric-label">Cần bạn xử lý</div><div class="metric-value" id="handoff-count">0</div><div class="metric-meta">Login, 2FA hoặc challenge</div></div></article>
+          <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg></span><div><div class="metric-label">Tự phục hồi</div><div class="metric-value" id="recovery-count">0</div><div class="metric-meta">Retry từ checkpoint</div></div></article>
+          <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#badge-check"></use></svg></span><div><div class="metric-label">Hoàn tất</div><div class="metric-value" id="completed-count">0</div><div class="metric-meta">Đã dừng tại Review</div></div></article>
+        </section>
+
+        <div id="notice" class="notice page-notice" hidden></div>
+
+        <section class="content-section work-queue-section">
+          <div class="section-toolbar work-toolbar">
+            <div><h2>Hàng công việc</h2><p>Mỗi hàng là một yêu cầu xuyên suốt từ hội thoại đến checkpoint cuối.</p></div>
+            <label class="compact-field">Trạng thái
+              <select id="status-filter">
+                <option value="">Tất cả</option>
+                <option value="active">Đang xử lý</option>
+                <option value="awaiting_user">Cần bạn xử lý</option>
+                <option value="completed">Hoàn tất</option>
+                <option value="failed">Lỗi</option>
+              </select>
+            </label>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Ad account</th><th>Tiến độ</th><th>Trạng thái</th><th>Cập nhật</th><th class="actions-heading">Chi tiết</th></tr></thead>
+              <tbody id="work-requests-body"></tbody>
+            </table>
+            <div id="work-requests-empty" class="empty-state" hidden>
+              <strong>Chưa có công việc từ Hermes</strong>
+              <p>Hãy gửi một yêu cầu trên Telegram, ví dụ “Tạo camp bán sản phẩm X, dùng ảnh này, ngân sách 500k/ngày”.</p>
+              <a class="button button-secondary" href="/ai-copilot" target="_blank" rel="noopener">Mở Hermes Dashboard</a>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
-
-    <section class="summary" aria-label="Tổng quan công việc">
-      <div><span>Đang xử lý</span><strong id="active-count">0</strong></div>
-      <div><span>Cần bạn xử lý</span><strong id="handoff-count">0</strong></div>
-      <div><span>Tự phục hồi</span><strong id="recovery-count">0</strong></div>
-      <div><span>Hoàn tất</span><strong id="completed-count">0</strong></div>
-    </section>
-
-    <div id="notice" class="notice page-notice" hidden></div>
-
-    <section class="content-section work-queue-section">
-      <div class="section-toolbar work-toolbar">
-        <div><h2>Hàng công việc</h2><p>Mỗi hàng là một yêu cầu xuyên suốt từ hội thoại đến checkpoint cuối.</p></div>
-        <div class="table-filters">
-          <label class="compact-field">Trạng thái
-            <select id="status-filter">
-              <option value="">Tất cả</option>
-              <option value="active">Đang xử lý</option>
-              <option value="awaiting_user">Cần bạn xử lý</option>
-              <option value="completed">Hoàn tất</option>
-              <option value="failed">Lỗi</option>
-            </select>
-          </label>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Ad account</th><th>Tiến độ</th><th>Trạng thái</th><th>Cập nhật</th><th class="actions-heading">Chi tiết</th></tr></thead>
-          <tbody id="work-requests-body"></tbody>
-        </table>
-        <div id="work-requests-empty" class="empty-state" hidden>
-          <strong>Chưa có công việc từ Hermes</strong>
-          <p>Hãy gửi một yêu cầu trên Telegram, ví dụ “Tạo camp bán sản phẩm X, dùng ảnh này, ngân sách 500k/ngày”.</p>
-          <a class="button button-secondary" href="/ai-copilot" target="_blank" rel="noopener">Mở Hermes Dashboard</a>
-        </div>
-      </div>
-    </section>
   </main>
 
   <dialog id="work-detail-dialog" class="wide-dialog work-detail-dialog">
@@ -116,7 +98,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/campaigns.js" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
+  <script src="/static/campaigns.js?v=agent-work-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

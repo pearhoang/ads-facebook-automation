@@ -4,51 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Tài khoản Facebook</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-7">
 </head>
 <body data-csrf-token="{{ csrf_token }}">
-  <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Ads Meta Master">
-      <img class="brand-mark" src="/static/ads-meta-master.svg" alt="">
-      <span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span>
-    </a>
-    <nav aria-label="Điều hướng chính">
-      <a class="nav-item is-active" href="/">Tài khoản Facebook</a>
-      <a class="nav-item" href="/ad-accounts">Ad accounts &amp; Resources</a>
-      <a class="nav-item" href="/campaigns">Công việc quảng cáo</a>
-      <a class="nav-item" href="/reports">Báo cáo</a>
-      <a class="nav-item" href="/bot-nodes">Bot VPS</a>
-      <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
-      <a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
-    </nav>
-    <div class="sidebar-footer">
-      <span class="environment-dot"></span>
-      <span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span>
-    </div>
-  </aside>
+  {% set active_nav = "accounts" %}
+  {% include "_sidebar.html" %}
 
   <main class="main">
     <header class="topbar">
-      <div>
+      <div class="page-identity">
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#users"></use></svg><span>Tài khoản Facebook</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Account sessions</span></div>
         <h1>Tài khoản Facebook</h1>
-        <p>Quản lý Chrome profile và phiên đăng nhập trên worker.</p>
       </div>
       <div class="topbar-actions">
-        <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
-        <button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button>
-        <button id="add-account-button" class="button button-primary" type="button">Thêm tài khoản</button>
+        {% set global_search_placeholder = "Tìm tài khoản, worker…" %}
+        {% include "_topbar_tools.html" %}
+        <button id="add-account-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thêm tài khoản</button>
       </div>
     </header>
 
+    <div class="content-pane">
+      <div class="content">
+
     <section class="summary" aria-label="Tổng quan">
-      <div><span>Tài khoản</span><strong id="account-count">0</strong></div>
-      <div><span>Worker online</span><strong id="worker-count">0</strong></div>
-      <div><span>Chờ xác minh</span><strong id="verification-count">0</strong></div>
-      <div><span>Phiên lỗi</span><strong id="failure-count">0</strong></div>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#users"></use></svg></span><div><div class="metric-label">Tài khoản</div><div class="metric-value" id="account-count">0</div><div class="metric-meta">Chrome profile đã tạo</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg></span><div><div class="metric-label">Worker online</div><div class="metric-value" id="worker-count">0</div><div class="metric-meta">Sẵn sàng mở phiên</div></div></article>
+      <article class="metric" data-notification-label="tài khoản chờ xác minh" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#shield-alert"></use></svg></span><div><div class="metric-label">Chờ xác minh</div><div class="metric-value" id="verification-count">0</div><div class="metric-meta">Cần kiểm tra đăng nhập</div></div></article>
+      <article class="metric" data-notification-label="phiên đăng nhập lỗi" data-notification-tone="danger"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#circle-alert"></use></svg></span><div><div class="metric-label">Phiên lỗi</div><div class="metric-value" id="failure-count">0</div><div class="metric-meta">Cần xử lý</div></div></article>
     </section>
 
     <section class="content-section">
@@ -81,6 +67,8 @@
         </div>
       </div>
     </section>
+      </div>
+    </div>
   </main>
 
   <dialog id="account-dialog">
@@ -119,7 +107,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/workspace.js" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
+  <script src="/static/workspace.js?v=meta-light-focus" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

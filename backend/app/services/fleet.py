@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from ..models import (
@@ -270,6 +270,68 @@ def list_operations(db: Session, tenant_id: str, limit: int = 30) -> list[Worker
             .limit(limit)
         )
     )
+
+
+def list_operations_page(
+    db: Session,
+    tenant_id: str,
+    *,
+    page: int,
+    page_size: int,
+) -> tuple[list[WorkerOperation], int, int]:
+    query = select(WorkerOperation).where(WorkerOperation.tenant_id == tenant_id)
+    total = db.scalar(select(func.count()).select_from(query.subquery())) or 0
+    operations = list(
+        db.scalars(
+            query.order_by(WorkerOperation.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+    )
+    deletable_count = sum(operation.status in {"succeeded", "failed"} for operation in operations)
+    return operations, total, deletable_count
+
+
+def delete_terminal_operations_page(
+    db: Session,
+    *,
+    tenant_id: str,
+    user_id: str,
+    page: int,
+    page_size: int,
+) -> tuple[int, int]:
+    operations = list(
+        db.scalars(
+            select(WorkerOperation)
+            .where(WorkerOperation.tenant_id == tenant_id)
+            .order_by(WorkerOperation.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+    )
+    removable = [operation for operation in operations if operation.status in {"succeeded", "failed"}]
+    protected_count = len(operations) - len(removable)
+    if not removable:
+        return 0, protected_count
+    for operation in removable:
+        db.delete(operation)
+    _audit(
+        db,
+        tenant_id=tenant_id,
+        user_id=user_id,
+        actor_type="user",
+        action="Đã xóa một trang operation log Bot VPS",
+        entity_type="worker_operation_log",
+        entity_id=f"page-{page}",
+        payload={
+            "page": page,
+            "page_size": page_size,
+            "deleted_count": len(removable),
+            "protected_count": protected_count,
+        },
+    )
+    db.commit()
+    return len(removable), protected_count
 
 
 def edit_node(

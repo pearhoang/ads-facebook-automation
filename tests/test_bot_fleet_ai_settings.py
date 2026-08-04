@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import paramiko
@@ -11,7 +12,7 @@ from fastapi.testclient import TestClient
 
 from backend.app.config import Settings
 from backend.app.main import create_app
-from backend.app.models import AIProviderConfig, Worker, WorkerEnrollment, WorkerOperation
+from backend.app.models import AIProviderConfig, User, Worker, WorkerEnrollment, WorkerOperation
 from backend.app.services import auth, remote_ops, ssh_credentials
 from workers.agent.hermes_config import HermesConfigManager
 from workers.agent import control_plane_mcp
@@ -98,6 +99,43 @@ def enroll_node(client: TestClient, headers: dict[str, str], key: str = "ads-nod
     )
     assert enrolled.status_code == 201, enrolled.text
     return payload, enrolled.json()
+
+
+def test_operation_log_page_paginates_and_deletes_terminal_entries_only(tmp_path: Path):
+    with build_client(tmp_path) as client:
+        headers = provision_and_login(client)
+        with client.app.state.database.session_factory() as db:
+            owner = db.query(User).one()
+            created_at = datetime(2026, 8, 4, tzinfo=timezone.utc)
+            for index in range(12):
+                db.add(
+                    WorkerOperation(
+                        tenant_id=TENANT_ID,
+                        operation_type="install",
+                        status="running" if index == 11 else "succeeded",
+                        host=f"192.0.2.{index}",
+                        ssh_user="root",
+                        created_by_user_id=owner.id,
+                        created_at=created_at + timedelta(minutes=index),
+                    )
+                )
+            db.commit()
+
+        page = client.get("/api/bot-nodes/operations/page?page=1&page_size=10")
+        assert page.status_code == 200, page.text
+        assert page.json()["total"] == 12
+        assert page.json()["total_pages"] == 2
+        assert page.json()["deletable_count"] == 9
+        assert page.json()["items"][0]["status"] == "running"
+
+        deleted = client.delete("/api/bot-nodes/operations/page?page=1&page_size=10", headers=headers)
+        assert deleted.status_code == 200, deleted.text
+        assert deleted.json() == {"deleted_count": 9, "protected_count": 1}
+
+        with client.app.state.database.session_factory() as db:
+            remaining = db.query(WorkerOperation).order_by(WorkerOperation.created_at.desc()).all()
+            assert len(remaining) == 3
+            assert remaining[0].status == "running"
 
 
 def test_enrollment_per_node_auth_lifecycle_and_reuse_guard(tmp_path: Path, monkeypatch):

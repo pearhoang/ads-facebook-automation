@@ -4,23 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Hermes Agents</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css">
-  <link rel="stylesheet" href="/static/fleet.css?v=20260804-codex-code">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-7">
+  <link rel="stylesheet" href="/static/fleet.css?v=meta-light-focus-2">
 </head>
 <body data-csrf-token="{{ csrf_token }}">
-  <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Ads Meta Master"><img class="brand-mark" src="/static/ads-meta-master.svg" alt=""><span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span></a>
-    <nav aria-label="Điều hướng chính">
-      <a class="nav-item" href="/">Tài khoản Facebook</a><a class="nav-item" href="/ad-accounts">Ad accounts &amp; Resources</a><a class="nav-item" href="/campaigns">Công việc quảng cáo</a><a class="nav-item" href="/reports">Báo cáo</a><a class="nav-item" href="/bot-nodes">Bot VPS</a><a class="nav-item is-active" href="/hermes-agents">Hermes Agents</a><a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
-    </nav>
-    <div class="sidebar-footer"><span class="environment-dot"></span><span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span></div>
-  </aside>
+  {% set active_nav = "hermes_agents" %}
+  {% include "_sidebar.html" %}
   <main class="main">
-    <header class="topbar"><div><h1>Hermes Agents</h1><p>Quản lý provider, model và trạng thái Hermes theo từng Bot VPS.</p></div><div class="provider-health"><span id="provider-status" class="status">Chưa cấu hình</span><button id="rotate-dashboard-password-button" class="button button-secondary" type="button">Đổi mật khẩu Dashboard</button><a class="button button-secondary" href="{{ hermes_dashboard_url }}" target="_blank" rel="noopener">Mở Hermes Dashboard</a></div></header>
+    <header class="topbar"><div class="page-identity"><div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg><span>Quản trị</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Hermes Agents</span></div><h1>Hermes Agents</h1></div><div class="topbar-actions hermes-topbar-actions">{% set global_search_placeholder = "Tìm provider, model…" %}{% include "_topbar_tools.html" %}<span id="provider-status" class="status">Chưa cấu hình</span><button id="rotate-dashboard-password-button" class="button button-secondary" type="button">Đổi mật khẩu Dashboard</button><a class="button button-primary" href="{{ hermes_dashboard_url }}" target="_blank" rel="noopener">Mở Hermes Dashboard</a></div></header>
+
+    <div class="content-pane">
+      <div class="content">
     <div class="safety-banner"><strong>Secret boundary:</strong> API key được mã hóa trong control-plane, chỉ trả về cho Bot VPS đã chọn qua credential của node. Trên VPS, key nằm trong Hermes config mode 0600 để agent vẫn hoạt động khi server tạm mất kết nối.</div>
     <section class="settings-layout">
       <form id="provider-form" class="settings-panel">
@@ -48,6 +46,8 @@
         <p class="settings-note">Kết nối dùng <code>codex login --device-auth</code>. Bạn mở link và nhập mã trên trình duyệt của mình; không cần noVNC và không dùng cookie ChatGPT làm credential. OAuth token chỉ lưu trên Bot VPS đã chọn.</p>
       </section>
     </section>
+      </div>
+    </div>
   </main>
   <dialog id="dashboard-password-dialog" class="wide-dialog" aria-labelledby="dashboard-password-title">
     <form id="dashboard-password-form" method="dialog">
@@ -86,6 +86,7 @@
     </form>
   </dialog>
   {% include "_password_dialog.html" %}
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
   <script src="/static/hermes_agents.js?v=20260804-stored-ssh" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>

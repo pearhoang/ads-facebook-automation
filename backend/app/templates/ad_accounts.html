@@ -4,59 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Ad accounts &amp; Resources</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css?v=agent-work-1">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
-  <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Ads Meta Master"><img class="brand-mark" src="/static/ads-meta-master.svg" alt=""><span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span></a>
-    <nav aria-label="Điều hướng chính">
-      <a class="nav-item" href="/">Tài khoản Facebook</a>
-      <a class="nav-item is-active" href="/ad-accounts">Ad accounts &amp; Resources</a>
-      <a class="nav-item" href="/campaigns">Công việc quảng cáo</a>
-      <a class="nav-item" href="/reports">Báo cáo</a>
-      <a class="nav-item" href="/bot-nodes">Bot VPS</a>
-      <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
-      <a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
-    </nav>
-    <div class="sidebar-footer"><span class="environment-dot"></span><span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span></div>
-  </aside>
+  {% set active_nav = "ad_accounts" %}
+  {% include "_sidebar.html" %}
 
   <main class="main">
     <header class="topbar">
-      <div><h1>Ad accounts &amp; Resources</h1><p>Setup một lần để Hermes luôn chọn đúng account, Page, Pixel và profile.</p></div>
-      <div class="topbar-actions"><div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div><button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button><button id="add-ad-account-button" class="button button-primary" type="button">Thêm ad account</button></div>
+      <div class="page-identity">
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#credit-card"></use></svg><span>Thiết lập</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Ad accounts &amp; Resources</span></div>
+        <h1>Ad accounts &amp; Resources</h1>
+      </div>
+      <div class="topbar-actions">
+        {% set global_search_placeholder = "Tìm ad account, Page, Pixel…" %}
+        {% include "_topbar_tools.html" %}
+        <button id="add-ad-account-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thêm ad account</button>
+      </div>
     </header>
 
-    <div class="setup-boundary"><strong>Đây là dữ liệu định tuyến, không phải giao diện chạy quảng cáo.</strong><span>Ảnh/video gửi qua Telegram được agent ingest tự động và không cần quản lý thủ công tại trang này.</span></div>
+    <div class="content-pane">
+      <div class="content">
+        <div class="safety-banner"><strong>Đây là dữ liệu định tuyến, không phải giao diện chạy quảng cáo.</strong> Ảnh/video gửi qua Telegram được agent ingest tự động và không cần quản lý thủ công tại đây.</div>
 
-    <section class="summary" aria-label="Tổng quan tài nguyên">
-      <div><span>Ad accounts</span><strong id="ad-account-count">0</strong></div>
-      <div><span>Resources</span><strong id="resource-count">0</strong></div>
-      <div><span>Đã xác minh</span><strong id="verified-count">0</strong></div>
-      <div><span>Cần kiểm tra</span><strong id="unverified-count">0</strong></div>
-    </section>
+        <section class="summary" aria-label="Tổng quan tài nguyên">
+          <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#credit-card"></use></svg></span><div><div class="metric-label">Ad accounts</div><div class="metric-value" id="ad-account-count">0</div><div class="metric-meta">Đã liên kết profile</div></div></article>
+          <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#database"></use></svg></span><div><div class="metric-label">Resources</div><div class="metric-value" id="resource-count">0</div><div class="metric-meta">Page, Pixel, Form, App</div></div></article>
+          <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#badge-check"></use></svg></span><div><div class="metric-label">Đã xác minh</div><div class="metric-value" id="verified-count">0</div><div class="metric-meta">Sẵn sàng cho agent</div></div></article>
+          <article class="metric" data-notification-label="resource cần kiểm tra" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg></span><div><div class="metric-label">Cần kiểm tra</div><div class="metric-value" id="unverified-count">0</div><div class="metric-meta">Chưa exact-match</div></div></article>
+        </section>
 
-    <div id="notice" class="notice page-notice" hidden></div>
+        <div id="notice" class="notice page-notice" hidden></div>
 
-    <section class="content-section">
-      <div class="section-toolbar"><div><h2>Ad accounts</h2><p>Liên kết Meta ad account với đúng Facebook profile và worker sở hữu cookie.</p></div><button id="refresh-button" class="button button-secondary" type="button">Làm mới</button></div>
-      <div class="table-wrap">
-        <table><thead><tr><th>Ad account</th><th>Facebook profile</th><th>Meta ID</th><th>Tiền tệ</th><th>Múi giờ</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="ad-accounts-body"></tbody></table>
-        <div id="ad-accounts-empty" class="empty-state" hidden><strong>Chưa có ad account</strong><p>Thêm account đầu tiên sau khi Facebook profile đã đăng nhập.</p><button class="button button-secondary" type="button" data-open-ad-account>Thêm ad account</button></div>
+        <section class="content-section">
+          <div class="section-toolbar"><div><h2>Ad accounts</h2><p>Liên kết Meta ad account với đúng Facebook profile và worker sở hữu cookie.</p></div><button id="refresh-button" class="button button-secondary" type="button">Làm mới</button></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Ad account</th><th>Facebook profile</th><th>Meta ID</th><th>Tiền tệ</th><th>Múi giờ</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="ad-accounts-body"></tbody></table>
+            <div id="ad-accounts-empty" class="empty-state" hidden><strong>Chưa có ad account</strong><p>Thêm account đầu tiên sau khi Facebook profile đã đăng nhập.</p><button class="button button-secondary" type="button" data-open-ad-account>Thêm ad account</button></div>
+          </div>
+        </section>
+
+        <section class="content-section">
+          <div class="section-toolbar"><div><h2>Meta resources</h2><p>Exact-match Page, Instagram, Pixel/Dataset, Instant Form và App cho từng ad account.</p></div><button id="add-resource-button" class="button button-secondary" type="button">Thêm resource</button></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Resource</th><th>Loại</th><th>Ad account</th><th>External ID</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="resources-body"></tbody></table>
+            <div id="resources-empty" class="empty-state compact-empty" hidden><strong>Chưa có resource</strong><p>Setup resource mà agent cần chọn khi thao tác Ads Manager.</p><button class="button button-secondary" type="button" data-open-resource>Thêm resource</button></div>
+          </div>
+        </section>
       </div>
-    </section>
-
-    <section class="content-section">
-      <div class="section-toolbar"><div><h2>Meta resources</h2><p>Exact-match Page, Instagram, Pixel/Dataset, Instant Form và App cho từng ad account.</p></div><button id="add-resource-button" class="button button-secondary" type="button">Thêm resource</button></div>
-      <div class="table-wrap">
-        <table><thead><tr><th>Resource</th><th>Loại</th><th>Ad account</th><th>External ID</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="resources-body"></tbody></table>
-        <div id="resources-empty" class="empty-state compact-empty" hidden><strong>Chưa có resource</strong><p>Setup resource mà agent cần chọn khi thao tác Ads Manager.</p><button class="button button-secondary" type="button" data-open-resource>Thêm resource</button></div>
-      </div>
-    </section>
+    </div>
   </main>
 
   <dialog id="ad-account-dialog">
@@ -92,7 +92,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ad_accounts.js" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
+  <script src="/static/ad_accounts.js?v=agent-work-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

@@ -4,39 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng nhập — Ads Meta Master</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css">
-  <link rel="stylesheet" href="/static/auth.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-7">
+  <link rel="stylesheet" href="/static/auth.css?v=meta-light-focus">
 </head>
 <body class="auth-page">
   <main class="auth-shell">
     <section class="auth-brand" aria-label="Ads Meta Master">
-      <div class="auth-brand-row"><img class="brand-mark" src="/static/ads-meta-master.svg" alt=""><span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span></div>
-      <p>Quản lý tài khoản Facebook, phiên đăng nhập và các tác vụ quảng cáo trong một workspace riêng.</p>
-      <ul>
-        <li>Mỗi khách hàng có dữ liệu và Chrome profile tách biệt.</li>
-        <li>Mật khẩu Facebook và mã 2FA không được lưu.</li>
-        <li>Thao tác có ngân sách sẽ cần xác nhận trước khi chạy.</li>
+      <div class="auth-brand-row">
+        <img class="brand-mark" src="/static/ads-meta-master.svg?v=meta-light-focus-3" alt="">
+        <span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span>
+      </div>
+      <div class="auth-brand-message">
+        <p class="auth-eyebrow">Campaign control center</p>
+        <h2>Kiểm soát campaign trước khi chạm tới Meta.</h2>
+        <p>Quản lý tài khoản, kiểm tra preflight và theo dõi từng checkpoint trong một workspace vận hành rõ ràng.</p>
+      </div>
+      <ul class="auth-trust-list">
+        <li><span aria-hidden="true"></span>Campaign luôn dừng ở trạng thái draft trước khi duyệt</li>
+        <li><span aria-hidden="true"></span>Phiên đăng nhập và Chrome profile được tách biệt</li>
+        <li><span aria-hidden="true"></span>Mọi thay đổi quan trọng đều có audit trail</li>
       </ul>
     </section>
 
     <section class="auth-form-panel">
       <div class="auth-form-heading">
-        <h1>Đăng nhập</h1>
-        <p>Dùng tài khoản đã được quản trị viên cấp cho workspace.</p>
+        <p class="auth-kicker">Ads Meta Master</p>
+        <h1>Đăng nhập workspace</h1>
+        <p>Tiếp tục bằng tài khoản đã được quản trị viên cấp.</p>
       </div>
       <div id="login-error" class="notice" role="alert" hidden></div>
       <form id="login-form">
         <label for="email">Tài khoản</label>
-        <input id="email" name="email" type="text" autocomplete="username" required minlength="3" maxlength="320" autofocus>
+        <input id="email" name="email" type="text" autocomplete="username" placeholder="Nhập tài khoản" required minlength="3" maxlength="320" autofocus>
         <label for="password">Mật khẩu</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024">
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required maxlength="1024">
         <button id="login-button" class="button button-primary auth-submit" type="submit">Đăng nhập</button>
       </form>
-      <p class="auth-support">Chưa có tài khoản hoặc quên mật khẩu? Liên hệ quản trị viên hệ thống.</p>
+      <p class="auth-support">Không có đăng ký công khai. Nếu cần cấp lại quyền truy cập, hãy liên hệ quản trị viên hệ thống.</p>
     </section>
   </main>
   <script src="/static/login.js" defer></script>
