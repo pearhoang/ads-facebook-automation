@@ -177,3 +177,12 @@
 - Dashboard chạy service riêng từ cùng `HERMES_HOME`, bind interface nội bộ, dùng password provider chính chủ với scrypt hash + signing secret và được Caddy expose qua HTTPS subdomain.
 - `Hermes Agents` tiếp tục là canonical control-plane UI cho provider/model/thinking/permission; nó không nhúng hoặc tái tạo chat.
 - Owner xoay mật khẩu Dashboard theo worker bằng SSH credential dùng một lần; control-plane không lưu plaintext, worker thay scrypt hash và signing secret rồi chỉ restart dashboard service để thu hồi mọi phiên Dashboard cũ.
+
+## DEC-026 — Meta Light Focus là visual canonical của app chính
+
+- Toàn bộ surface server-rendered dùng chung app shell trắng, warm-peach glow rất nhẹ ở góc trên trái, canvas `#F1F4F8`, panel trắng và shadow nông.
+- Custom loop mark màu `#0866FF` là brand/favicon; primary CTA và selected navigation dùng indigo `#4F46E5`, hover `#4338CA`. Success giữ green, pending giữ amber và destructive giữ red.
+- KPI dùng một strip liền với divider và semantic bottom accent. Main content không khóa `max-width`, dùng gutter `20px` desktop/tablet và `12px` mobile.
+- Dialog dùng flat header/footer, không accent line hoặc banner trang trí. Native single-select được progressive-enhance thành popover bo `10px`, cách trigger `4px`, nhưng vẫn giữ nguyên field ID, form semantics và event contract.
+- Login được phép dùng gradient xanh–tím–hồng có chủ đích để tạo identity; các màn vận hành còn lại ưu tiên hierarchy dữ liệu và không thêm chrome cạnh tranh với trạng thái/action chính.
+- Quyết định này chỉ thay presentation layer; không thay route, API field, safety boundary hoặc business workflow.

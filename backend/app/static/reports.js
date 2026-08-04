@@ -203,11 +203,6 @@ byId("account-filter").addEventListener("change", render);
 byId("refresh-button").addEventListener("click", () => loadReports());
 byId("collect-form").addEventListener("submit", createReportJob);
 byId("schedule-form").addEventListener("submit", createSchedule);
-byId("logout-button").addEventListener("click", async () => {
-  try { await api("/api/auth/logout", { method: "POST" }); window.location.assign("/login"); }
-  catch (error) { showNotice(error.message); }
-});
-
 setInterval(() => {
   if (state.jobs.some((job) => ["queued", "claimed", "running"].includes(job.status))) loadReports({ quiet: true });
 }, 4000);

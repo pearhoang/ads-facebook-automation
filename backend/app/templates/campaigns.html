@@ -4,32 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Campaigns</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
-  <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Ads Meta Master">
-      <img class="brand-mark" src="/static/ads-meta-master.svg" alt="">
-      <span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span>
-    </a>
-    <nav aria-label="Điều hướng chính">
-      <a class="nav-item" href="/">Tài khoản Facebook</a>
-      <a class="nav-item" href="#ad-accounts">Ad accounts</a>
-      <a class="nav-item is-active" href="/campaigns">Campaigns</a>
-      <a class="nav-item" href="/reports">Báo cáo</a>
-      <a class="nav-item" href="/bot-nodes">Bot VPS</a>
-      <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
-      <a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
-    </nav>
-    <div class="sidebar-footer">
-      <span class="environment-dot"></span>
-      <span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span>
-    </div>
-  </aside>
+  {% set active_nav = "campaigns" %}
+  {% include "_sidebar.html" %}
 
   <main class="main">
     <header class="topbar">
@@ -39,7 +22,6 @@
       </div>
       <div class="topbar-actions">
         <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
-        <button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button>
         <button id="add-campaign-button" class="button button-primary" type="button">Tạo campaign draft</button>
       </div>
     </header>
@@ -280,7 +262,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/campaigns.js" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus" defer></script>
+  <script src="/static/campaigns.js?v=meta-light-focus" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

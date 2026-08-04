@@ -11,8 +11,8 @@
 ## Visual Direction
 
 - Nhận diện sản phẩm là `Ads Meta Master`, dùng subtitle `Meta Ads Automation` và custom SVG loop/infinity mark màu xanh cho sidebar, account mark và favicon; brand trong sidebar không dùng tile nền, footer account dùng cùng biểu tượng ở kích thước nhỏ và màu indigo dịu. Đây là biểu tượng riêng, không dùng logo chính thức của Meta/Facebook.
-- Sidebar cố định giữ dark neutral `#242321`, top bar gọn, white surfaces trên nền blue-gray rất nhạt.
-- Tone `Meta Balanced`: brand/data accent dùng blue `#1877F2`, primary action và selected navigation dùng indigo `#4F46E5`, success/online dùng green `#16865F`; error, blocker và destructive action giữ red `#B83A3A`.
+- Sidebar cố định dùng nền trắng với warm-peach glow rất nhẹ nối sang topbar; navigation được chọn là điểm neo indigo duy nhất trong sidebar.
+- Tone `Meta Light Focus`: brand/data accent dùng Meta blue `#0866FF`, primary action và selected navigation dùng indigo `#4F46E5`, success/online dùng green `#16865F`, pending dùng amber `#A76513`; error, blocker và destructive action giữ red `#B83A3A`.
 
 ## Shared Patterns
 
@@ -74,9 +74,9 @@
 - Copy Phase 3 phải nói rõ `preflight read-only`, `không click` và `không publish`.
 - Copy Phase 4 phải dùng `Tạo Meta draft`, `Cần người dùng` và `Không tự publish`; không gọi draft là campaign đang chạy.
 
-## Candidate Prototype Directions
+## Canonical Meta Light Focus
 
-- Ba prototype so sánh tại `docs/ui-prototypes/`: `Meta Gradient Vibrant`, `Meta Balanced Elevated` và bản user đang chọn để tinh chỉnh `Meta Light Focus`.
+- Ba prototype so sánh tại `docs/ui-prototypes/` được giữ làm lịch sử thiết kế; `Meta Light Focus` là visual canonical của app chính.
 - Cả ba giữ sidebar-left/main-content, dùng cùng component anatomy cho Dashboard, Login, native dialogs, tables, empty state, search/filter, popovers và campaign checkpoint progress.
 - `Meta Light Focus` dùng sidebar trắng, canvas `#F1F4F8`, custom loop mark `#0866FF`, primary action `#4F46E5` và login lấy identity gradient xanh–tím–hồng từ phương án A; slug cũ `meta-dark-sidebar-glass` được giữ để URL review không đổi.
 - Brand và footer sidebar dùng nền trắng trung tính để navigation là vùng điều hướng chính. Custom loop mark đứng độc lập, không có tile; footer dùng cùng mark với màu indigo dịu, không tạo thêm mảng màu cạnh tranh với selected navigation.
@@ -86,5 +86,5 @@
 - KPI dùng value và vạch đáy cùng semantic accent. Mỗi panel chỉ giữ một section icon màu ở header: Ad accounts xanh, Campaign drafts indigo, Meta resources green; table header và border có contrast cao hơn nhưng shadow vẫn shallow.
 - KPI của `Meta Light Focus` dùng một strip liền có vertical divider; icon nhỏ nằm cạnh label, không có tile nền. Value là focal point và vạch semantic accent được căn giữa đáy từng ô; mobile chuyển thành lưới `2×2` trong cùng một surface.
 - Dialog dùng header phẳng với border phân tách mảnh, không có accent line, icon tile hoặc safety banner trang trí. Campaign dialog dùng một luồng field phẳng theo thứ tự `Ad account` → `Tên campaign` → `Objective/Ngân sách` → `Ghi chú`, đánh dấu trường bắt buộc và chỉ giữ icon đóng có chức năng. Single-select giữ mật độ gần native select: popover cách trigger `4px`, bo `10px`, option cao `31px` dạng hàng chữ không checkbox; sáu objective hiển thị trọn không cần cuộn. Dialog body và menu thực sự dài vẫn dùng scrollbar mảnh bo tròn nằm gọn trong surface. Danger/destructive vẫn giữ `#B83A3A`.
-- Đây là candidate để user chọn, chưa phải canonical production styling. Không áp dụng token, layout hoặc interaction prototype vào Jinja templates cho đến khi có lựa chọn rõ ràng.
+- Jinja templates, shared CSS và interaction layer của app chính phải dùng bộ token, layout và component anatomy này. Prototype chỉ còn là reference snapshot; source production là `backend/app/templates/**` và `backend/app/static/**`.
 - Prototype không gọi API, không dùng production data và không nhúng password mẫu; danger/destructive giữ `#B83A3A` ở cả ba hướng.

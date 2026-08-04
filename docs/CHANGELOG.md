@@ -354,3 +354,10 @@
 - Changed: Giảm option từ `40px` xuống `31px`, menu padding còn `3px`, khoảng tách còn `4px` và radius `10px`; sáu objective hiển thị trọn không cần scrollbar nhưng vẫn giữ góc bo.
 - Verified: `15 passed`, Python compile và diff check sạch; browser local xác nhận menu compact không overflow/scroll, đúng một selected option và console không có warning/error.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-04 - Áp dụng Meta Light Focus vào app chính
+
+- Changed: Chuyển visual đã chốt sang toàn bộ Jinja app gồm Workspace, Campaigns, Reports, Bot VPS, Hermes Agents và Login; dùng shared sidebar, token, KPI strip, full-width panel, semantic status, dialog và custom single-select chung.
+- Compatibility: Giữ nguyên routes, field IDs, form/API contract và business workflow; bỏ listener logout trùng và thêm asset version để favicon/CSS/JS mới không bị cache cũ.
+- Verified: full suite `76 passed`, JavaScript syntax và diff check sạch; browser audit desktop/mobile không có console error, dialog dài giữ scrollbar trong góc bo, dropdown đúng geometry `4px`/`10px`/`31px`.
+- Preview: `http://127.0.0.1:8040/`; chưa push hoặc deploy.

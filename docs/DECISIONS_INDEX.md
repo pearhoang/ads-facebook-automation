@@ -27,3 +27,4 @@
 | DEC-023 | AI Copilot session bridge được giữ như legacy rollback, không còn là UI chính | Superseded by DEC-025 | backend/UI/worker/agent | High |
 | DEC-024 | Hermes permission mode theo worker, safe mặc định và experimental full chỉ opt-in | Active | backend/UI/worker/agent | High |
 | DEC-025 | Chat Web dùng native Hermes Dashboard; Telegram vẫn là kênh lệnh chính | Active | backend/UI/infra/agent | High |
+| DEC-026 | Chọn Meta Light Focus làm visual canonical cho toàn bộ app chính | Active | UI/templates/static | Medium |

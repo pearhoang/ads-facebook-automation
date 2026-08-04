@@ -4,9 +4,13 @@ from pathlib import Path
 
 
 UI_FILES = (
+    Path("backend/app/templates/_sidebar.html"),
+    Path("backend/app/templates/login.html"),
     Path("backend/app/templates/campaigns.html"),
     Path("backend/app/static/campaigns.js"),
+    Path("backend/app/static/ui.js"),
     Path("backend/app/static/workspace.css"),
+    Path("backend/app/static/auth.css"),
     Path("backend/app/templates/reports.html"),
     Path("backend/app/static/reports.js"),
     Path("backend/app/static/reports.css"),
@@ -65,8 +69,28 @@ def test_primary_navigation_uses_native_hermes_dashboard():
     for path in active_templates:
         text = path.read_text(encoding="utf-8")
         assert ">AI Copilot<" not in text
-        assert "Hermes Dashboard" in text
-        assert 'href="/ai-copilot"' in text
+        assert '{% include "_sidebar.html" %}' in text
+
+    sidebar = Path("backend/app/templates/_sidebar.html").read_text(encoding="utf-8")
+    assert "Hermes Dashboard" in sidebar
+    assert 'href="/ai-copilot"' in sidebar
+    assert "data-account-menu-toggle" in sidebar
+    assert "data-global-logout" in sidebar
 
     hermes_agents = active_templates[-1].read_text(encoding="utf-8")
     assert "Mở Hermes Dashboard" in hermes_agents
+
+
+def test_canonical_selects_are_progressively_enhanced_without_changing_form_contracts():
+    script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
+    styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
+
+    assert 'document.querySelectorAll("select").forEach(enhanceSelect)' in script
+    assert 'menu.setAttribute("popover", "auto")' in script
+    assert 'menu.setAttribute("role", "listbox")' in script
+    assert "const gap = 4" in script
+    assert "select.dispatchEvent(new Event(\"change\"" in script
+    assert ".ui-select-menu" in styles
+    assert "border-radius: 10px" in styles
+    assert "min-height: 31px" in styles
+    assert ".ui-select-native" in styles
