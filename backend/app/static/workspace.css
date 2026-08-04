@@ -365,7 +365,7 @@ tbody tr:hover { background: color-mix(in srgb, var(--meta-blue) 3.5%, var(--sur
 .account-name strong, .account-name small, .node-meta strong, .node-meta small { display: block; }
 .account-name strong, .node-meta strong { color: #101828; font-size: 12.5px; }
 .account-name small, .node-meta small { margin-top: 4px; color: #667085; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10.5px; }
-.actions-heading { text-align: right; }
+.actions-heading { text-align: left; }
 .row-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
 .row-button {
   width: 30px;
@@ -385,6 +385,7 @@ tbody tr:hover { background: color-mix(in srgb, var(--meta-blue) 3.5%, var(--sur
 .status.success { border-color: #b9dfd2; background: #e2f5ee; color: #0f6b50; }
 .status.warning { border-color: #efcf9b; background: #fff4df; color: #8a520f; }
 .status.danger { border-color: #efc5c5; background: #fff1f1; color: var(--danger); }
+.status > svg { width: 12px; height: 12px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .button {
   min-height: 36px;

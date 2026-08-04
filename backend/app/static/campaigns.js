@@ -125,7 +125,8 @@ function showNotice(message = "", tone = "error") {
 
 function badge(status) {
   const [label, tone] = statusMeta[status] || [status || "—", ""];
-  return `<span class="status ${tone}">${escapeHtml(label)}</span>`;
+  const icon = { success: "badge-check", warning: "clock", danger: "circle-alert" }[tone];
+  return `<span class="status ${tone}">${icon ? `<svg aria-hidden="true"><use href="/static/ui-icons.svg?v=meta-light-focus-4#${icon}"></use></svg>` : ""}${escapeHtml(label)}</span>`;
 }
 
 function fieldBadge(status) {
