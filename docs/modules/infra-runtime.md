@@ -69,6 +69,8 @@
 - Caddy auth migration backup: `/opt/spoticheck/app/deploy/Caddyfile.backup-auth-20260731-184555`.
 - Native Hermes Dashboard đã deploy từ commit `3164426`; login basic auth, session Telegram, Chat PTY và tool event feed đều được smoke test qua public HTTPS. Smoke session `20260801_193914_2fc1bf` đã xóa sau kiểm thử.
 - Native dashboard backup: `/var/backups/meta-ads-copilot/20260801T171727Z-native-hermes-dashboard`; Caddy WebSocket fix backup: `/opt/spoticheck/app/deploy/Caddyfile.pre-hermes-ws-20260801T173809Z`.
+- Stored worker SSH credential đã deploy từ commit `c29761e`; Alembic `20260804_0010` ở `head`, worker hiện hữu có Fernet ciphertext hợp lệ và API chỉ trả `ssh_password_configured=true`.
+- Backup trước stored-SSH deploy: `/var/backups/meta-ads-copilot/20260804T032514Z-stored-worker-ssh` gồm source, verified PostgreSQL custom dump và app env.
 
 ## Services
 
@@ -84,6 +86,7 @@
 - Validate bằng `caddy validate` trong container trước khi reload.
 - Không restart container/app không liên quan.
 - Không xóa browser profile khi đóng session.
+- SSH password worker chỉ được lưu dạng ciphertext bằng `SECRET_ENCRYPTION_KEY`; không in plaintext/ciphertext qua API, UI, audit hoặc operation log, và revoke phải xóa ciphertext.
 
 ## Operations
 

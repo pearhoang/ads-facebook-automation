@@ -226,9 +226,9 @@
 - Fixed: Device login parser nhận đúng mã Codex CLI 9 ký tự dạng `XXXX-XXXXX`; popup tách mã xác thực thành khối dễ đọc với action `Sao chép mã`, vẫn hỗ trợ format legacy 8 ký tự.
 - Changed: Thêm per-worker Codex device login tại `Hermes Agents`, heartbeat status và MCP tools `codex_search`/`codex_vision`; bump managed Hermes config schema để worker hiện hữu nhận tool dù provider không đổi.
 - Affected: Bot VPS remote operation, worker heartbeat/config, Hermes MCP/SOUL, installer, UI, tests và project memory.
-- Verified: `67 passed`, Python compile, JavaScript syntax, UTF-8/diff check và Alembic fresh-head check sạch.
+- Verified: `73 passed`, Python compile, JavaScript syntax, UTF-8/diff check và Alembic fresh-head check sạch. Production UI/API xác nhận không còn trường SSH lặp, worker báo `ssh_password_configured=true`, ciphertext có Fernet shape và không lộ secret.
 - Safety: Không tạo ChatGPT browser profile hoặc lưu cookie/token ở control-plane; OAuth chỉ ở worker mode `0600`, tools read-only và không thay Meta DRAFT/approval/publish boundary.
-- Deploy: Production đang chạy commit `be2057b`; backup nền tại `/var/backups/meta-ads-copilot/20260804T-codex-search-vision` và backup trước sửa popup tại `/var/backups/meta-ads-copilot/20260804T-codex-device-code-popup`. Codex CLI `0.146.0`, bốn service web/worker/Hermes active và `/health` trả `ok`; smoke thực tế chờ owner hoàn tất lại `device login` trên UI.
+- Deploy: Production code đã nâng tới commit `c29761e`; backup stored-SSH tại `/var/backups/meta-ads-copilot/20260804T032514Z-stored-worker-ssh`. Alembic `20260804_0010 (head)`, PostgreSQL healthy, bốn service active, `/health` trả `ok`, không có active browser/job/operation; smoke Codex thực tế chờ owner hoàn tất lại `device login` trên UI.
 
 ### 2026-08-03 - Đổi nhận diện control-plane sang Ads Meta Master
 
