@@ -322,3 +322,9 @@
 - Changed: Dùng custom loop mark làm SVG favicon; thay canvas xanh–tím bằng base neutral và radial glow warm-peach nhẹ từ góc trên trái.
 - Verified: `13 passed`, diff check sạch; browser local nhận đúng SVG favicon, computed background có đủ hai layer và console không có warning/error.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-04 - Thử warm glow tại sidebar
+
+- Changed: Chuyển tâm radial glow từ content canvas lên góc trên trái sidebar, cho ánh peach phủ nhẹ brand và tan dần xuống navigation; main canvas trở lại neutral.
+- Verified: `13 passed`, diff check sạch; browser local xác nhận glow nằm ở sidebar, canvas chỉ còn neutral base và console không có warning/error.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.

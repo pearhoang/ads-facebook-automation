@@ -162,9 +162,7 @@ body[data-variant="meta-balanced-elevated"] .brand-panel {
         radius="12px",
         variant_css="""
 body[data-variant="meta-dark-sidebar-glass"] .content-pane {
-  background:
-    radial-gradient(ellipse 72% 54% at 0% 0%, rgba(255,218,202,.58) 0%, rgba(255,238,231,.28) 36%, rgba(255,255,255,0) 72%),
-    linear-gradient(145deg, #fbfcfe 0%, #f7f8fb 54%, #f8f7fb 100%);
+  background: linear-gradient(145deg, #fbfcfe 0%, #f7f8fb 54%, #f8f7fb 100%);
 }
 body[data-variant="meta-dark-sidebar-glass"] .content {
   width: 100%;
@@ -174,7 +172,9 @@ body[data-variant="meta-dark-sidebar-glass"] .content {
   padding-inline: 20px;
 }
 body[data-variant="meta-dark-sidebar-glass"] .sidebar {
-  background: #fff;
+  background:
+    radial-gradient(ellipse 155% 42% at 0% 0%, rgba(255,218,202,.62) 0%, rgba(255,238,231,.30) 40%, rgba(255,255,255,0) 78%),
+    #fff;
   border-right-color: var(--border);
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand,
@@ -182,7 +182,7 @@ body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer {
   border-color: var(--border);
 }
 body[data-variant="meta-dark-sidebar-glass"] .brand {
-  background: #fff;
+  background: transparent;
 }
 body[data-variant="meta-dark-sidebar-glass"] .sidebar-footer {
   background: #fff;
