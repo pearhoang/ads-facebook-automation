@@ -388,3 +388,9 @@
 - Fidelity: Sidebar icon giữ `17px`, nav row `42px`, gap `11px`; breadcrumb chevron dùng cùng box `13px`; panel/KPI/table xếp đúng gutter `20px` ở desktop.
 - Verified: Browser comparison tại `1212×910` cho content pane `964px`, client width `949px`, table `907px`, account columns khớp reference; full suite chạy lại sau thay đổi.
 - Preview: `http://127.0.0.1:8040/campaigns`; chưa push hoặc deploy.
+
+### 2026-08-04 - Đồng nhất icon brand, topbar và thứ tự panel
+
+- Changed: Dùng inline loop mark để giữ đúng visual box brand/footer, thêm border-left 1px cho selected nav, tăng section icon lên `18px/2px`, đồng bộ sprite search/bell theo Lucide reference và đưa campaign list lên ngay sau Ad accounts.
+- Fidelity: Topbar search bắt đầu tại `x=526`, notification tại `x=964`, CTA tại `x=1022` ở viewport `1212×910`; section icon và nav content trùng prototype.
+- Verified: Full suite, `node --check backend/app/static/ui.js`, `git diff --check`.

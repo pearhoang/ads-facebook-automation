@@ -102,6 +102,7 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
         assert 'class="metric-icon"' in text
 
     tools = Path("backend/app/templates/_topbar_tools.html").read_text(encoding="utf-8")
+    sidebar = Path("backend/app/templates/_sidebar.html").read_text(encoding="utf-8")
     script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
     styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
     assert "data-global-search" in tools
@@ -115,6 +116,10 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
     assert "#ad-accounts table" in styles
     assert "table-layout: fixed" in styles
     assert '.breadcrumb svg:nth-of-type(2)' not in styles
+    assert 'class="brand-mark" aria-hidden="true"' in sidebar
+    assert 'class="avatar account-brand-mark" aria-hidden="true"' in sidebar
+    assert "gap: 18px" in styles
+    assert ".section-icon svg" in styles
 
 
 def test_canonical_selects_are_progressively_enhanced_without_changing_form_contracts():

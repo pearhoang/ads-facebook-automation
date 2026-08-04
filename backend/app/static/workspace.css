@@ -67,7 +67,8 @@ h2 { font-size: 15px; line-height: 1.4; }
   text-decoration: none;
   border-bottom: 1px solid var(--border);
 }
-.brand-mark { width: 40px; height: 30px; display: block; flex: 0 0 auto; color: var(--meta-blue); }
+.brand-mark { width: 40px; height: 30px; display: grid; place-items: center; flex: 0 0 auto; color: var(--meta-blue); }
+.brand-mark svg { width: 38px; height: 26px; display: block; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
 .brand-copy { min-width: 0; }
 .brand-copy strong { display: block; font-family: var(--font-display); font-size: 14px; line-height: 1.25; letter-spacing: -.02em; }
 .brand-copy span { display: block; margin-top: 3px; color: #667085; font-size: 11px; }
@@ -97,6 +98,7 @@ h2 { font-size: 15px; line-height: 1.4; }
 .nav-link.active-nav {
   background: var(--accent);
   color: #fff;
+  border-left: 1px solid var(--accent);
   box-shadow: 0 4px 10px rgba(79, 70, 229, .22);
 }
 .nav-item.is-active:hover,
@@ -110,7 +112,8 @@ h2 { font-size: 15px; line-height: 1.4; }
 }
 .sidebar-account-button:hover { background: #f0f2f5; }
 .sidebar-account-button:focus-visible { outline: 3px solid rgba(79, 70, 229, .2); outline-offset: 1px; }
-.account-brand-mark { width: 30px; height: 24px; flex: 0 0 auto; color: #6674d9; opacity: 1; }
+.account-brand-mark { width: 30px; height: 24px; display: grid; place-items: center; flex: 0 0 auto; color: #6674d9; opacity: 1; }
+.account-brand-mark svg { width: 28px; height: 19px; display: block; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
 .sidebar-account-copy { min-width: 0; line-height: 1.25; }
 .sidebar-account-copy strong { display: block; font-family: var(--font-display); font-size: 12px; }
 .sidebar-account-copy span { display: block; margin-top: 2px; color: #667085; font-size: 9px; }
@@ -164,7 +167,16 @@ h2 { font-size: 15px; line-height: 1.4; }
   width: 100%;
   margin: 0;
   padding: 24px 20px 42px;
+  display: flex;
+  flex-direction: column;
 }
+#ad-accounts { order: 2; }
+#campaign-list { order: 3; }
+#meta-resources { order: 4; }
+#creative-assets { order: 5; }
+#campaign-approvals { order: 6; }
+#execution-jobs { order: 7; }
+#audit-log { order: 8; }
 .page-identity { min-width: 210px; }
 .breadcrumb {
   display: flex;
@@ -179,7 +191,7 @@ h2 { font-size: 15px; line-height: 1.4; }
 .page-identity h1 { margin: 4px 0 0; color: var(--text); font-size: 20px; line-height: 1.25; letter-spacing: -.025em; }
 .topbar p { margin-top: 4px; color: var(--muted); font-size: 11px; }
 .topbar-actions,
-.provider-health { min-width: 0; display: flex; align-items: center; gap: 9px; }
+.provider-health { min-width: 0; display: flex; align-items: center; gap: 18px; }
 .user-identity { display: none; }
 .global-search {
   position: relative;
@@ -201,7 +213,7 @@ h2 { font-size: 15px; line-height: 1.4; }
   fill: none;
   color: var(--muted);
   stroke: currentColor;
-  stroke-width: 1.9;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
   transform: translateY(-50%);
@@ -232,12 +244,12 @@ h2 { font-size: 15px; line-height: 1.4; }
   border: 1px solid #cbd5e1;
   border-radius: 9px;
   background: #fff;
-  color: #344054;
+  color: var(--text);
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
 .topbar-icon-button:hover { border-color: #aab7c8; background: #f7f9fc; }
 .topbar-icon-button:focus-visible { outline: 3px solid rgba(79,70,229,.20); outline-offset: 2px; }
-.topbar-icon-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.topbar-icon-button svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .notification-dot { position: absolute; right: 8px; top: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 2px #fff; }
 .notification-popover {
   position: absolute;
@@ -335,10 +347,10 @@ h2 { font-size: 15px; line-height: 1.4; }
   background: transparent;
   color: var(--meta-blue);
 }
-.section-icon.purple { color: #6551e8; }
-.section-icon.green { color: var(--success); }
+.section-icon.purple { color: #4f46e5; }
+.section-icon.green { color: #0f8f6f; }
 .section-icon.amber { color: var(--warning); }
-.section-icon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.section-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .section-toolbar p { display: none; }
 .section-toolbar h2 { font-size: 15px; line-height: 1.45; letter-spacing: -.015em; }
 .table-wrap { overflow-x: auto; }
@@ -395,7 +407,7 @@ tbody tr:hover { background: color-mix(in srgb, var(--meta-blue) 3.5%, var(--sur
 .button:focus-visible, .icon-button:focus-visible, .ui-select-trigger:focus-visible { outline: 3px solid rgba(79, 70, 229, .22); outline-offset: 2px; }
 .button-primary { border-color: var(--accent); background: var(--accent); color: #fff; }
 .button-primary:hover:not(:disabled) { border-color: var(--accent-hover); background: var(--accent-hover); color: #fff; }
-.button > svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.button > svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .button-secondary { background: var(--surface); color: var(--text); }
 .button-danger { border-color: color-mix(in srgb, var(--danger) 38%, var(--border)); background: #fff; color: var(--danger); }
 .button-danger:hover:not(:disabled) { border-color: var(--danger); background: #fff5f5; color: var(--danger); }
