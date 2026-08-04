@@ -162,7 +162,9 @@ body[data-variant="meta-balanced-elevated"] .brand-panel {
         radius="12px",
         variant_css="""
 body[data-variant="meta-dark-sidebar-glass"] .content-pane {
-  background: linear-gradient(145deg, #f7f9fc 0%, #eef4ff 52%, #f6f3fb 100%);
+  background:
+    radial-gradient(ellipse 72% 54% at 0% 0%, rgba(255,218,202,.58) 0%, rgba(255,238,231,.28) 36%, rgba(255,255,255,0) 72%),
+    linear-gradient(145deg, #fbfcfe 0%, #f7f8fb 54%, #f8f7fb 100%);
 }
 body[data-variant="meta-dark-sidebar-glass"] .content {
   width: 100%;
@@ -520,6 +522,7 @@ DOCUMENT = r'''<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>__NAME__ — Ads Meta Master UI Prototype</title>
+  <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M4 24C8 12 14 12 24 24C34 36 40 36 44 24C40 12 34 12 24 24C14 36 8 36 4 24Z' fill='none' stroke='%230866FF' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1243,6 +1246,7 @@ INDEX_DOCUMENT = r'''<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>Ads Meta Master — Chọn phương án UI</title>
+  <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M4 24C8 12 14 12 24 24C34 36 40 36 44 24C40 12 34 12 24 24C14 36 8 36 4 24Z' fill='none' stroke='%230866FF' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">

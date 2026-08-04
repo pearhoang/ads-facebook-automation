@@ -139,7 +139,11 @@ def test_selected_direction_uses_meta_light_shell_and_vibrant_login() -> None:
     assert "--sidebar-text: #172033" in html
     assert "--sidebar-muted: #344054" in html
     assert ".brand > .brand-mark" in html
-    assert "linear-gradient(145deg, #f7f9fc 0%, #eef4ff 52%, #f6f3fb 100%)" in html
+    assert "radial-gradient(ellipse 72% 54% at 0% 0%" in html
+    assert "rgba(255,218,202,.58)" in html
+    assert "linear-gradient(145deg, #fbfcfe 0%, #f7f8fb 54%, #f8f7fb 100%)" in html
+    assert 'rel="icon" type="image/svg+xml" sizes="any"' in html
+    assert "stroke='%230866ff'" in html
     assert "color: #fff" in html
     assert "linear-gradient(135deg, #0668e1, #8b5cf6 58%, #ec4899)" in html
     assert 'body[data-variant="meta-dark-sidebar-glass"] .content {' in html

@@ -316,3 +316,9 @@
 - Changed: Chuyển toàn bộ `primary-button` của `Meta Light Focus` sang indigo `#4F46E5`, hover `#4338CA`; giữ outline action và semantic status colors độc lập.
 - Verified: `13 passed` và diff check sạch.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-04 - Thêm favicon và warm canvas glow
+
+- Changed: Dùng custom loop mark làm SVG favicon; thay canvas xanh–tím bằng base neutral và radial glow warm-peach nhẹ từ góc trên trái.
+- Verified: `13 passed`, diff check sạch; browser local nhận đúng SVG favicon, computed background có đủ hai layer và console không có warning/error.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
