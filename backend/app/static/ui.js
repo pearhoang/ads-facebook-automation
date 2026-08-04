@@ -5,6 +5,144 @@
   const accountToggle = document.querySelector("[data-account-menu-toggle]");
   const accountMenu = document.getElementById("sidebar-account-menu");
 
+  const globalSearch = document.querySelector("[data-global-search]");
+  const searchableBodies = Array.from(document.querySelectorAll(".table-wrap tbody"));
+
+  function normalizeSearchText(value) {
+    return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("vi").trim();
+  }
+
+  function applyGlobalSearch() {
+    if (!globalSearch) return;
+    const query = normalizeSearchText(globalSearch.value);
+    let visibleCount = 0;
+    searchableBodies.forEach((body) => {
+      Array.from(body.rows).forEach((row) => {
+        const visible = !query || normalizeSearchText(row.textContent).includes(query);
+        row.hidden = !visible;
+        if (visible) visibleCount += 1;
+      });
+    });
+    globalSearch.setAttribute("aria-label", query ? `Tìm kiếm trong trang, ${visibleCount} kết quả` : "Tìm kiếm trong trang");
+  }
+
+  if (globalSearch) {
+    globalSearch.addEventListener("input", applyGlobalSearch);
+    searchableBodies.forEach((body) => new MutationObserver(applyGlobalSearch).observe(body, { childList: true }));
+    document.addEventListener("keydown", (event) => {
+      const target = event.target;
+      if (event.key !== "/" || event.ctrlKey || event.metaKey || event.altKey || target?.matches("input, textarea, select, [contenteditable='true']")) return;
+      event.preventDefault();
+      globalSearch.focus();
+    });
+  }
+
+  const notificationToggle = document.querySelector("[data-notification-toggle]");
+  const notificationPopover = document.querySelector("[data-notification-popover]");
+  const notificationList = document.querySelector("[data-notification-list]");
+  const notificationSummary = document.querySelector("[data-notification-summary]");
+  const notificationDot = document.querySelector("[data-notification-dot]");
+  const notificationSources = Array.from(document.querySelectorAll("[data-notification-label]"));
+
+  function spriteIcon(name) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("aria-hidden", "true");
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", `/static/ui-icons.svg#${name}`);
+    svg.append(use);
+    return svg;
+  }
+
+  document.querySelectorAll(".section-toolbar").forEach((toolbar) => {
+    const copy = toolbar.querySelector(":scope > div:first-child");
+    const heading = copy?.querySelector("h2")?.textContent || "";
+    if (!copy || copy.classList.contains("section-heading")) return;
+    const normalized = normalizeSearchText(heading);
+    let iconName = "layout";
+    let tone = "";
+    if (normalized.includes("account") || normalized.includes("tai khoan")) iconName = "credit-card";
+    else if (normalized.includes("resource") || normalized.includes("asset")) { iconName = "database"; tone = "green"; }
+    else if (normalized.includes("duyet") || normalized.includes("lich")) { iconName = "clock"; tone = "amber"; }
+    else if (normalized.includes("job") || normalized.includes("audit") || normalized.includes("kpi") || normalized.includes("thao tac")) { iconName = "activity"; tone = "purple"; }
+    else if (normalized.includes("bot") || normalized.includes("node") || normalized.includes("provider") || normalized.includes("hermes")) iconName = "server";
+    else if (normalized.includes("campaign")) { iconName = "layout"; tone = "purple"; }
+
+    const cluster = document.createElement("div");
+    cluster.className = "section-heading";
+    const icon = document.createElement("span");
+    icon.className = `section-icon${tone ? ` ${tone}` : ""}`;
+    icon.append(spriteIcon(iconName));
+    toolbar.insertBefore(cluster, copy);
+    cluster.append(icon, copy);
+
+    toolbar.querySelectorAll(":scope > .button").forEach((button) => {
+      if (!button.querySelector("svg") && /^(Thêm|Tạo|Tải)/u.test(button.textContent.trim())) button.prepend(spriteIcon("plus"));
+    });
+  });
+
+  function closeNotifications() {
+    if (!notificationToggle || !notificationPopover) return;
+    notificationPopover.hidden = true;
+    notificationToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function notificationIcon(tone) {
+    return spriteIcon(tone === "danger" ? "circle-alert" : "clock");
+  }
+
+  function renderNotifications() {
+    if (!notificationList || !notificationSummary || !notificationDot) return;
+    const items = notificationSources.map((source) => {
+      const value = Number.parseInt((source.querySelector("strong")?.textContent || "0").replace(/[^0-9-]/g, ""), 10) || 0;
+      return { value, label: source.dataset.notificationLabel || "mục cần xử lý", tone: source.dataset.notificationTone || "warning" };
+    }).filter((item) => item.value > 0);
+
+    notificationList.replaceChildren();
+    if (!items.length) {
+      const empty = document.createElement("div");
+      empty.className = "notification-empty";
+      empty.textContent = "Không có cảnh báo cần xử lý trên trang này.";
+      notificationList.append(empty);
+      notificationSummary.textContent = "Không có cảnh báo";
+      notificationDot.hidden = true;
+      return;
+    }
+
+    items.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = `notification-item ${item.tone}`;
+      const icon = document.createElement("span");
+      icon.className = "notification-item-icon";
+      icon.append(notificationIcon(item.tone));
+      const copy = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = `${item.value} ${item.label}`;
+      const detail = document.createElement("span");
+      detail.textContent = item.tone === "danger" ? "Cần kiểm tra và xử lý sớm." : "Đang chờ bạn kiểm tra.";
+      copy.append(title, detail);
+      row.append(icon, copy);
+      notificationList.append(row);
+    });
+    notificationSummary.textContent = `${items.length} mục cần chú ý`;
+    notificationDot.hidden = false;
+  }
+
+  if (notificationToggle && notificationPopover) {
+    notificationToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const willOpen = notificationPopover.hidden;
+      notificationPopover.hidden = !willOpen;
+      notificationToggle.setAttribute("aria-expanded", String(willOpen));
+      if (willOpen) renderNotifications();
+    });
+    notificationPopover.addEventListener("click", (event) => event.stopPropagation());
+    notificationSources.forEach((source) => {
+      const value = source.querySelector("strong");
+      if (value) new MutationObserver(renderNotifications).observe(value, { childList: true, characterData: true, subtree: true });
+    });
+    renderNotifications();
+  }
+
   function closeAccountMenu() {
     if (!accountMenu || !accountToggle) return;
     accountMenu.hidden = true;
@@ -22,9 +160,20 @@
       event.stopPropagation();
       if (event.target.closest("button")) closeAccountMenu();
     });
-    document.addEventListener("click", closeAccountMenu);
+    document.addEventListener("click", () => {
+      closeAccountMenu();
+      closeNotifications();
+    });
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeAccountMenu();
+      if (event.key === "Escape") {
+        closeAccountMenu();
+        closeNotifications();
+      }
+    });
+  } else {
+    document.addEventListener("click", closeNotifications);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeNotifications();
     });
   }
 

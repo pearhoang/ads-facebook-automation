@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Báo cáo</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-2">
   <link rel="stylesheet" href="/static/reports.css?v=meta-light-focus">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
@@ -17,13 +17,14 @@
 
   <main class="main">
     <header class="topbar">
-      <div>
+      <div class="page-identity">
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg><span>Báo cáo</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>KPI</span></div>
         <h1>Báo cáo &amp; KPI</h1>
-        <p>Snapshot read-only từ Ads Manager, không thay đổi campaign hoặc ngân sách.</p>
       </div>
       <div class="topbar-actions">
-        <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
-        <button id="collect-button" class="button button-primary" type="button">Thu thập KPI</button>
+        {% set global_search_placeholder = "Tìm snapshot, campaign…" %}
+        {% include "_topbar_tools.html" %}
+        <button id="collect-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thu thập KPI</button>
       </div>
     </header>
 
@@ -37,10 +38,10 @@
     <div id="notice" class="notice page-notice" hidden></div>
 
     <section class="summary" aria-label="KPI gần nhất">
-      <div><span>Chi tiêu</span><strong id="kpi-spend">—</strong></div>
-      <div><span>Kết quả</span><strong id="kpi-results">—</strong></div>
-      <div><span>Chi phí/kết quả</span><strong id="kpi-cost">—</strong></div>
-      <div><span>Thu thập gần nhất</span><strong id="kpi-collected" class="summary-time">Chưa có</strong></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#wallet"></use></svg>Chi tiêu</span><strong id="kpi-spend">—</strong><small>Theo khoảng ngày đã chọn</small></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#target"></use></svg>Kết quả</span><strong id="kpi-results">—</strong><small>Tổng kết quả ghi nhận</small></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#calculator"></use></svg>Chi phí/kết quả</span><strong id="kpi-cost">—</strong><small>Giá trị trung bình</small></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg>Thu thập gần nhất</span><strong id="kpi-collected" class="summary-time">Chưa có</strong><small>Snapshot read-only</small></div>
     </section>
 
     <section class="content-section">
@@ -108,7 +109,7 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-2" defer></script>
   <script src="/static/reports.js?v=meta-light-focus" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>

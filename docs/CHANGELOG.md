@@ -361,3 +361,10 @@
 - Compatibility: Giữ nguyên routes, field IDs, form/API contract và business workflow; bỏ listener logout trùng và thêm asset version để favicon/CSS/JS mới không bị cache cũ.
 - Verified: full suite `76 passed`, JavaScript syntax và diff check sạch; browser audit desktop/mobile không có console error, dialog dài giữ scrollbar trong góc bo, dropdown đúng geometry `4px`/`10px`/`31px`.
 - Preview: `http://127.0.0.1:8040/`; chưa push hoặc deploy.
+
+### 2026-08-04 - Khôi phục fidelity giữa prototype và app chính
+
+- Changed: Đưa nguyên anatomy topbar của prototype vào toàn bộ app chính gồm breadcrumb, search, notification popover và primary CTA; khôi phục KPI semantic icon + helper text và section icon/description thay vì bản tối giản trước đó.
+- Interaction: Search lọc table row hiện tại và hỗ trợ phím `/`; notification đọc KPI/page state thật, không dùng nội dung demo giả.
+- Verified: full suite `77 passed`, JavaScript syntax và diff check sạch; browser audit 5 màn không horizontal overflow, search/notification hoạt động và Campaigns khớp visual reference.
+- Preview: `http://127.0.0.1:8040/`; chưa push hoặc deploy.

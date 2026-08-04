@@ -2,7 +2,7 @@
 
 ## Status
 
-- Complete locally; chờ user duyệt preview trước khi push/deploy.
+- Complete locally sau fidelity correction; chờ user duyệt preview trước khi push/deploy.
 
 ## Goal
 
@@ -25,7 +25,7 @@
 ## Current State
 
 - Prototype `meta-dark-sidebar-glass.html` đã được user chốt.
-- Shared sidebar, token, app shell, KPI, panel, dialog, dropdown và login đã được chuyển sang production templates/static assets.
+- Shared sidebar, token, app shell, breadcrumb, search, notification popover, KPI semantic icon, panel, dialog, dropdown và login đã được chuyển sang production templates/static assets.
 - Các route nghiệp vụ và form/API contract được giữ nguyên; đang chạy regression test và browser audit trước khi bàn giao local preview.
 
 ## Next Steps
@@ -35,8 +35,9 @@
 
 ## Verification
 
-- `76 passed` với full pytest suite; `node --check` cho shared UI/login scripts và `git diff --check` đều sạch.
+- `77 passed` với full pytest suite; `node --check` cho shared UI script và `git diff --check` đều sạch.
 - Browser audit xác nhận Workspace, Campaigns, Reports, Bot VPS, Hermes Agents và Login không overflow viewport ngoài table scroller có chủ đích.
+- Search cập nhật số kết quả theo input; notification popover render trạng thái KPI thật và hiển thị empty state khi không có cảnh báo.
 - Custom select đạt gap `4px`, radius `10px`, option `31px`; long dialog có radius `12px`, sticky header/footer và scrollbar nằm trong surface.
 - Responsive audit ở `390×844` xác nhận login không horizontal overflow và KPI chuyển đúng lưới `2×2`.
 

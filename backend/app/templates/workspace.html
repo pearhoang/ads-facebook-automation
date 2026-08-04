@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Tài khoản Facebook</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-2">
 </head>
 <body data-csrf-token="{{ csrf_token }}">
   {% set active_nav = "accounts" %}
@@ -16,21 +16,22 @@
 
   <main class="main">
     <header class="topbar">
-      <div>
+      <div class="page-identity">
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#users"></use></svg><span>Tài khoản Facebook</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Account sessions</span></div>
         <h1>Tài khoản Facebook</h1>
-        <p>Quản lý Chrome profile và phiên đăng nhập trên worker.</p>
       </div>
       <div class="topbar-actions">
-        <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
-        <button id="add-account-button" class="button button-primary" type="button">Thêm tài khoản</button>
+        {% set global_search_placeholder = "Tìm tài khoản, worker…" %}
+        {% include "_topbar_tools.html" %}
+        <button id="add-account-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thêm tài khoản</button>
       </div>
     </header>
 
     <section class="summary" aria-label="Tổng quan">
-      <div><span>Tài khoản</span><strong id="account-count">0</strong></div>
-      <div><span>Worker online</span><strong id="worker-count">0</strong></div>
-      <div><span>Chờ xác minh</span><strong id="verification-count">0</strong></div>
-      <div><span>Phiên lỗi</span><strong id="failure-count">0</strong></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#users"></use></svg>Tài khoản</span><strong id="account-count">0</strong><small>Chrome profile đã tạo</small></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg>Worker online</span><strong id="worker-count">0</strong><small>Sẵn sàng mở phiên</small></div>
+      <div data-notification-label="tài khoản chờ xác minh" data-notification-tone="warning"><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#shield-alert"></use></svg>Chờ xác minh</span><strong id="verification-count">0</strong><small>Cần kiểm tra đăng nhập</small></div>
+      <div data-notification-label="phiên đăng nhập lỗi" data-notification-tone="danger"><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#circle-alert"></use></svg>Phiên lỗi</span><strong id="failure-count">0</strong><small>Cần xử lý</small></div>
     </section>
 
     <section class="content-section">
@@ -101,7 +102,7 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-2" defer></script>
   <script src="/static/workspace.js?v=meta-light-focus" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>

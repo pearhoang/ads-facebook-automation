@@ -48,7 +48,7 @@ def test_ads_meta_master_branding_is_consistent_across_rendered_pages():
         assert "Ads Meta Master" in login_page.text
         assert "Meta Ads Automation" in login_page.text
         assert (
-            'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus"'
+            'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2"'
             in login_page.text
         )
         assert "Ads Lush" not in login_page.text
@@ -68,7 +68,7 @@ def test_ads_meta_master_branding_is_consistent_across_rendered_pages():
             assert "Meta Ads Automation" in page.text, path
             assert "<strong>Admin</strong>" in page.text, path
             assert (
-                'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus"'
+                'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2"'
                 in page.text
             ), path
             assert "Ads Lush" not in page.text, path

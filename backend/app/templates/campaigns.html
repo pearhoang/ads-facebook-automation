@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Campaigns</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-2">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
   {% set active_nav = "campaigns" %}
@@ -16,23 +16,24 @@
 
   <main class="main">
     <header class="topbar">
-      <div>
+      <div class="page-identity">
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#layout"></use></svg><span>Campaigns</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Campaign drafts</span></div>
         <h1>Campaign drafts</h1>
-        <p>Soạn, duyệt, kiểm tra profile và tạo Meta draft có checkpoint.</p>
       </div>
       <div class="topbar-actions">
-        <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
-        <button id="add-campaign-button" class="button button-primary" type="button">Tạo campaign draft</button>
+        {% set global_search_placeholder = "Tìm campaign, ad account…" %}
+        {% include "_topbar_tools.html" %}
+        <button id="add-campaign-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Tạo campaign draft</button>
       </div>
     </header>
 
     <div class="safety-banner"><strong>Không tự publish.</strong> Preflight chỉ đọc; Meta draft builder được click và điền Campaign/Ad Set/Ad nhưng luôn dừng trước nút <span class="mono-text">Đăng</span>.</div>
 
     <section class="summary" aria-label="Tổng quan campaign">
-      <div><span>Ad accounts</span><strong id="ad-account-count">0</strong></div>
-      <div><span>Drafts</span><strong id="draft-count">0</strong></div>
-      <div><span>Chờ duyệt</span><strong id="pending-count">0</strong></div>
-      <div><span>Đã duyệt nội bộ</span><strong id="approved-count">0</strong></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#credit-card"></use></svg>Ad accounts</span><strong id="ad-account-count">0</strong><small>Account đã liên kết</small></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#files"></use></svg>Campaign drafts</span><strong id="draft-count">0</strong><small>Bản nháp đang quản lý</small></div>
+      <div data-notification-label="campaign chờ duyệt" data-notification-tone="warning"><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg>Chờ duyệt</span><strong id="pending-count">0</strong><small>Cần owner kiểm tra</small></div>
+      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#badge-check"></use></svg>Đã duyệt nội bộ</span><strong id="approved-count">0</strong><small>Chưa publish lên Meta</small></div>
     </section>
 
     <div id="notice" class="notice page-notice" hidden></div>
@@ -262,7 +263,7 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-2" defer></script>
   <script src="/static/campaigns.js?v=meta-light-focus" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>

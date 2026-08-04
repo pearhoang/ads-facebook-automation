@@ -5,11 +5,13 @@ from pathlib import Path
 
 UI_FILES = (
     Path("backend/app/templates/_sidebar.html"),
+    Path("backend/app/templates/_topbar_tools.html"),
     Path("backend/app/templates/login.html"),
     Path("backend/app/templates/campaigns.html"),
     Path("backend/app/static/campaigns.js"),
     Path("backend/app/static/ui.js"),
     Path("backend/app/static/workspace.css"),
+    Path("backend/app/static/ui-icons.svg"),
     Path("backend/app/static/auth.css"),
     Path("backend/app/templates/reports.html"),
     Path("backend/app/static/reports.js"),
@@ -79,6 +81,35 @@ def test_primary_navigation_uses_native_hermes_dashboard():
 
     hermes_agents = active_templates[-1].read_text(encoding="utf-8")
     assert "Mở Hermes Dashboard" in hermes_agents
+
+
+def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
+    active_templates = (
+        Path("backend/app/templates/workspace.html"),
+        Path("backend/app/templates/campaigns.html"),
+        Path("backend/app/templates/reports.html"),
+        Path("backend/app/templates/bot_nodes.html"),
+        Path("backend/app/templates/hermes_agents.html"),
+    )
+    for path in active_templates:
+        text = path.read_text(encoding="utf-8")
+        assert 'class="breadcrumb"' in text
+        assert '{% include "_topbar_tools.html" %}' in text
+
+    for path in active_templates[:4]:
+        text = path.read_text(encoding="utf-8")
+        assert 'class="summary-label"' in text
+
+    tools = Path("backend/app/templates/_topbar_tools.html").read_text(encoding="utf-8")
+    script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
+    styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
+    assert "data-global-search" in tools
+    assert "data-notification-popover" in tools
+    assert "applyGlobalSearch" in script
+    assert "renderNotifications" in script
+    assert ".global-search" in styles
+    assert ".notification-popover" in styles
+    assert ".summary-label svg" in styles
 
 
 def test_canonical_selects_are_progressively_enhanced_without_changing_form_contracts():
