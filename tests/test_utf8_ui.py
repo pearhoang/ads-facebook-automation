@@ -95,6 +95,7 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
         text = path.read_text(encoding="utf-8")
         assert 'class="breadcrumb"' in text
         assert '{% include "_topbar_tools.html" %}' in text
+        assert 'class="content-pane"' in text
 
     for path in active_templates[:4]:
         text = path.read_text(encoding="utf-8")
@@ -110,6 +111,10 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
     assert ".global-search" in styles
     assert ".notification-popover" in styles
     assert ".metric-icon svg" in styles
+    assert ".content-pane" in styles
+    assert "#ad-accounts table" in styles
+    assert "table-layout: fixed" in styles
+    assert '.breadcrumb svg:nth-of-type(2)' not in styles
 
 
 def test_canonical_selects_are_progressively_enhanced_without_changing_form_contracts():

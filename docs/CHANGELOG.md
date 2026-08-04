@@ -381,3 +381,10 @@
 - Changed: Đồng bộ `Inter` cho body/navigation, màu và stroke icon sidebar, loop mark footer, breadcrumb/page title, search input, button line-height và section heading với bản demo; giữ typography display `Be Vietnam Pro` cho title/value.
 - Affected: `backend/app/static/workspace.css`, `docs/UI_SYSTEM.md`.
 - Verified: Browser comparison ở cùng geometry cho breadcrumb, title, search, button, KPI và sidebar; account sessions route có đủ search, notification và 4 KPI icon.
+
+### 2026-08-04 - Khớp vùng cuộn, chevron và cột bảng với prototype
+
+- Changed: Tách nội dung các route vào `.content-pane` cuộn độc lập, giữ topbar/sidebar cố định; bỏ override làm chevron breadcrumb nhỏ hơn; cố định tỷ lệ cột `Ad accounts` theo reference để empty state không làm trôi header.
+- Fidelity: Sidebar icon giữ `17px`, nav row `42px`, gap `11px`; breadcrumb chevron dùng cùng box `13px`; panel/KPI/table xếp đúng gutter `20px` ở desktop.
+- Verified: Browser comparison tại `1212×910` cho content pane `964px`, client width `949px`, table `907px`, account columns khớp reference; full suite chạy lại sau thay đổi.
+- Preview: `http://127.0.0.1:8040/campaigns`; chưa push hoặc deploy.

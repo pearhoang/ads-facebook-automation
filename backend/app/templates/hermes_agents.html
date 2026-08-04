@@ -16,6 +16,9 @@
   {% include "_sidebar.html" %}
   <main class="main">
     <header class="topbar"><div class="page-identity"><div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg><span>Quản trị</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Hermes Agents</span></div><h1>Hermes Agents</h1></div><div class="topbar-actions hermes-topbar-actions">{% set global_search_placeholder = "Tìm provider, model…" %}{% include "_topbar_tools.html" %}<span id="provider-status" class="status">Chưa cấu hình</span><button id="rotate-dashboard-password-button" class="button button-secondary" type="button">Đổi mật khẩu Dashboard</button><a class="button button-primary" href="{{ hermes_dashboard_url }}" target="_blank" rel="noopener">Mở Hermes Dashboard</a></div></header>
+
+    <div class="content-pane">
+      <div class="content">
     <div class="safety-banner"><strong>Secret boundary:</strong> API key được mã hóa trong control-plane, chỉ trả về cho Bot VPS đã chọn qua credential của node. Trên VPS, key nằm trong Hermes config mode 0600 để agent vẫn hoạt động khi server tạm mất kết nối.</div>
     <section class="settings-layout">
       <form id="provider-form" class="settings-panel">
@@ -35,6 +38,8 @@
       </form>
       <aside class="settings-panel provider-summary"><h2>Trạng thái hiện tại</h2><dl class="session-facts"><div><dt>Provider</dt><dd id="summary-provider">—</dd></div><div><dt>Model</dt><dd id="summary-model">—</dd></div><div><dt>Thinking</dt><dd id="summary-thinking">—</dd></div><div><dt>Reasoning</dt><dd id="summary-reasoning">—</dd></div><div><dt>Quyền Agent</dt><dd id="summary-permission">—</dd></div><div><dt>Endpoint</dt><dd id="summary-endpoint">—</dd></div><div><dt>API key</dt><dd id="summary-key">—</dd></div><div><dt>Execution</dt><dd id="summary-scope">—</dd></div><div><dt>Kiểm tra</dt><dd id="summary-test">—</dd></div></dl><p class="settings-note">Worker đồng bộ cấu hình mỗi phút. Nếu control-plane tắt, Hermes tiếp tục dùng bản local gần nhất. Session mới hoặc `/reset` sẽ nhận bộ quyền mới.</p></aside>
     </section>
+      </div>
+    </div>
   </main>
   <dialog id="dashboard-password-dialog" class="wide-dialog" aria-labelledby="dashboard-password-title">
     <form id="dashboard-password-form" method="dialog">

@@ -27,6 +27,8 @@
       </div>
     </header>
 
+    <div class="content-pane">
+      <div class="content">
     <div class="safety-banner"><strong>Không tự publish.</strong> Preflight chỉ đọc; Meta draft builder được click và điền Campaign/Ad Set/Ad nhưng luôn dừng trước nút <span class="mono-text">Đăng</span>.</div>
 
     <section class="summary" aria-label="Tổng quan campaign">
@@ -80,7 +82,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="campaign-list" class="content-section">
       <div class="section-toolbar">
         <div><h2>Danh sách campaign</h2><p>Mọi campaign bắt đầu ở draft và phải được duyệt trước phase thực thi.</p></div>
         <button id="refresh-button" class="button button-secondary" type="button">Làm mới</button>
@@ -94,7 +96,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="campaign-approvals" class="content-section">
       <div class="section-toolbar"><div><h2>Hàng chờ duyệt</h2><p>Owner hoặc admin kiểm tra snapshot trước khi quyết định.</p></div></div>
       <div class="table-wrap">
         <table>
@@ -105,7 +107,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="execution-jobs" class="content-section">
       <div class="section-toolbar"><div><h2>Execution jobs</h2><p>Preflight xác minh profile; draft builder tạo cấu hình trên Meta và dừng trước publish.</p></div></div>
       <div class="table-wrap">
         <table>
@@ -116,7 +118,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="audit-log" class="content-section">
       <div class="section-toolbar"><div><h2>Audit gần đây</h2><p>Lịch sử campaign, approval và execution job.</p></div></div>
       <div class="table-wrap">
         <table>
@@ -125,6 +127,8 @@
         </table>
       </div>
     </section>
+      </div>
+    </div>
   </main>
 
   <dialog id="ad-account-dialog">

@@ -19,6 +19,9 @@
       <div class="page-identity"><div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg><span>Quản trị</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Bot VPS</span></div><h1>Bot VPS</h1></div>
       <div class="topbar-actions">{% set global_search_placeholder = "Tìm node, host…" %}{% include "_topbar_tools.html" %}<button id="add-node-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thêm Bot VPS</button></div>
     </header>
+
+    <div class="content-pane">
+      <div class="content">
     <section class="summary" aria-label="Tổng quan fleet">
       <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg></span><div><div class="metric-label">Tổng node</div><div class="metric-value" id="node-total">0</div><div class="metric-meta">Worker đã đăng ký</div></div></article>
       <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg></span><div><div class="metric-label">Online</div><div class="metric-value" id="node-online">0</div><div class="metric-meta">Đang kết nối</div></div></article>
@@ -37,6 +40,8 @@
       <div class="table-wrap"><table><thead><tr><th>Loại</th><th>Host</th><th>Trạng thái</th><th>Kết quả</th><th>Thời gian</th></tr></thead><tbody id="operation-rows"></tbody></table></div>
       <div id="operation-empty" class="empty-state compact-empty" hidden><strong>Chưa có thao tác</strong></div>
     </section>
+      </div>
+    </div>
   </main>
 
   <dialog id="enrollment-dialog" class="wide-dialog">

@@ -46,6 +46,11 @@
 
 - Browser comparison confirms `Inter` for body/navigation, breadcrumb `12px`, page title `20px/1.25`, search input `13px`, button label `12px/650`, section heading `15px/1.45`, and matching sidebar icon stroke/footer loop mark colors.
 
+## Scroll and column parity follow-up
+
+- Production routes now mirror the prototype shell: topbar stays fixed while `.content-pane` owns vertical scrolling, so the scrollbar does not resize the sidebar or shift panel columns.
+- At `1212×910`, Campaigns matches the reference geometry for content gutter, KPI y-position, breadcrumb chevron `13px`, account table x/width and fixed column ratios; sidebar icons remain `17px` with `11px` gap.
+
 ## Risks
 
 - CSS cũ phân tán giữa nhiều file có thể tạo specificity conflict hoặc làm lệch responsive layout.
