@@ -125,6 +125,8 @@
 
 ## DEC-020 — SSH secret transient và AI provider scope theo worker
 
+> Phần SSH password transient đã được thay thế bởi DEC-027. Telegram bootstrap token và các nguyên tắc provider scope trong quyết định này vẫn còn hiệu lực.
+
 - Popup install/decommission nhận SSH password nhưng chỉ truyền vào background job trong RAM; không ghi DB, operation message, response hoặc audit.
 - Lần cài đầu ghi SSH host fingerprint; decommission từ xa phải khớp fingerprint đã lưu nếu có.
 - AI API key mã hóa bằng `SECRET_ENCRYPTION_KEY`; UI/API chỉ trả masked hint, còn raw key chỉ được giải mã cho đúng worker credential.
@@ -176,7 +178,7 @@
 - Route `/ai-copilot` vẫn yêu cầu Ads Lush session rồi chuyển hướng tới dashboard; legacy API, transcript và job table được giữ để rollback, không hard-delete dữ liệu.
 - Dashboard chạy service riêng từ cùng `HERMES_HOME`, bind interface nội bộ, dùng password provider chính chủ với scrypt hash + signing secret và được Caddy expose qua HTTPS subdomain.
 - `Hermes Agents` tiếp tục là canonical control-plane UI cho provider/model/thinking/permission; nó không nhúng hoặc tái tạo chat.
-- Owner xoay mật khẩu Dashboard theo worker bằng SSH credential dùng một lần; control-plane không lưu plaintext, worker thay scrypt hash và signing secret rồi chỉ restart dashboard service để thu hồi mọi phiên Dashboard cũ.
+- Owner xoay mật khẩu Dashboard theo worker bằng SSH credential đã mã hóa theo DEC-027; control-plane không trả plaintext, worker thay scrypt hash và signing secret rồi chỉ restart dashboard service để thu hồi mọi phiên Dashboard cũ.
 
 ## DEC-026 — Search/vision fallback dùng per-worker Codex OAuth và Hermes MCP
 
@@ -185,3 +187,11 @@
 - Kết nối dùng official `codex login --device-auth` theo từng worker. User mở public verification URL và nhập one-time code trên trình duyệt riêng, không cần noVNC.
 - Credential ở `<WORKER_DATA_DIR>/codex/auth.json` mode `0600`; control-plane chỉ thấy trạng thái không nhạy cảm qua heartbeat và không lưu cookie, access token hoặc refresh token.
 - `codex_vision` chỉ đọc ảnh trong các worker/Hermes data root cho phép; tool không cấp thêm Meta mutation, publish hoặc budget permission.
+
+## DEC-027 — Lưu SSH credential mã hóa theo worker
+
+- `Add Bot` nhận SSH password một lần và mã hóa bằng Fernet với `SECRET_ENCRYPTION_KEY`; enrollment chuyển ciphertext sang worker sau khi kết nối thành công.
+- `Sửa thiết lập` có thể rotate password; để trống giữ ciphertext hiện tại. API/UI chỉ trả `ssh_password_configured`, không trả plaintext hoặc ciphertext.
+- Decommission, đổi password Hermes Dashboard và Codex connect/disconnect giải mã credential ngay trước background task; plaintext chỉ tồn tại trong RAM và không ghi vào audit, operation message hay log.
+- Revoke worker xóa ciphertext. Telegram Bot Token vẫn là bootstrap secret transient và không thuộc cơ chế lưu SSH này.
+- Worker được enrollment thủ công có thể chưa có credential; remote action phải trả `409` và yêu cầu owner lưu password tại `Bot VPS -> Sửa thiết lập`.

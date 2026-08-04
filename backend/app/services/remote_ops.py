@@ -193,6 +193,7 @@ def _operator_command(ssh_user: str, password: str, script_command: str) -> tupl
 _ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 _DEVICE_URL = re.compile(r"https://[^\s]+", re.IGNORECASE)
 _DEVICE_CODE = re.compile(r"\b[A-Z0-9]{4}-[A-Z0-9]{4,5}\b")
+_CODEX_HOME = "/opt/meta-ads-copilot-runtime/worker-data/codex"
 
 
 def _codex_device_prompt(output: str) -> str | None:
@@ -228,7 +229,8 @@ def run_codex_device_login(
             ssh_password,
             expected_fingerprint,
         )
-        codex_home = "/opt/meta-ads-copilot-runtime/worker-data/codex"
+        codex_home = _CODEX_HOME
+        disconnect_marker = f"{codex_home}/.credential-disconnected"
         script = " && ".join(
             [
                 f"install -d -m 700 {shlex.quote(codex_home)}",
@@ -238,6 +240,7 @@ def run_codex_device_login(
                 f"test -s {shlex.quote(codex_home + '/auth.json')}",
                 f"chmod 600 {shlex.quote(codex_home + '/auth.json')}",
                 f"CODEX_HOME={shlex.quote(codex_home)} codex login status",
+                f"rm -f -- {shlex.quote(disconnect_marker)}",
             ]
         )
         operator_script, sudo_stdin = _operator_command(operation.ssh_user, ssh_password, script)
@@ -283,6 +286,77 @@ def run_codex_device_login(
             operation_id,
             status="succeeded",
             message="Đã kết nối Codex Search & Vision. Worker sẽ báo trạng thái mới trong tối đa 15 giây.",
+            completed=True,
+        )
+    except Exception as exc:
+        _set_operation(
+            session_factory,
+            operation_id,
+            status="failed",
+            message=str(exc)[:2400],
+            completed=True,
+        )
+    finally:
+        if client is not None:
+            client.close()
+
+
+def _codex_disconnect_script(codex_home: str = _CODEX_HOME) -> str:
+    auth_path = f"{codex_home}/auth.json"
+    disconnect_marker = f"{codex_home}/.credential-disconnected"
+    return " && ".join(
+        [
+            f"install -d -m 700 {shlex.quote(codex_home)}",
+            f"touch {shlex.quote(disconnect_marker)}",
+            f"chmod 600 {shlex.quote(disconnect_marker)}",
+            (
+                "(if command -v codex >/dev/null 2>&1; then "
+                f"CODEX_HOME={shlex.quote(codex_home)} codex logout >/dev/null 2>&1 || true; "
+                "fi)"
+            ),
+            f"rm -f -- {shlex.quote(auth_path)}",
+            f"test ! -e {shlex.quote(auth_path)}",
+        ]
+    )
+
+
+def run_codex_disconnect(
+    session_factory: Callable[[], Session],
+    operation_id: str,
+    ssh_password: str,
+) -> None:
+    operation = _set_operation(session_factory, operation_id, status="running", started=True)
+    client: paramiko.SSHClient | None = None
+    try:
+        with session_factory() as db:
+            expected_worker = db.get(Worker, operation.worker_id) if operation.worker_id else None
+            expected_fingerprint = expected_worker.ssh_host_fingerprint if expected_worker else None
+        client, fingerprint = _connect(
+            operation.host,
+            operation.ssh_user,
+            ssh_password,
+            expected_fingerprint,
+        )
+        operator_script, sudo_stdin = _operator_command(
+            operation.ssh_user,
+            ssh_password,
+            _codex_disconnect_script(),
+        )
+        _run_command(client, operator_script, stdin_text=sudo_stdin, timeout_seconds=120)
+        with session_factory() as db:
+            current = db.get(WorkerOperation, operation_id)
+            worker = db.get(Worker, current.worker_id) if current and current.worker_id else None
+            if worker is not None:
+                worker.ssh_host_fingerprint = fingerprint
+                db.commit()
+        _set_operation(
+            session_factory,
+            operation_id,
+            status="succeeded",
+            message=(
+                "Đã xóa credential và ngắt kết nối Codex trên Bot VPS. "
+                "Hermes, Telegram và browser vẫn tiếp tục chạy."
+            ),
             completed=True,
         )
     except Exception as exc:
@@ -362,6 +436,8 @@ def run_install(
             worker.host = current.host
             worker.ssh_user = current.ssh_user
             worker.ssh_host_fingerprint = fingerprint
+            worker.ssh_password_ciphertext = enrollment.ssh_password_ciphertext
+            enrollment.ssh_password_ciphertext = None
             worker.install_status = "installed"
             worker.installed_at = utc_now()
             current.worker_id = worker.id
@@ -389,6 +465,16 @@ def run_install(
             completed=True,
         )
     except Exception as exc:
+        with session_factory() as db:
+            current = db.get(WorkerOperation, operation_id)
+            enrollment = db.get(WorkerEnrollment, current.enrollment_id) if current else None
+            if enrollment is not None:
+                if enrollment.worker_id and enrollment.ssh_password_ciphertext:
+                    worker = db.get(Worker, enrollment.worker_id)
+                    if worker is not None:
+                        worker.ssh_password_ciphertext = enrollment.ssh_password_ciphertext
+                enrollment.ssh_password_ciphertext = None
+                db.commit()
         _set_operation(
             session_factory,
             operation_id,

@@ -75,7 +75,8 @@ function renderNodes(nodes) {
   rows.innerHTML = nodes.map((node) => {
     const capabilities = Object.entries(node.capabilities_json || {}).filter(([, enabled]) => enabled === true).map(([name]) => `<span>${escapeHtml(name)}</span>`).join("") || "—";
     const host = node.host ? `${escapeHtml(node.ssh_user || "root")}@${escapeHtml(node.host)}` : "Chưa lưu host";
-    return `<tr><td class="node-meta"><strong>${escapeHtml(node.display_name)}</strong><small>${escapeHtml(node.worker_key)}</small></td><td><span class="status ${statusClass(node.lifecycle_status)}">${escapeHtml(node.lifecycle_status)}</span><br><small>${escapeHtml(node.install_status)}</small></td><td><strong>${host}</strong><br><small>${escapeHtml(node.runtime_version || "—")}</small></td><td><div class="capability-list">${capabilities}</div></td><td>${escapeHtml(formatDate(node.last_seen_at))}</td><td><div class="row-actions">${actionButtons(node)}</div></td></tr>`;
+    const sshState = node.ssh_password_configured ? "SSH credential đã lưu" : "Chưa lưu SSH credential";
+    return `<tr><td class="node-meta"><strong>${escapeHtml(node.display_name)}</strong><small>${escapeHtml(node.worker_key)}</small></td><td><span class="status ${statusClass(node.lifecycle_status)}">${escapeHtml(node.lifecycle_status)}</span><br><small>${escapeHtml(node.install_status)}</small></td><td><strong>${host}</strong><br><small>${escapeHtml(sshState)} · ${escapeHtml(node.runtime_version || "—")}</small></td><td><div class="capability-list">${capabilities}</div></td><td>${escapeHtml(formatDate(node.last_seen_at))}</td><td><div class="row-actions">${actionButtons(node)}</div></td></tr>`;
   }).join("");
 }
 
@@ -117,7 +118,10 @@ document.getElementById("add-node-button").addEventListener("click", () => {
 document.getElementById("install-provider-preset").addEventListener("change", applyInstallPreset);
 document.getElementById("install-provider-thinking-mode").addEventListener("change", () => toggleReasoning("install"));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => enrollmentDialog.close()));
-document.querySelectorAll("[data-close-edit]").forEach((button) => button.addEventListener("click", () => editDialog.close()));
+document.querySelectorAll("[data-close-edit]").forEach((button) => button.addEventListener("click", () => {
+  document.getElementById("edit-node-ssh-password").value = "";
+  editDialog.close();
+}));
 document.querySelectorAll("[data-close-decommission]").forEach((button) => button.addEventListener("click", () => decommissionDialog.close()));
 document.querySelectorAll("[data-close-confirm]").forEach((button) => button.addEventListener("click", () => confirmDialog.close()));
 document.getElementById("refresh-nodes").addEventListener("click", loadAll);
@@ -160,6 +164,7 @@ async function openEdit(node) {
   document.getElementById("edit-node-key").value = node.worker_key;
   document.getElementById("edit-node-host").value = node.host || "";
   document.getElementById("edit-node-ssh-user").value = node.ssh_user || "root";
+  document.getElementById("edit-node-ssh-password").value = "";
   editDialog.showModal();
 }
 
@@ -167,19 +172,19 @@ document.getElementById("edit-node-form").addEventListener("submit", async (even
   event.preventDefault();
   const workerId = document.getElementById("edit-node-id").value;
   try {
-    await api(`/api/bot-nodes/${workerId}`, { method: "PATCH", body: JSON.stringify({ display_name: document.getElementById("edit-node-name").value.trim(), host: document.getElementById("edit-node-host").value.trim(), ssh_user: document.getElementById("edit-node-ssh-user").value.trim() }) });
+    await api(`/api/bot-nodes/${workerId}`, { method: "PATCH", body: JSON.stringify({ display_name: document.getElementById("edit-node-name").value.trim(), host: document.getElementById("edit-node-host").value.trim(), ssh_user: document.getElementById("edit-node-ssh-user").value.trim(), ssh_password: document.getElementById("edit-node-ssh-password").value || null }) });
+    document.getElementById("edit-node-ssh-password").value = "";
     editDialog.close();
     showNotice("Đã lưu thiết lập worker.", true);
     await loadAll();
-  } catch (error) { showNotice(error.message); editDialog.close(); }
+  } catch (error) { document.getElementById("edit-node-ssh-password").value = ""; showNotice(error.message); editDialog.close(); }
 });
 
 document.getElementById("decommission-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const workerId = document.getElementById("decommission-node-id").value;
   try {
-    const operation = await api(`/api/bot-nodes/${workerId}/decommission`, { method: "POST", body: JSON.stringify({ ssh_password: document.getElementById("decommission-password").value }) });
-    document.getElementById("decommission-password").value = "";
+    const operation = await api(`/api/bot-nodes/${workerId}/decommission`, { method: "POST" });
     decommissionDialog.close();
     showNotice(`Đã bắt đầu gỡ service trên ${operation.host}.`, true);
     await loadAll();

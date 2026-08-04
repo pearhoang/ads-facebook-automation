@@ -43,12 +43,31 @@ function renderSummary(config) {
 function renderCodexStatus(worker) {
   const codex = worker?.capabilities_json?.codex || { configured: false };
   const connected = codex.configured === true;
+  const credentialPresent = codex.credential_present === true;
+  const disconnected = codex.disconnected === true;
   const status = document.getElementById("codex-status");
-  status.textContent = connected ? "Đã kết nối" : "Chưa kết nối";
+  status.textContent = connected ? "Đã kết nối" : disconnected ? "Đã ngắt kết nối" : credentialPresent ? "Credential cần xử lý" : "Chưa kết nối";
   status.className = connected ? "text-success" : "";
   setText("codex-account", codex.email || codex.account_id);
   setText("codex-plan", codex.plan_type);
-  document.getElementById("connect-codex-button").textContent = connected ? "Kết nối lại" : "Kết nối Codex";
+  const connectButton = document.getElementById("connect-codex-button");
+  connectButton.textContent = connected ? "Đã kết nối" : "Kết nối Codex";
+  connectButton.disabled = connected || !worker?.ssh_password_configured;
+  document.getElementById("disconnect-codex-button").disabled = !(worker?.ssh_password_configured && (connected || credentialPresent));
+  document.getElementById("rotate-dashboard-password-button").disabled = !worker?.ssh_password_configured;
+}
+
+async function refreshCodexWorker(workerId, expectedConnected) {
+  let worker = workersById.get(workerId);
+  for (let attempt = 0; attempt < 24; attempt += 1) {
+    const workers = await api("/api/bot-nodes");
+    workersById = new Map(workers.map((item) => [item.id, item]));
+    worker = workersById.get(workerId);
+    if ((worker?.capabilities_json?.codex?.configured === true) === expectedConnected) break;
+    await new Promise((resolve) => window.setTimeout(resolve, 1000));
+  }
+  renderCodexStatus(worker);
+  return worker;
 }
 
 async function load() {
@@ -133,12 +152,10 @@ const dashboardPasswordDialog = document.getElementById("dashboard-password-dial
 const dashboardPasswordForm = document.getElementById("dashboard-password-form");
 const dashboardPasswordNotice = document.getElementById("dashboard-password-notice");
 const dashboardPasswordSubmit = document.getElementById("dashboard-password-submit");
-const dashboardSshPassword = document.getElementById("dashboard-ssh-password");
 const dashboardNewPassword = document.getElementById("dashboard-new-password");
 const dashboardNewPasswordConfirmation = document.getElementById("dashboard-new-password-confirmation");
 
 function clearDashboardSecrets() {
-  dashboardSshPassword.value = "";
   dashboardNewPassword.value = "";
   dashboardNewPasswordConfirmation.value = "";
 }
@@ -183,7 +200,7 @@ document.getElementById("rotate-dashboard-password-button").addEventListener("cl
   dashboardPasswordNotice.hidden = true;
   document.getElementById("dashboard-password-target").textContent = `Bot VPS: ${worker.display_name} · ${worker.host || "chưa có host"}`;
   dashboardPasswordDialog.showModal();
-  dashboardSshPassword.focus();
+  dashboardNewPassword.focus();
 });
 
 document.querySelectorAll("[data-close-dashboard-password]").forEach((button) => {
@@ -203,7 +220,6 @@ dashboardPasswordForm.addEventListener("submit", async (event) => {
     return;
   }
   const payload = {
-    ssh_password: dashboardSshPassword.value,
     new_password: dashboardNewPassword.value,
     new_password_confirmation: dashboardNewPasswordConfirmation.value,
   };
@@ -228,7 +244,6 @@ dashboardPasswordForm.addEventListener("submit", async (event) => {
 
 const codexLoginDialog = document.getElementById("codex-login-dialog");
 const codexLoginForm = document.getElementById("codex-login-form");
-const codexSshPassword = document.getElementById("codex-ssh-password");
 const codexLoginNotice = document.getElementById("codex-login-notice");
 const codexLoginSubmit = document.getElementById("codex-login-submit");
 
@@ -285,20 +300,20 @@ document.getElementById("connect-codex-button").addEventListener("click", () => 
     showNotice("Hãy chọn một Bot VPS trước khi kết nối Codex.");
     return;
   }
-  codexSshPassword.value = "";
+  if (!worker.ssh_password_configured) {
+    showNotice("Bot VPS chưa lưu SSH password. Hãy mở Bot VPS → Sửa thiết lập và lưu password một lần.");
+    return;
+  }
   codexLoginNotice.hidden = true;
   document.getElementById("codex-login-target").textContent = `Bot VPS: ${worker.display_name} · ${worker.host || "chưa có host"}`;
   codexLoginDialog.showModal();
-  codexSshPassword.focus();
 });
 
 document.querySelectorAll("[data-close-codex-login]").forEach((button) => {
   button.addEventListener("click", () => {
-    codexSshPassword.value = "";
     codexLoginDialog.close();
   });
 });
-codexLoginDialog.addEventListener("cancel", () => { codexSshPassword.value = ""; });
 
 codexLoginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -307,22 +322,66 @@ codexLoginForm.addEventListener("submit", async (event) => {
   try {
     const operation = await api(`/api/bot-nodes/${encodeURIComponent(workerId)}/codex/device-login`, {
       method: "POST",
-      body: JSON.stringify({ ssh_password: codexSshPassword.value }),
     });
-    codexSshPassword.value = "";
     showCodexLoginNotice("Đang chuẩn bị Codex CLI và tạo mã xác thực…");
     const completed = await waitForCodexOperation(operation.id, (progress) => showCodexLoginNotice(progress.message || "Đang chờ xác thực…"));
     if (completed.status !== "succeeded") throw new Error(completed.message || "Không thể kết nối Codex.");
     showCodexLoginNotice(completed.message || "Đã kết nối Codex.", true);
-    await new Promise((resolve) => window.setTimeout(resolve, 16000));
-    const workers = await api("/api/bot-nodes");
-    workersById = new Map(workers.map((item) => [item.id, item]));
-    renderCodexStatus(workersById.get(workerId));
+    await refreshCodexWorker(workerId, true);
   } catch (error) {
-    codexSshPassword.value = "";
     showCodexLoginNotice(error.message);
   } finally {
     codexLoginSubmit.disabled = false;
+  }
+});
+
+const codexDisconnectDialog = document.getElementById("codex-disconnect-dialog");
+const codexDisconnectForm = document.getElementById("codex-disconnect-form");
+const codexDisconnectNotice = document.getElementById("codex-disconnect-notice");
+const codexDisconnectSubmit = document.getElementById("codex-disconnect-submit");
+
+document.getElementById("disconnect-codex-button").addEventListener("click", () => {
+  const workerId = document.getElementById("provider-worker").value;
+  const worker = workersById.get(workerId);
+  if (!workerId || !worker) {
+    showNotice("Hãy chọn một Bot VPS trước khi ngắt kết nối Codex.");
+    return;
+  }
+  if (!worker.ssh_password_configured) {
+    showNotice("Bot VPS chưa lưu SSH password. Hãy mở Bot VPS → Sửa thiết lập và lưu password một lần.");
+    return;
+  }
+  codexDisconnectNotice.hidden = true;
+  document.getElementById("codex-disconnect-target").textContent = `Bot VPS: ${worker.display_name} · ${worker.host || "chưa có host"}`;
+  codexDisconnectDialog.showModal();
+});
+
+document.querySelectorAll("[data-close-codex-disconnect]").forEach((button) => {
+  button.addEventListener("click", () => {
+    codexDisconnectDialog.close();
+  });
+});
+
+codexDisconnectForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const workerId = document.getElementById("provider-worker").value;
+  codexDisconnectSubmit.disabled = true;
+  try {
+    const operation = await api(`/api/bot-nodes/${encodeURIComponent(workerId)}/codex/disconnect`, {
+      method: "POST",
+    });
+    codexDisconnectNotice.textContent = "Đang xóa credential Codex trên Bot VPS…";
+    codexDisconnectNotice.hidden = false;
+    const completed = await waitForWorkerOperation(operation.id);
+    if (completed.status !== "succeeded") throw new Error(completed.message || "Không thể ngắt kết nối Codex.");
+    await refreshCodexWorker(workerId, false);
+    codexDisconnectDialog.close();
+    showNotice(completed.message || "Đã ngắt kết nối Codex.", true);
+  } catch (error) {
+    codexDisconnectNotice.textContent = error.message;
+    codexDisconnectNotice.hidden = false;
+  } finally {
+    codexDisconnectSubmit.disabled = false;
   }
 });
 

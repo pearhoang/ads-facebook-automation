@@ -52,7 +52,7 @@
 
   <dialog id="enrollment-dialog" class="wide-dialog">
     <form id="enrollment-form">
-      <div class="dialog-header"><div><h2>Thêm Bot VPS</h2><p>Control-plane dùng SSH để cài một lần; password chỉ giữ trong RAM của request.</p></div><button class="icon-button" type="button" data-close-dialog aria-label="Đóng">×</button></div>
+      <div class="dialog-header"><div><h2>Thêm Bot VPS</h2><p>Nhập SSH một lần; password được mã hóa tại control-plane để tái sử dụng cho các thao tác quản trị worker.</p></div><button class="icon-button" type="button" data-close-dialog aria-label="Đóng">×</button></div>
       <div class="form-grid"><label>IP hoặc hostname<input id="node-host" required maxlength="255" placeholder="203.0.113.10"></label><label>SSH user<input id="node-ssh-user" required maxlength="80" value="root"></label></div>
       <label>SSH password<input id="node-ssh-password" type="password" required maxlength="1024" autocomplete="new-password"></label>
       <div class="form-grid"><label>Tên hiển thị<input id="node-name" required maxlength="160" placeholder="Ads Worker Singapore 01"></label><label>Worker key<input id="node-key" required maxlength="120" pattern="[a-zA-Z0-9._-]+" placeholder="ads-sg-01"></label></div>
@@ -71,7 +71,8 @@
       <input id="edit-node-id" type="hidden">
       <div class="form-grid"><label>Tên hiển thị<input id="edit-node-name" required maxlength="160"></label><label>Worker key<input id="edit-node-key" disabled></label></div>
       <div class="form-grid"><label>IP hoặc hostname<input id="edit-node-host" required maxlength="255"></label><label>SSH user<input id="edit-node-ssh-user" required maxlength="80"></label></div>
-      <p class="inline-help">Provider và model của Hermes được quản lý tập trung tại trang Hermes Agents.</p>
+      <label>SSH password mới<input id="edit-node-ssh-password" type="password" maxlength="1024" autocomplete="new-password" placeholder="Để trống để giữ password đã lưu"></label>
+      <p class="inline-help">Password mới chỉ cần nhập khi đổi credential hoặc worker chưa có SSH credential. Giá trị được mã hóa và không bao giờ hiển thị lại. Provider/model được quản lý tại Hermes Agents.</p>
       <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-edit>Hủy</button><button class="button button-primary" type="submit">Lưu thiết lập</button></div>
     </form>
   </dialog>
@@ -81,7 +82,7 @@
       <div class="dialog-header"><div><h2>Gỡ worker khỏi VPS</h2><p>Chỉ chạy sau khi worker đã Drain; profile được giữ lại để phục hồi.</p></div><button class="icon-button" type="button" data-close-decommission aria-label="Đóng">×</button></div>
       <input id="decommission-node-id" type="hidden">
       <p id="decommission-target" class="approval-warning"></p>
-      <label>Nhập lại SSH password<input id="decommission-password" type="password" required maxlength="1024" autocomplete="new-password"></label>
+      <p>Hệ thống sẽ dùng SSH credential đã mã hóa của worker. Browser profile được giữ lại để phục hồi.</p>
       <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-decommission>Hủy</button><button class="button button-danger" type="submit">Gỡ service trên VPS</button></div>
     </form>
   </dialog>
@@ -91,7 +92,7 @@
     <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-confirm>Hủy</button><button id="confirm-node-action" class="button button-danger" type="button">Xác nhận</button></div>
   </dialog>
   {% include "_password_dialog.html" %}
-  <script src="/static/bot_nodes.js" defer></script>
+  <script src="/static/bot_nodes.js?v=20260804-stored-ssh" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

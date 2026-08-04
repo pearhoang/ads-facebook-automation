@@ -112,13 +112,30 @@ def _read_auth(auth_path: Path) -> tuple[dict[str, Any], CodexCredential] | None
     return (payload, credential) if credential else None
 
 
+def disconnect_marker_path(auth_path: Path) -> Path:
+    return auth_path.with_name(".credential-disconnected")
+
+
 def capability_status(auth_path: Path) -> dict[str, Any]:
+    credential_present = auth_path.exists()
+    if disconnect_marker_path(auth_path).exists():
+        return {
+            "configured": False,
+            "credential_present": credential_present,
+            "disconnected": True,
+        }
     loaded = _read_auth(auth_path)
     if loaded is None:
-        return {"configured": False}
+        return {
+            "configured": False,
+            "credential_present": credential_present,
+            "disconnected": False,
+        }
     _, credential = loaded
     return {
         "configured": True,
+        "credential_present": True,
+        "disconnected": False,
         "account_id": credential.account_id,
         "email": credential.email,
         "plan_type": credential.plan_type,
@@ -135,6 +152,8 @@ def _write_auth_atomic(auth_path: Path, payload: dict[str, Any]) -> None:
 
 
 def load_credential(auth_path: Path, *, allow_refresh: bool = True) -> CodexCredential:
+    if disconnect_marker_path(auth_path).exists():
+        raise RuntimeError("Codex đã ngắt kết nối. Mở Hermes Agents và kết nối một tài khoản trước.")
     loaded = _read_auth(auth_path)
     if loaded is None:
         raise RuntimeError("Chưa kết nối Codex. Mở Hermes Agents và chọn Kết nối Codex trước.")

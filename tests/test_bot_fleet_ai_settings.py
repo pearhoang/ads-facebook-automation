@@ -11,8 +11,8 @@ from fastapi.testclient import TestClient
 
 from backend.app.config import Settings
 from backend.app.main import create_app
-from backend.app.models import AIProviderConfig, WorkerEnrollment, WorkerOperation
-from backend.app.services import auth, remote_ops
+from backend.app.models import AIProviderConfig, Worker, WorkerEnrollment, WorkerOperation
+from backend.app.services import auth, remote_ops, ssh_credentials
 from workers.agent.hermes_config import HermesConfigManager
 from workers.agent import control_plane_mcp
 
@@ -51,10 +51,12 @@ def test_default_worker_repo_and_deepseek_flash_preset():
     assert "https://api.deepseek.com" in template
     assert "deepseek-v4-flash" in template
     assert "Đổi mật khẩu Dashboard" in template
-    assert "SSH password chỉ dùng một lần" in template
+    assert "SSH credential đã mã hóa" in template
     assert 'id="dashboard-new-password" type="password" required minlength="4"' in template
     assert "Codex Search &amp; Vision" in template
     assert "Kết nối Codex" in template
+    assert "Ngắt kết nối Codex" in template
+    assert "Xóa token và ngắt kết nối" in template
     assert "codex login --device-auth" in template
 
 
@@ -137,10 +139,12 @@ def test_enrollment_per_node_auth_lifecycle_and_reuse_guard(tmp_path: Path, monk
                 "display_name": "Ads Node Edited",
                 "host": "203.0.113.20",
                 "ssh_user": "deploy",
+                "ssh_password": "saved-decommission-password",
             },
         )
         assert edited.status_code == 200
         assert edited.json()["host"] == "203.0.113.20"
+        assert edited.json()["ssh_password_configured"] is True
 
         drained = client.post(f"/api/bot-nodes/{worker['id']}/drain", headers=headers)
         assert drained.status_code == 200
@@ -151,18 +155,18 @@ def test_enrollment_per_node_auth_lifecycle_and_reuse_guard(tmp_path: Path, monk
         ).json() is None
 
         monkeypatch.setattr(remote_ops, "run_decommission", lambda *args: None)
-        decommission_password = "one-use-decommission-password"
         decommission = client.post(
             f"/api/bot-nodes/{worker['id']}/decommission",
             headers=headers,
-            json={"ssh_password": decommission_password},
         )
         assert decommission.status_code == 202, decommission.text
-        assert decommission_password not in decommission.text
 
         revoked = client.delete(f"/api/bot-nodes/{worker['id']}", headers=headers)
         assert revoked.status_code == 200
         assert revoked.json()["lifecycle_status"] == "revoked"
+        assert revoked.json()["ssh_password_configured"] is False
+        with client.app.state.database.session_factory() as db:
+            assert db.get(Worker, worker["id"]).ssh_password_ciphertext is None
         assert client.post(
             f"/api/workers/{worker['id']}/heartbeat",
             headers=credential_headers,
@@ -229,7 +233,7 @@ def test_ai_key_is_masked_encrypted_and_scoped_to_selected_worker(tmp_path: Path
             assert raw_key not in config.api_key_ciphertext
 
 
-def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch):
+def test_remote_install_stores_ssh_password_encrypted(tmp_path: Path, monkeypatch):
     captured: dict[str, object] = {}
 
     def fake_install(*args):
@@ -295,6 +299,10 @@ def test_remote_install_keeps_ssh_password_transient(tmp_path: Path, monkeypatch
             assert provider_api_key not in persisted
             assert telegram_bot_token not in persisted
             assert telegram_allowed_users not in persisted
+            assert enrollment.ssh_password_ciphertext
+            assert ssh_credentials.decrypt_password(
+                FERNET_KEY.encode("ascii"), enrollment.ssh_password_ciphertext
+            ) == ssh_password
 
 
 def test_rotate_dashboard_password_is_transient_and_scoped_to_worker(tmp_path: Path, monkeypatch):
@@ -315,17 +323,17 @@ def test_rotate_dashboard_password_is_transient_and_scoped_to_worker(tmp_path: P
                 "display_name": "Dashboard worker",
                 "host": "203.0.113.30",
                 "ssh_user": "root",
+                "ssh_password": "saved-dashboard-ssh-password",
             },
         )
         assert edited.status_code == 200
 
-        ssh_password = "one-use-dashboard-ssh-password"
+        ssh_password = "saved-dashboard-ssh-password"
         new_password = "1234"
         mismatched = client.post(
             f"/api/bot-nodes/{worker['id']}/hermes-dashboard/password",
             headers=headers,
             json={
-                "ssh_password": ssh_password,
                 "new_password": new_password,
                 "new_password_confirmation": "Different-dashboard-password-2026",
             },
@@ -336,7 +344,6 @@ def test_rotate_dashboard_password_is_transient_and_scoped_to_worker(tmp_path: P
             f"/api/bot-nodes/{worker['id']}/hermes-dashboard/password",
             headers=headers,
             json={
-                "ssh_password": ssh_password,
                 "new_password": new_password,
                 "new_password_confirmation": new_password,
             },
@@ -373,14 +380,14 @@ def test_codex_device_login_is_transient_and_scoped_to_worker(tmp_path: Path, mo
                 "display_name": "Codex worker",
                 "host": "203.0.113.31",
                 "ssh_user": "root",
+                "ssh_password": "saved-codex-ssh-password",
             },
         ).status_code == 200
 
-        ssh_password = "one-use-codex-ssh-password"
+        ssh_password = "saved-codex-ssh-password"
         response = client.post(
             f"/api/bot-nodes/{worker['id']}/codex/device-login",
             headers=headers,
-            json={"ssh_password": ssh_password},
         )
         assert response.status_code == 202, response.text
         assert response.json()["operation_type"] == "codex_device_login"
@@ -391,6 +398,121 @@ def test_codex_device_login_is_transient_and_scoped_to_worker(tmp_path: Path, mo
             operation = db.query(WorkerOperation).one()
             persisted = " ".join(str(value) for value in vars(operation).values())
             assert ssh_password not in persisted
+
+
+def test_worker_edit_encrypts_ssh_password_and_api_only_returns_status(tmp_path: Path):
+    with build_client(tmp_path) as client:
+        headers = provision_and_login(client)
+        _, enrolled = enroll_node(client, headers)
+        worker = enrolled["worker"]
+        ssh_password = "saved-worker-password"
+
+        response = client.patch(
+            f"/api/bot-nodes/{worker['id']}",
+            headers=headers,
+            json={
+                "display_name": "Stored credential worker",
+                "host": "203.0.113.32",
+                "ssh_user": "root",
+                "ssh_password": ssh_password,
+            },
+        )
+        assert response.status_code == 200, response.text
+        assert response.json()["ssh_password_configured"] is True
+        assert ssh_password not in response.text
+
+        with client.app.state.database.session_factory() as db:
+            stored = db.get(Worker, worker["id"])
+            assert stored.ssh_password_ciphertext != ssh_password
+            original_ciphertext = stored.ssh_password_ciphertext
+            assert ssh_credentials.decrypt_password(
+                FERNET_KEY.encode("ascii"), stored.ssh_password_ciphertext
+            ) == ssh_password
+
+        unchanged = client.patch(
+            f"/api/bot-nodes/{worker['id']}",
+            headers=headers,
+            json={
+                "display_name": "Stored credential worker renamed",
+                "host": "203.0.113.32",
+                "ssh_user": "root",
+            },
+        )
+        assert unchanged.status_code == 200, unchanged.text
+        assert unchanged.json()["ssh_password_configured"] is True
+        with client.app.state.database.session_factory() as db:
+            assert db.get(Worker, worker["id"]).ssh_password_ciphertext == original_ciphertext
+
+
+def test_codex_action_without_stored_ssh_rejects_before_operation(tmp_path: Path):
+    with build_client(tmp_path) as client:
+        headers = provision_and_login(client)
+        _, enrolled = enroll_node(client, headers)
+        worker = enrolled["worker"]
+        assert client.patch(
+            f"/api/bot-nodes/{worker['id']}",
+            headers=headers,
+            json={
+                "display_name": "Missing credential worker",
+                "host": "203.0.113.33",
+                "ssh_user": "root",
+            },
+        ).status_code == 200
+
+        response = client.post(
+            f"/api/bot-nodes/{worker['id']}/codex/device-login",
+            headers=headers,
+        )
+        assert response.status_code == 409
+        assert "chưa lưu SSH password" in response.text
+        with client.app.state.database.session_factory() as db:
+            assert db.query(WorkerOperation).count() == 0
+
+
+def test_codex_disconnect_is_transient_and_scoped_to_worker(tmp_path: Path, monkeypatch):
+    captured: dict[str, object] = {}
+
+    def fake_disconnect(*args):
+        captured["args"] = args
+
+    monkeypatch.setattr(remote_ops, "run_codex_disconnect", fake_disconnect)
+    with build_client(tmp_path) as client:
+        headers = provision_and_login(client)
+        _, enrolled = enroll_node(client, headers)
+        worker = enrolled["worker"]
+        assert client.patch(
+            f"/api/bot-nodes/{worker['id']}",
+            headers=headers,
+            json={
+                "display_name": "Codex worker",
+                "host": "203.0.113.31",
+                "ssh_user": "root",
+                "ssh_password": "saved-codex-disconnect-password",
+            },
+        ).status_code == 200
+
+        ssh_password = "saved-codex-disconnect-password"
+        response = client.post(
+            f"/api/bot-nodes/{worker['id']}/codex/disconnect",
+            headers=headers,
+        )
+        assert response.status_code == 202, response.text
+        assert response.json()["operation_type"] == "codex_disconnect"
+        assert ssh_password not in response.text
+        assert captured["args"][-1] == ssh_password
+
+        with client.app.state.database.session_factory() as db:
+            operation = db.query(WorkerOperation).one()
+            persisted = " ".join(str(value) for value in vars(operation).values())
+            assert ssh_password not in persisted
+
+
+def test_codex_disconnect_script_targets_only_worker_credential():
+    script = remote_ops._codex_disconnect_script()
+    assert "codex logout" in script
+    assert "/opt/meta-ads-copilot-runtime/worker-data/codex/auth.json" in script
+    assert "/opt/meta-ads-copilot-runtime/worker-data/codex/.credential-disconnected" in script
+    assert "rm -rf" not in script
 
 
 def test_dashboard_password_hash_matches_hermes_scrypt_contract():

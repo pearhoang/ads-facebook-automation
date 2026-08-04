@@ -29,6 +29,7 @@ class WorkerView(ORMModel):
     host: str | None = None
     ssh_user: str | None = None
     ssh_host_fingerprint: str | None = None
+    ssh_password_configured: bool = False
     install_status: str = "registered"
     installed_at: datetime | None = None
     drained_at: datetime | None = None
@@ -100,14 +101,10 @@ class BotNodeEditRequest(BaseModel):
     display_name: str = Field(min_length=2, max_length=160)
     host: str = Field(min_length=3, max_length=255, pattern=r"^[a-zA-Z0-9.:-]+$")
     ssh_user: str = Field(min_length=1, max_length=80, pattern=r"^[a-zA-Z0-9._-]+$")
-
-
-class BotNodeDecommissionRequest(BaseModel):
-    ssh_password: SecretStr = Field(min_length=1, max_length=1024)
+    ssh_password: SecretStr | None = Field(default=None, min_length=1, max_length=1024)
 
 
 class HermesDashboardPasswordRotateRequest(BaseModel):
-    ssh_password: SecretStr = Field(min_length=1, max_length=1024)
     new_password: SecretStr = Field(min_length=4, max_length=1024)
     new_password_confirmation: SecretStr = Field(min_length=4, max_length=1024)
 
@@ -116,10 +113,6 @@ class HermesDashboardPasswordRotateRequest(BaseModel):
         if self.new_password.get_secret_value() != self.new_password_confirmation.get_secret_value():
             raise ValueError("Xác nhận mật khẩu Dashboard mới không khớp.")
         return self
-
-
-class CodexDeviceLoginRequest(BaseModel):
-    ssh_password: SecretStr = Field(min_length=1, max_length=1024)
 
 
 class WorkerOperationView(ORMModel):

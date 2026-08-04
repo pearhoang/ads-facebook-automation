@@ -31,10 +31,10 @@
 - `agent_permission_mode=ads_safe` là mặc định. `experimental_full` chỉ được bật chủ động theo từng worker và chỉ gỡ sáu toolset block do Ads Lush quản lý.
 - Experimental Full Access không mở thêm typed tool publish/budget và không thay approval boundary của control-plane.
 - Dashboard dùng auth provider chính chủ của Hermes; password chỉ lưu dạng scrypt hash và signing secret nằm trong env mode `0600`.
-- Đổi Dashboard password yêu cầu owner session + CSRF + SSH password dùng một lần; thao tác xoay cả signing secret để revoke phiên cũ và không restart gateway/worker.
+- Đổi Dashboard password yêu cầu owner session + CSRF và dùng SSH credential đã mã hóa của worker; thao tác xoay cả signing secret để revoke phiên cũ và không restart gateway/worker.
 - Dashboard password chấp nhận từ 4 ký tự theo cấu hình single-customer; credential at rest vẫn chỉ là scrypt hash.
 - Port dashboard không bind public interface. Caddy chỉ truy cập qua Docker host interface và HTTPS subdomain.
-- Codex OAuth nằm tại `<WORKER_DATA_DIR>/codex/auth.json` mode `0600`; SSH password, access token và refresh token không persist ở control-plane/audit.
+- Codex OAuth nằm tại `<WORKER_DATA_DIR>/codex/auth.json` mode `0600`; access token và refresh token không persist ở control-plane/audit. SSH password worker được lưu riêng dưới dạng ciphertext và không xuất hiện trong OAuth status, audit hoặc operation response.
 - Device login chỉ đưa public verification URL và one-time code vào operation message; không đưa OAuth token qua browser/noVNC.
 - `codex_search` và `codex_vision` là fallback read-only, không mở thêm Meta publish/budget action và không thay DeepSeek provider chính.
 
@@ -48,5 +48,5 @@
 - Provider/model có một canonical UI tại `Hermes Agents`; popup sửa Bot VPS chỉ sửa identity/SSH, còn popup cài mới vẫn nhận initial provider bootstrap.
 - Worker production `Ads Browser VPS 82` hiện được owner bật `experimental_full`; smoke chỉ đọc đã chứng minh Hermes gọi được `terminal` và `read_file`. Các worker mới vẫn bắt đầu ở `ads_safe`.
 - Chat Web chính chuyển sang native Hermes Dashboard; `Hermes Agents` chỉ giữ provider/model/permission settings và action mở dashboard.
-- `Hermes Agents` có dialog đổi mật khẩu Dashboard theo worker; SSH password và password mới không persist trong database/audit/operation response.
+- `Hermes Agents` có dialog đổi mật khẩu Dashboard theo worker; password Dashboard mới không persist trong database/audit/operation response, còn SSH credential được lấy từ ciphertext của worker và không render lại cho client.
 - `Hermes Agents` hiển thị trạng thái Codex theo heartbeat từng worker và cho chạy `codex login --device-auth` không cần noVNC.

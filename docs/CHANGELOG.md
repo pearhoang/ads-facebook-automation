@@ -219,6 +219,10 @@
 
 ### 2026-08-04 - Codex Search & Vision fallback cho Hermes
 
+- Changed: Lưu SSH password quản trị dưới dạng Fernet ciphertext theo worker để Add Bot chỉ nhập một lần; Edit Bot VPS có thể rotate, revoke xóa credential và mọi remote operation chỉ giải mã trong RAM.
+- Changed: Codex connect/disconnect, đổi mật khẩu Hermes Dashboard và decommission dùng SSH credential đã lưu; UI/API chỉ hiển thị cờ đã/chưa cấu hình và không trả secret.
+- Added: Alembic `20260804_0010` thêm `ssh_password_ciphertext` cho worker/enrollment.
+- Changed: Thêm lifecycle `Ngắt kết nối Codex` theo worker, xóa exact OAuth credential qua SSH operation transient, chặn refresh race bằng local marker và cho phép device login lại bằng account khác mà không restart Hermes/Telegram/browser.
 - Fixed: Device login parser nhận đúng mã Codex CLI 9 ký tự dạng `XXXX-XXXXX`; popup tách mã xác thực thành khối dễ đọc với action `Sao chép mã`, vẫn hỗ trợ format legacy 8 ký tự.
 - Changed: Thêm per-worker Codex device login tại `Hermes Agents`, heartbeat status và MCP tools `codex_search`/`codex_vision`; bump managed Hermes config schema để worker hiện hữu nhận tool dù provider không đổi.
 - Affected: Bot VPS remote operation, worker heartbeat/config, Hermes MCP/SOUL, installer, UI, tests và project memory.

@@ -42,7 +42,7 @@
       <section class="settings-panel codex-panel" aria-labelledby="codex-capability-title">
         <div class="settings-heading">
           <div><h2 id="codex-capability-title">Codex Search &amp; Vision</h2><p>Giữ DeepSeek làm model chính, chỉ gọi Codex khi cần tìm kiếm web hoặc đọc ảnh.</p></div>
-          <button id="connect-codex-button" class="button button-secondary" type="button">Kết nối Codex</button>
+          <div class="codex-actions"><button id="disconnect-codex-button" class="button button-danger" type="button" disabled>Ngắt kết nối</button><button id="connect-codex-button" class="button button-secondary" type="button">Kết nối Codex</button></div>
         </div>
         <dl class="codex-facts"><div><dt>Trạng thái</dt><dd id="codex-status">Chưa kết nối</dd></div><div><dt>Tài khoản</dt><dd id="codex-account">—</dd></div><div><dt>Gói</dt><dd id="codex-plan">—</dd></div><div><dt>Tools</dt><dd><code>codex_search</code>, <code>codex_vision</code></dd></div></dl>
         <p class="settings-note">Kết nối dùng <code>codex login --device-auth</code>. Bạn mở link và nhập mã trên trình duyệt của mình; không cần noVNC và không dùng cookie ChatGPT làm credential. OAuth token chỉ lưu trên Bot VPS đã chọn.</p>
@@ -55,10 +55,9 @@
         <div><h2 id="dashboard-password-title">Đổi mật khẩu Hermes Dashboard</h2><p id="dashboard-password-target">Áp dụng cho Bot VPS đang chọn.</p></div>
         <button class="icon-button" type="button" data-close-dashboard-password aria-label="Đóng">×</button>
       </div>
-      <label>SSH password của Bot VPS<input id="dashboard-ssh-password" type="password" required maxlength="1024" autocomplete="current-password"></label>
       <label>Mật khẩu Dashboard mới<input id="dashboard-new-password" type="password" required minlength="4" maxlength="1024" autocomplete="new-password"></label>
       <label>Xác nhận mật khẩu Dashboard mới<input id="dashboard-new-password-confirmation" type="password" required minlength="4" maxlength="1024" autocomplete="new-password"></label>
-      <p class="inline-help">Mật khẩu mới cần ít nhất 4 ký tự. SSH password chỉ dùng một lần và không lưu. Dashboard password được đổi thành scrypt hash; signing secret cũng được xoay để đăng xuất mọi phiên Dashboard cũ. Hermes gateway, Telegram và browser worker không bị restart.</p>
+      <p class="inline-help">Control-plane dùng SSH credential đã mã hóa của Bot VPS. Dashboard password mới cần ít nhất 4 ký tự, được đổi thành scrypt hash; signing secret cũng được xoay để đăng xuất mọi phiên cũ. Hermes gateway, Telegram và browser worker không bị restart.</p>
       <div id="dashboard-password-notice" class="notice" role="status" aria-live="polite" hidden></div>
       <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dashboard-password>Hủy</button><button id="dashboard-password-submit" class="button button-primary" type="submit">Đổi mật khẩu</button></div>
     </form>
@@ -69,14 +68,25 @@
         <div><h2 id="codex-login-title">Kết nối Codex Search &amp; Vision</h2><p id="codex-login-target">Áp dụng cho Bot VPS đang chọn.</p></div>
         <button class="icon-button" type="button" data-close-codex-login aria-label="Đóng">×</button>
       </div>
-      <label>SSH password của Bot VPS<input id="codex-ssh-password" type="password" required maxlength="1024" autocomplete="current-password"></label>
-      <p class="inline-help">SSH password chỉ dùng một lần để khởi chạy device login và không được lưu. Sau khi có mã, hãy mở link trên trình duyệt của bạn và xác nhận tài khoản ChatGPT/Codex.</p>
+      <p class="inline-help">Control-plane dùng SSH credential đã mã hóa của Bot VPS để khởi chạy device login. Sau khi có mã, hãy mở link trên trình duyệt của bạn và xác nhận tài khoản ChatGPT/Codex.</p>
       <div id="codex-login-notice" class="notice codex-login-notice" role="status" aria-live="polite" hidden></div>
       <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-codex-login>Hủy</button><button id="codex-login-submit" class="button button-primary" type="submit">Lấy link đăng nhập</button></div>
     </form>
   </dialog>
+  <dialog id="codex-disconnect-dialog" class="wide-dialog" aria-labelledby="codex-disconnect-title">
+    <form id="codex-disconnect-form" method="dialog">
+      <div class="dialog-header">
+        <div><h2 id="codex-disconnect-title">Ngắt kết nối Codex</h2><p id="codex-disconnect-target">Áp dụng cho Bot VPS đang chọn.</p></div>
+        <button class="icon-button" type="button" data-close-codex-disconnect aria-label="Đóng">×</button>
+      </div>
+      <p>Credential Codex sẽ bị xóa khỏi worker này. Search và vision sẽ dừng cho tới khi bạn kết nối lại hoặc đăng nhập tài khoản khác.</p>
+      <p class="inline-help">Control-plane dùng SSH credential đã mã hóa của Bot VPS. Hermes, Telegram, browser profile và thiết lập DeepSeek không bị xóa hoặc restart.</p>
+      <div id="codex-disconnect-notice" class="notice" role="status" aria-live="polite" hidden></div>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-codex-disconnect>Hủy</button><button id="codex-disconnect-submit" class="button button-danger" type="submit">Xóa token và ngắt kết nối</button></div>
+    </form>
+  </dialog>
   {% include "_password_dialog.html" %}
-  <script src="/static/hermes_agents.js?v=20260804-codex-code" defer></script>
+  <script src="/static/hermes_agents.js?v=20260804-stored-ssh" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

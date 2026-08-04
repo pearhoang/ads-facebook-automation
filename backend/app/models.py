@@ -79,6 +79,7 @@ class Worker(Base):
     host: Mapped[str | None] = mapped_column(String(255), nullable=True)
     ssh_user: Mapped[str | None] = mapped_column(String(80), nullable=True)
     ssh_host_fingerprint: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    ssh_password_ciphertext: Mapped[str | None] = mapped_column(Text, nullable=True)
     install_status: Mapped[str] = mapped_column(String(32), default="registered", index=True)
     installed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     drained_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -87,6 +88,10 @@ class Worker(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now, onupdate=utc_now
     )
+
+    @property
+    def ssh_password_configured(self) -> bool:
+        return bool(self.ssh_password_ciphertext)
 
 
 class WorkerTenantAssignment(Base):
@@ -115,6 +120,7 @@ class WorkerEnrollment(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     worker_id: Mapped[str | None] = mapped_column(ForeignKey("workers.id"), nullable=True)
+    ssh_password_ciphertext: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
 

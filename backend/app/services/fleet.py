@@ -80,6 +80,7 @@ def issue_enrollment(
     repo_url: str,
     repo_branch: str,
     ttl_minutes: int,
+    ssh_password_ciphertext: str | None = None,
 ) -> IssuedEnrollment:
     normalized_key = worker_key.strip()
     if db.scalar(select(Worker).where(Worker.worker_key == normalized_key)) is not None:
@@ -103,6 +104,7 @@ def issue_enrollment(
         status="pending",
         created_by_user_id=user_id,
         expires_at=utc_now() + timedelta(minutes=ttl_minutes),
+        ssh_password_ciphertext=ssh_password_ciphertext,
     )
     db.add(enrollment)
     db.flush()
@@ -279,6 +281,7 @@ def edit_node(
     display_name: str,
     host: str,
     ssh_user: str,
+    ssh_password_ciphertext: str | None = None,
 ) -> Worker:
     worker = get_tenant_node(db, tenant_id, worker_id)
     if worker.host and worker.host != host.strip():
@@ -286,6 +289,8 @@ def edit_node(
     worker.display_name = display_name.strip()
     worker.host = host.strip()
     worker.ssh_user = ssh_user.strip()
+    if ssh_password_ciphertext:
+        worker.ssh_password_ciphertext = ssh_password_ciphertext
     _audit(
         db,
         tenant_id=tenant_id,
@@ -339,6 +344,7 @@ def set_lifecycle(
         worker.lifecycle_status = "revoked"
         worker.status = "revoked"
         worker.revoked_at = utc_now()
+        worker.ssh_password_ciphertext = None
         db.execute(
             update(WorkerCredential)
             .where(WorkerCredential.worker_id == worker.id)

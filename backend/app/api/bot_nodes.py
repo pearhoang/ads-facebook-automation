@@ -15,16 +15,27 @@ from ..schemas import (
     BotNodeEnrollmentView,
     BotNodeRemoteInstallRequest,
     BotNodeEditRequest,
-    BotNodeDecommissionRequest,
-    CodexDeviceLoginRequest,
     HermesDashboardPasswordRotateRequest,
     WorkerView,
     WorkerOperationView,
 )
-from ..services import auth, fleet, remote_ops
+from ..services import auth, fleet, remote_ops, ssh_credentials
 
 
 router = APIRouter(prefix="/api/bot-nodes", tags=["bot-nodes"])
+
+
+def _stored_ssh_password(worker, settings: Settings) -> str:
+    password = ssh_credentials.decrypt_password(
+        settings.resolved_secret_encryption_key(),
+        worker.ssh_password_ciphertext,
+    )
+    if not password:
+        raise HTTPException(
+            status_code=409,
+            detail="Bot VPS chưa lưu SSH password. Hãy mở Sửa thiết lập và lưu password một lần.",
+        )
+    return password
 
 
 @router.get("/bootstrap.sh", include_in_schema=False)
@@ -113,6 +124,10 @@ def install_node(
         repo_url=repo_url,
         repo_branch=repo_branch,
         ttl_minutes=settings.worker_enrollment_ttl_minutes,
+        ssh_password_ciphertext=ssh_credentials.encrypt_password(
+            settings.resolved_secret_encryption_key(),
+            payload.ssh_password.get_secret_value(),
+        ),
     )
     operation = fleet.create_operation(
         db,
@@ -206,6 +221,7 @@ def edit_node(
     payload: BotNodeEditRequest,
     principal: auth.AuthPrincipal = Depends(require_owner),
     _csrf: None = Depends(verify_csrf),
+    settings: Settings = Depends(get_settings),
     db: Session = Depends(get_db),
 ):
     return fleet.edit_node(
@@ -216,6 +232,14 @@ def edit_node(
         display_name=payload.display_name,
         host=payload.host,
         ssh_user=payload.ssh_user,
+        ssh_password_ciphertext=(
+            ssh_credentials.encrypt_password(
+                settings.resolved_secret_encryption_key(),
+                payload.ssh_password.get_secret_value(),
+            )
+            if payload.ssh_password
+            else None
+        ),
     )
 
 
@@ -226,7 +250,6 @@ def edit_node(
 )
 def decommission_node(
     worker_id: str,
-    payload: BotNodeDecommissionRequest,
     request: Request,
     background_tasks: BackgroundTasks,
     principal: auth.AuthPrincipal = Depends(require_owner),
@@ -239,6 +262,7 @@ def decommission_node(
         raise HTTPException(status_code=409, detail="Worker chưa có host/SSH user để gỡ từ xa.")
     if worker.lifecycle_status != "draining":
         raise HTTPException(status_code=409, detail="Hãy Drain worker trước khi gỡ khỏi VPS.")
+    ssh_password = _stored_ssh_password(worker, settings)
     operation = fleet.create_operation(
         db,
         tenant_id=principal.tenant_id,
@@ -253,7 +277,7 @@ def decommission_node(
         request.app.state.database.session_factory,
         settings,
         operation.id,
-        payload.ssh_password.get_secret_value(),
+        ssh_password,
     )
     return operation
 
@@ -270,6 +294,7 @@ def rotate_hermes_dashboard_password(
     background_tasks: BackgroundTasks,
     principal: auth.AuthPrincipal = Depends(require_owner),
     _csrf: None = Depends(verify_csrf),
+    settings: Settings = Depends(get_settings),
     db: Session = Depends(get_db),
 ):
     worker = fleet.get_tenant_node(db, principal.tenant_id, worker_id)
@@ -278,6 +303,7 @@ def rotate_hermes_dashboard_password(
             status_code=409,
             detail="Worker chưa có host/SSH user để đổi mật khẩu Dashboard từ xa.",
         )
+    ssh_password = _stored_ssh_password(worker, settings)
     operation = fleet.create_operation(
         db,
         tenant_id=principal.tenant_id,
@@ -291,7 +317,7 @@ def rotate_hermes_dashboard_password(
         remote_ops.run_rotate_dashboard_password,
         request.app.state.database.session_factory,
         operation.id,
-        payload.ssh_password.get_secret_value(),
+        ssh_password,
         payload.new_password.get_secret_value(),
     )
     return operation
@@ -304,11 +330,11 @@ def rotate_hermes_dashboard_password(
 )
 def connect_codex_device_login(
     worker_id: str,
-    payload: CodexDeviceLoginRequest,
     request: Request,
     background_tasks: BackgroundTasks,
     principal: auth.AuthPrincipal = Depends(require_owner),
     _csrf: None = Depends(verify_csrf),
+    settings: Settings = Depends(get_settings),
     db: Session = Depends(get_db),
 ):
     worker = fleet.get_tenant_node(db, principal.tenant_id, worker_id)
@@ -317,6 +343,7 @@ def connect_codex_device_login(
             status_code=409,
             detail="Worker chưa có host/SSH user để kết nối Codex từ xa.",
         )
+    ssh_password = _stored_ssh_password(worker, settings)
     operation = fleet.create_operation(
         db,
         tenant_id=principal.tenant_id,
@@ -330,7 +357,46 @@ def connect_codex_device_login(
         remote_ops.run_codex_device_login,
         request.app.state.database.session_factory,
         operation.id,
-        payload.ssh_password.get_secret_value(),
+        ssh_password,
+    )
+    return operation
+
+
+@router.post(
+    "/{worker_id}/codex/disconnect",
+    response_model=WorkerOperationView,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def disconnect_codex(
+    worker_id: str,
+    request: Request,
+    background_tasks: BackgroundTasks,
+    principal: auth.AuthPrincipal = Depends(require_owner),
+    _csrf: None = Depends(verify_csrf),
+    settings: Settings = Depends(get_settings),
+    db: Session = Depends(get_db),
+):
+    worker = fleet.get_tenant_node(db, principal.tenant_id, worker_id)
+    if not worker.host or not worker.ssh_user:
+        raise HTTPException(
+            status_code=409,
+            detail="Worker chưa có host/SSH user để ngắt kết nối Codex từ xa.",
+        )
+    ssh_password = _stored_ssh_password(worker, settings)
+    operation = fleet.create_operation(
+        db,
+        tenant_id=principal.tenant_id,
+        user_id=principal.user_id,
+        operation_type="codex_disconnect",
+        host=worker.host,
+        ssh_user=worker.ssh_user,
+        worker_id=worker.id,
+    )
+    background_tasks.add_task(
+        remote_ops.run_codex_disconnect,
+        request.app.state.database.session_factory,
+        operation.id,
+        ssh_password,
     )
     return operation
 

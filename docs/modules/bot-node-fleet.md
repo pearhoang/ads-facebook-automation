@@ -14,7 +14,7 @@
 
 ## Invariants
 
-- SSH password và Telegram Bot Token không được persist; operation chỉ lưu host, user, status và message đã scrub.
+- SSH password quản trị được persist dưới dạng Fernet ciphertext bằng `SECRET_ENCRYPTION_KEY`; API/UI chỉ lộ `ssh_password_configured`, plaintext chỉ được giải mã trong RAM cho remote operation. Telegram Bot Token vẫn không persist tại control-plane; operation chỉ lưu host, user, status và message đã scrub.
 - Remote install chuyển Telegram token/allowlist bằng file tạm `0600`, xóa ở cả installer và control-plane cleanup; secret không nằm trong process arguments.
 - Enrollment token one-time chỉ lưu digest; worker credential cũng chỉ lưu digest ở control-plane.
 - Decommission yêu cầu worker đã `draining`; nếu có fingerprint thì SSH host key phải khớp.
@@ -26,6 +26,8 @@
 - Production migration mục tiêu `20260801_0007`; một worker hiện hữu đã gắn host và trạng thái installed.
 - Canonical public repo là `https://github.com/pearhoang/ads-facebook-automation.git`, branch `main`; popup điền sẵn và cho phép thay bằng fork khác.
 - Popup Add Bot là one-shot setup: SSH, Git checkout, initial Hermes provider, Telegram Bot Token và allowlist user ID; worker tự cài browser/noVNC/Hermes rồi kết nối control-plane.
+- `Sửa thiết lập` cho phép rotate SSH password; để trống giữ credential hiện tại. Revoke worker xóa ciphertext khỏi control-plane.
 - Installer cài sẵn unit native Hermes Dashboard nhưng không tự public hoặc start khi chưa có dashboard env/auth và reverse proxy riêng của node.
 - Installer cài Codex CLI và tạo `CODEX_HOME` riêng; kết nối ChatGPT/Codex thực hiện sau bằng device login, không tạo browser profile loại ChatGPT.
+- Codex credential có thể bị xóa theo worker bằng SSH operation transient; disconnect marker chặn token refresh race và không restart Hermes/Telegram/browser.
 - Production source là Git checkout sạch tracking `origin/main`.

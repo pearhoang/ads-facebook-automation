@@ -38,7 +38,8 @@
 - Thao tác publish, tăng budget hoặc thay đổi rủi ro cao phải qua preview, guardrail và approval.
 - Agent không phải source of truth và không được sửa production trực tiếp.
 - Chat/agent dùng Telegram hoặc Hermes Dashboard chính chủ. Legacy AI Copilot API/session mirror được giữ tạm để rollback nhưng không còn là UI chính; Hermes API và dashboard port không public trực tiếp.
-- Search/vision fallback dùng Codex OAuth theo từng worker qua device login; credential chỉ ở `CODEX_HOME` mode `0600`, không dùng cookie ChatGPT hoặc lưu token tại control-plane.
+- Search/vision fallback dùng Codex OAuth theo từng worker qua device login; credential chỉ ở `CODEX_HOME` mode `0600`, có lifecycle ngắt kết nối/đổi account và không dùng cookie ChatGPT hoặc lưu token tại control-plane.
+- SSH password quản trị worker được mã hóa bằng `SECRET_ENCRYPTION_KEY` tại control-plane, chỉ trả ra cờ `ssh_password_configured`; plaintext chỉ tồn tại trong RAM khi mở kết nối SSH và bị xóa khi revoke worker.
 - Production schema chỉ thay đổi qua Alembic revision; application startup không tự tạo bảng.
 
 ## Build / Test / Lint

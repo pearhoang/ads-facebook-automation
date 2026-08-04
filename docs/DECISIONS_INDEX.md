@@ -21,10 +21,11 @@
 | DEC-017 | Snap Chromium phải chạy direct binary và chứng minh profile path riêng | Active | worker/browser runtime | High |
 | DEC-018 | Reporting dùng read-only worker job và immutable snapshot; Telegram delivery fail-soft | Active | backend/UI/worker | High |
 | DEC-019 | Fleet dùng one-time enrollment, per-node credential và worker durable state | Active | backend/worker/infra | High |
-| DEC-020 | Remote SSH/Telegram bootstrap secret transient; AI provider config mã hóa và scope theo worker | Active | backend/UI/agent | High |
+| DEC-020 | Remote SSH/Telegram bootstrap secret transient; AI provider config mã hóa và scope theo worker | Superseded in part by DEC-027 | backend/UI/agent | High |
 | DEC-021 | Source/worker bootstrap dùng public GitHub checkout tracking main | Active | repo/infra/worker | High |
 | DEC-022 | Telegram dùng Hermes conversational gateway và MCP typed tools scope theo worker | Active | agent/backend/worker | High |
 | DEC-023 | AI Copilot session bridge được giữ như legacy rollback, không còn là UI chính | Superseded by DEC-025 | backend/UI/worker/agent | High |
 | DEC-024 | Hermes permission mode theo worker, safe mặc định và experimental full chỉ opt-in | Active | backend/UI/worker/agent | High |
 | DEC-025 | Chat Web dùng native Hermes Dashboard; Telegram vẫn là kênh lệnh chính | Active | backend/UI/infra/agent | High |
 | DEC-026 | Search/vision fallback dùng per-worker Codex OAuth device login và Hermes MCP read-only | Active | backend/UI/worker/agent | High |
+| DEC-027 | Lưu SSH credential mã hóa theo worker để tái sử dụng remote operation | Active | backend/UI/infra | High |
