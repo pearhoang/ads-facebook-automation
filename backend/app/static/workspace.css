@@ -486,6 +486,30 @@ dialog:not(:has(> form)) > .dialog-header, dialog.session-dialog > .dialog-heade
   margin: 20px -20px 0; padding: 12px 20px; border-top: 1px solid #e1e6ee; background: #fff;
 }
 dialog:not(:has(> form)) > .dialog-actions, dialog.session-dialog > .dialog-actions { margin: 20px 0 0; }
+#campaign-dialog .dialog-form-scrollable {
+  display: flex;
+  flex-direction: column;
+  block-size: min(820px, calc(100dvh - 36px));
+  max-block-size: inherit;
+  padding: 0;
+  overflow: hidden;
+}
+#campaign-dialog .dialog-form-scrollable > .dialog-header,
+#campaign-dialog .dialog-form-scrollable > .dialog-actions { flex: 0 0 auto; margin: 0; }
+#campaign-dialog .dialog-body-scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  padding: 12px 20px 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #98a2b3 transparent;
+  scrollbar-gutter: stable;
+}
+#campaign-dialog .dialog-body-scroll::-webkit-scrollbar { width: 10px; }
+#campaign-dialog .dialog-body-scroll::-webkit-scrollbar-track { margin-block: 9px; background: transparent; }
+#campaign-dialog .dialog-body-scroll::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 999px; background: #98a2b3; background-clip: padding-box; }
+#campaign-dialog .dialog-body-scroll::-webkit-scrollbar-corner { background: transparent; }
 .session-dialog { width: min(660px, calc(100vw - 32px)); }
 .session-facts { margin: 16px 0 0; overflow: hidden; border: 1px solid var(--border); border-radius: 9px; }
 .session-facts div { display: grid; grid-template-columns: 150px minmax(0, 1fr); padding: 11px 13px; border-bottom: 1px solid var(--border); }

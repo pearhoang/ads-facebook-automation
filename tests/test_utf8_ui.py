@@ -137,6 +137,18 @@ def test_ad_account_actions_keep_empty_state_and_contextual_create_flow_clear():
     assert 'id="arrow-up-right"' in icons
 
 
+def test_campaign_dialog_scroll_stays_between_its_fixed_header_and_footer():
+    template = Path("backend/app/templates/campaigns.html").read_text(encoding="utf-8")
+    styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
+
+    assert '<form id="campaign-form" class="dialog-form-scrollable">' in template
+    assert '<div class="dialog-body dialog-body-scroll">' in template
+    assert "#campaign-dialog .dialog-form-scrollable" in styles
+    assert "#campaign-dialog .dialog-body-scroll" in styles
+    assert "overflow-y: auto;" in styles
+    assert "#campaign-dialog .dialog-body-scroll::-webkit-scrollbar-thumb" in styles
+
+
 def test_canonical_selects_are_progressively_enhanced_without_changing_form_contracts():
     script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
     styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")

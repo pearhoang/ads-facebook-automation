@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-4">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-5">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
   {% set active_nav = "campaigns" %}
@@ -179,8 +179,9 @@
   </dialog>
 
   <dialog id="campaign-dialog" class="wide-dialog">
-    <form id="campaign-form">
+    <form id="campaign-form" class="dialog-form-scrollable">
       <div class="dialog-header"><div><h2>Tạo campaign draft</h2><p>Chỉ lưu bản nháp trong Ads Meta Master.</p></div><button class="icon-button" type="button" data-close="campaign-dialog" aria-label="Đóng">×</button></div>
+      <div class="dialog-body dialog-body-scroll">
       <label>Ad account<select id="campaign-ad-account" required></select></label>
       <label>Tên campaign<input id="campaign-name" required maxlength="200" placeholder="Ví dụ: Lead form — Tháng 8"></label>
       <div class="form-grid">
@@ -232,6 +233,7 @@
         <label class="objective-fields" data-objectives="traffic sales" hidden>Destination URL<input id="campaign-destination-url" type="url" maxlength="2048" placeholder="https://example.com/landing-page"></label>
         <label>Ghi chú creative<textarea id="campaign-creative" rows="2" maxlength="2000" placeholder="File media hoặc bài viết sẽ dùng; chưa upload ở Phase 4"></textarea></label>
       </fieldset>
+      </div>
       <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="campaign-dialog">Hủy</button><button class="button button-primary" type="submit">Lưu draft</button></div>
     </form>
   </dialog>

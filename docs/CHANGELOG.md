@@ -416,6 +416,11 @@
 - Fidelity: Ad accounts and campaign tables use the prototype auto layout with a 900px minimum width and paired 30px row controls.
 - Interaction: the pencil edits the account; the arrow opens the campaign draft form with that account preselected and never creates or publishes automatically.
 
+### 2026-08-04 - Contain campaign-dialog scrolling
+
+- Fixed: Campaign form scrolling now belongs exclusively to the body between the fixed header and action footer, keeping the rounded dialog edge clean.
+- Verified: UTF-8 UI tests, Python compilation and whitespace validation.
+
 ### 2026-08-04 - Deploy Meta Light Focus lên production
 
 - Deploy: Push `main` tại commit `6aeba67`; VPS pull fast-forward từ `379a77c`, chỉ restart `meta-ads-copilot-web.service`.
