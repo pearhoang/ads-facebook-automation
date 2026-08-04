@@ -410,6 +410,12 @@
 - Fidelity: Topbar search bắt đầu tại `x=526`, notification tại `x=964`, CTA tại `x=1022` ở viewport `1212×910`; section icon và nav content trùng prototype.
 - Verified: Full suite, `node --check backend/app/static/ui.js`, `git diff --check`.
 
+### 2026-08-04 - Fix Ad account empty state and row actions
+
+- Fixed: `.empty-state[hidden]` now wins over the shared grid layout, so the Add account empty state is hidden whenever data is present.
+- Fidelity: Ad accounts and campaign tables use the prototype auto layout with a 900px minimum width and paired 30px row controls.
+- Interaction: the pencil edits the account; the arrow opens the campaign draft form with that account preselected and never creates or publishes automatically.
+
 ### 2026-08-04 - Deploy Meta Light Focus lên production
 
 - Deploy: Push `main` tại commit `6aeba67`; VPS pull fast-forward từ `379a77c`, chỉ restart `meta-ads-copilot-web.service`.

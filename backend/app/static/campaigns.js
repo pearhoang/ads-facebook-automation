@@ -197,7 +197,9 @@ function render() {
   byId("execution-jobs-empty").hidden = state.executionJobs.length > 0;
   byId("ad-accounts-body").innerHTML = state.adAccounts.map((account) => {
     const facebookAccount = facebookById.get(account.facebook_account_id);
-    return `<tr><td class="account-name"><strong>${escapeHtml(account.label)}</strong><small>${escapeHtml(account.meta_ad_account_id)}</small></td><td>${escapeHtml(facebookAccount?.label || "Không xác định")}</td><td>${escapeHtml(account.currency)}</td><td>${escapeHtml(account.timezone_name)}</td><td>${badge(account.status)}</td><td><div class="row-actions"><button class="button button-small button-secondary" type="button" data-edit-ad-account="${escapeHtml(account.id)}">Sửa</button></div></td></tr>`;
+    const accountLabel = escapeHtml(account.label);
+    const accountId = escapeHtml(account.id);
+    return `<tr><td class="account-name"><strong>${accountLabel}</strong><small>${escapeHtml(account.meta_ad_account_id)}</small></td><td>${escapeHtml(facebookAccount?.label || "Không xác định")}</td><td>${escapeHtml(account.currency)}</td><td>${escapeHtml(account.timezone_name)}</td><td>${badge(account.status)}</td><td><div class="row-actions"><button class="row-button" type="button" data-edit-ad-account="${accountId}" aria-label="Sửa ad account ${accountLabel}" title="Sửa ad account"><svg aria-hidden="true"><use href="/static/ui-icons.svg?v=meta-light-focus-4#pencil"></use></svg></button><button class="row-button" type="button" data-create-campaign-for-ad-account="${accountId}" aria-label="Tạo campaign với ad account ${accountLabel}" title="Tạo campaign"><svg aria-hidden="true"><use href="/static/ui-icons.svg?v=meta-light-focus-4#arrow-up-right"></use></svg></button></div></td></tr>`;
   }).join("");
 
   byId("meta-resources-body").innerHTML = state.metaResources.map((resource) => {
@@ -318,8 +320,13 @@ function openAssetDialog() {
   byId("asset-label").focus();
 }
 
-function openCampaignDialog() {
+function openCampaignDialog(adAccountId = null) {
   if (!state.adAccounts.length) return showNotice("Hãy thêm ad account trước khi tạo campaign draft.");
+  if (adAccountId && state.adAccounts.some((item) => item.id === adAccountId)) {
+    byId("campaign-ad-account").value = adAccountId;
+    updateBudgetLabel();
+    updateCampaignResourceOptions();
+  }
   byId("campaign-dialog").showModal();
   byId("campaign-name").focus();
 }
@@ -695,6 +702,8 @@ document.addEventListener("click", (event) => {
   if (verifyResource) openResourceVerification(verifyResource.dataset.verifyResource);
   const editAdAccount = event.target.closest("[data-edit-ad-account]");
   if (editAdAccount) openAdAccountEditDialog(editAdAccount.dataset.editAdAccount);
+  const createCampaignForAdAccount = event.target.closest("[data-create-campaign-for-ad-account]");
+  if (createCampaignForAdAccount) openCampaignDialog(createCampaignForAdAccount.dataset.createCampaignForAdAccount);
 });
 
 byId("ad-account-form").addEventListener("submit", createAdAccount);

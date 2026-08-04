@@ -114,12 +114,27 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
     assert ".metric-icon svg" in styles
     assert ".content-pane" in styles
     assert "#ad-accounts table" in styles
-    assert "table-layout: fixed" in styles
+    assert "min-width: 900px; table-layout: auto" in styles
+    assert ".empty-state[hidden] { display: none; }" in styles
+    assert ".row-button" in styles
     assert '.breadcrumb svg:nth-of-type(2)' not in styles
     assert 'class="brand-mark" aria-hidden="true"' in sidebar
     assert 'class="avatar account-brand-mark" aria-hidden="true"' in sidebar
     assert "gap: 18px" in styles
     assert ".section-icon svg" in styles
+
+
+def test_ad_account_actions_keep_empty_state_and_contextual_create_flow_clear():
+    script = Path("backend/app/static/campaigns.js").read_text(encoding="utf-8")
+    icons = Path("backend/app/static/ui-icons.svg").read_text(encoding="utf-8")
+
+    assert 'byId("ad-accounts-empty").hidden = state.adAccounts.length > 0' in script
+    assert 'class="row-button"' in script
+    assert 'data-edit-ad-account=' in script
+    assert 'data-create-campaign-for-ad-account=' in script
+    assert "function openCampaignDialog(adAccountId = null)" in script
+    assert 'id="pencil"' in icons
+    assert 'id="arrow-up-right"' in icons
 
 
 def test_canonical_selects_are_progressively_enhanced_without_changing_form_contracts():
