@@ -39,6 +39,7 @@ class WorkerConfig:
     execution_debug_port: int = 19350
     execution_timeout_seconds: int = 45
     telegram_bot_token: str | None = None
+    telegram_allowed_users: tuple[str, ...] = ()
     hermes_home: Path | None = None
     hermes_ads_api_port: int = 8642
     codex_home: Path | None = None
@@ -81,6 +82,11 @@ class WorkerConfig:
                 int(os.getenv("EXECUTION_PREFLIGHT_TIMEOUT_SECONDS", "45")),
             ),
             telegram_bot_token=(os.getenv("TELEGRAM_BOT_TOKEN") or "").strip() or None,
+            telegram_allowed_users=tuple(
+                item.strip()
+                for item in (os.getenv("TELEGRAM_ALLOWED_USERS") or "").split(",")
+                if item.strip()
+            ),
             hermes_home=Path(os.getenv("HERMES_HOME", str(data_dir / "hermes"))),
             hermes_ads_api_port=int(os.getenv("HERMES_ADS_API_PORT", "8642")),
             codex_home=Path(os.getenv("CODEX_HOME", str(data_dir / "codex"))),

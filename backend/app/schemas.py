@@ -696,6 +696,81 @@ class ExecutionArtifactView(ORMModel):
     created_at: datetime
 
 
+class AdAutomationEventView(ORMModel):
+    id: str
+    tenant_id: str
+    request_id: str
+    actor_type: str
+    event_type: str
+    stage: str
+    message: str
+    payload_json: dict
+    created_at: datetime
+
+
+class AdAutomationRequestSummaryView(ORMModel):
+    id: str
+    tenant_id: str
+    worker_id: str
+    facebook_account_id: str
+    ad_account_id: str
+    campaign_draft_id: str | None
+    approval_request_id: str | None
+    execution_job_id: str | None
+    source: str
+    source_session_id: str | None
+    source_message_id: str | None
+    intent: str
+    request_text: str
+    title: str
+    status: str
+    stage: str
+    progress_message: str
+    plan_json: dict
+    resolution_json: dict
+    recovery_json: dict
+    last_error: str | None
+    requested_by_user_id: str | None
+    attempt_count: int
+    recovery_count: int
+    requested_at: datetime
+    completed_at: datetime | None
+    updated_at: datetime
+
+
+class AgentCampaignPrepareRequest(BaseModel):
+    ad_account_id: str = Field(min_length=1, max_length=36)
+    request_text: str = Field(min_length=1, max_length=12000)
+    title: str = Field(min_length=1, max_length=240)
+    name: str = Field(min_length=1, max_length=200)
+    objective: str = Field(min_length=1, max_length=40)
+    daily_budget_minor: int = Field(gt=0)
+    start_at: datetime | None = None
+    end_at: datetime | None = None
+    targeting_json: dict = Field(default_factory=dict)
+    creative_json: dict = Field(default_factory=dict)
+    source: str = Field(default="telegram", pattern="^(telegram|hermes|web|import)$")
+    source_session_id: str | None = Field(default=None, max_length=255)
+    source_message_id: str | None = Field(default=None, max_length=160)
+
+
+class AgentCampaignConfirmRequest(BaseModel):
+    request_id: str = Field(min_length=1, max_length=36)
+    decision: str = Field(pattern="^(execute_draft|cancel)$")
+    note: str | None = Field(default=None, max_length=2000)
+
+
+class AgentWorkStatusRequest(BaseModel):
+    request_id: str = Field(min_length=1, max_length=36)
+
+
+class AgentWorkflowLearningRequest(BaseModel):
+    learning_key: str = Field(min_length=1, max_length=160)
+    symptom: str = Field(min_length=1, max_length=4000)
+    cause: str | None = Field(default=None, max_length=4000)
+    recovery_plan_json: dict = Field(default_factory=dict)
+
+
 class ReportScheduleCreateRequest(BaseModel):
     ad_account_id: str = Field(min_length=1, max_length=36)
     local_time: str = Field(pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$")

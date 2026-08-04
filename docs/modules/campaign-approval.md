@@ -2,16 +2,16 @@
 
 ## Responsibility
 
-- Quản lý ad account nội bộ, campaign draft, approval request và audit event theo tenant.
+- Quản lý internal campaign snapshot, approval request và audit event theo tenant cho orchestration từ Telegram/Hermes.
 - Cung cấp approval gate trước mọi phase có khả năng ghi dữ liệu lên Meta.
-- Approval vẫn không tự chạy executor; Phase 3 chỉ thêm preflight read-only và không có Meta mutation.
+- Conversational approval có thể tự enqueue preflight và nối sang draft builder, nhưng luôn dừng tại Review và không Publish.
 
 ## Entry Points
 
 - Models: `backend/app/models.py` (`AdAccount`, `CampaignDraft`, `ApprovalRequest`, `AuditEvent`).
 - Service/state machine: `backend/app/services/campaigns.py`.
 - API: `backend/app/api/campaigns.py`.
-- UI: `/campaigns`, `templates/campaigns.html`, `static/campaigns.js`.
+- UI: `/campaigns` chỉ hiển thị `AdAutomationRequest` work queue/timeline; không author/approve campaign thủ công trong primary UX.
 - Migration: `20260731_0002_campaign_approval.py`.
 
 ## State Machine
@@ -29,7 +29,7 @@
 - Chỉ role `owner` hoặc `admin` được approve/reject.
 - Reject bắt buộc có lý do.
 - `approved` chỉ là duyệt nội bộ; không đồng nghĩa đã publish lên Meta.
-- Preflight phải có explicit confirmation riêng sau approval.
+- Một explicit conversational approval cho exact plan cho phép orchestration chạy preflight rồi draft builder; Publish/chi tiêu thật vẫn là approval riêng.
 - Mọi create/update/submit/approve/reject đều tạo `AuditEvent`.
 - Ad account hỗ trợ `PATCH /api/ad-accounts/{id}`; label luôn được đổi, còn Meta ID/currency/timezone bị khóa khi đã có campaign/resource/asset phụ thuộc để tránh đổi identity âm thầm.
 
@@ -50,3 +50,4 @@
 
 - `DEC-005`
 - `DEC-011`
+- `DEC-028`

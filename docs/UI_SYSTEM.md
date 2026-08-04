@@ -23,19 +23,16 @@
 - Loading, empty, error và waiting-for-user là các trạng thái bắt buộc.
 - Auth dùng một form gọn, error inline và recovery path rõ; không biến login thành dashboard.
 - Workspace header hiển thị user/tenant hiện tại và action đăng xuất.
-- Campaign workspace dùng table-first layout: ad accounts, campaign drafts, pending approvals và audit.
+- `/ad-accounts` là setup surface cho ad account và Meta resource; `/campaigns` là work queue/timeline do Telegram/Hermes tạo, không phải trình dựng campaign thay Ads Manager.
 - Ad account row có action sửa dùng chung dialog create/edit; structural fields phải hiện cảnh báo khóa khi account đã có dependency, còn label vẫn sửa được.
-- Approval modal luôn hiển thị snapshot version, ad account, objective, budget, schedule, targeting và creative.
-- Execution preview hiển thị profile, worker, browser lock, blockers và safety scope trước khi enqueue.
+- Chi tiết work hiển thị request gốc, account/resource đã resolve, plan, timeline, recovery, artifact và handoff; không yêu cầu user bấm tiếp từng phase trên web.
 - Execution jobs dùng table/history và detail dialog; artifact mở ở tab riêng, không nhúng ảnh lớn vào table.
-- Form campaign thu thập spec có cấu trúc cho Page, quốc gia, độ tuổi, placements, primary text, headline, destination URL và CTA; `note` chỉ là phần bổ sung.
-- Form campaign lấy sáu objective từ API catalog, hiển thị conversion location/performance goal read-only và chỉ mở field liên quan: messaging destination, Instant Form, app/store hoặc dataset/event.
-- Destination URL chỉ hiện cho Traffic và Sales; phần tóm tắt phải nói rõ default path và Traffic manual setup.
-- Execution preview phân biệt rõ `Preflight read-only` và `Meta draft builder`, hiển thị blockers/warnings và confirmation riêng.
+- Spec Campaign/Ad Set/Ad được Hermes thu thập bằng hội thoại và đóng băng thành internal snapshot; web không render lại form nhập spec cho người dùng.
+- Sáu objective vẫn dùng adapter/catalog nội bộ để resolve required field, conversion location và performance goal trước khi worker thao tác Ads Manager.
 - Draft builder detail hiển thị phase dừng, số lần chạy, current URL, blockers và checkpoint `Campaign`, `Ad Set`, `Ad`, `Review`.
 - Phase 6 hiển thị `field_results` bằng bảng nhỏ trong job detail: stage, field path, trạng thái áp dụng/xác minh và chi tiết lỗi; không giấu field chưa có control.
-- Phase 7 đặt `Meta resources` và `Creative assets` thành hai registry table riêng; resource mới phải hiển thị `Chưa xác minh`, asset hiển thị loại, dung lượng và SHA-256.
-- Campaign form chọn Page/Dataset/Form/App/asset từ registry theo ad account, không cho nhập label rời rạc rồi suy đoán.
+- `/ad-accounts` hiển thị Meta resource registry; resource mới phải có trạng thái `Chưa xác minh` và chỉ được dùng khi exact ownership đã rõ.
+- Creative asset không có thư viện nhập tay trong primary UI. Worker ingest media từ Telegram/Hermes, lưu digest và gắn asset ID vào internal snapshot.
 - Job `Cần người dùng` có action `Mở noVNC xử lý` tại exact Ads Manager URL do worker trả về; action này không retry hoặc publish job.
 - Safety banner luôn nói rõ draft builder có thể click/điền nhưng không tự `Publish`.
 - Trang Báo cáo dùng table-first layout: ad account filter, bốn KPI gần nhất, snapshot history, schedule và report job history.
@@ -72,6 +69,5 @@
 - Vietnamese copy phải UTF-8, rõ hành động và không mơ hồ về trạng thái tiêu tiền.
 - Frontend source/response phải khai báo UTF-8 và regression test chặn các chuỗi mojibake phổ biến.
 - Publish/budget action luôn hiển thị account, campaign và số tiền trước confirm.
-- Copy `Đã duyệt nội bộ` phải được dùng trong Phase 2 để không tạo ấn tượng campaign đã chạy trên Meta.
-- Copy Phase 3 phải nói rõ `preflight read-only`, `không click` và `không publish`.
-- Copy Phase 4 phải dùng `Tạo Meta draft`, `Cần người dùng` và `Không tự publish`; không gọi draft là campaign đang chạy.
+- Copy xác nhận hội thoại phải nói rõ đây là duyệt internal plan, chưa phải campaign đang chạy trên Meta.
+- Timeline phải phân biệt `Preflight read-only`, `Tạo Meta draft`, `Cần người dùng` và `Dừng tại Review`; không gọi draft là campaign đang chạy.

@@ -268,6 +268,8 @@ async def store_asset(
     chunks: AsyncIterator[bytes],
     storage_root: str,
     max_bytes: int,
+    allow_existing: bool = False,
+    metadata_json: dict | None = None,
 ) -> CreativeAsset:
     _get_ad_account(db, tenant_id, ad_account_id)
     normalized_name = Path(file_name).name.strip()
@@ -321,10 +323,10 @@ async def store_asset(
             )
         )
         if duplicate is not None:
-            raise HTTPException(
-                status_code=409,
-                detail=f"Asset trùng nội dung với '{duplicate.label}'.",
-            )
+            if allow_existing:
+                temporary.unlink(missing_ok=True)
+                return duplicate
+            raise HTTPException(status_code=409, detail=f"Asset trùng nội dung với '{duplicate.label}'.")
         asset_id = new_id()
         target = (target_dir / f"{asset_id}{suffix}").resolve()
         target.relative_to(root)
@@ -340,7 +342,7 @@ async def store_asset(
             sha256=sha256,
             storage_path=str(target),
             status="ready",
-            metadata_json={"extension": suffix},
+            metadata_json={"extension": suffix, **(metadata_json or {})},
             created_by_user_id=user_id,
         )
         db.add(asset)

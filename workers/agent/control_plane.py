@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import mimetypes
 import os
 from pathlib import Path
 
@@ -246,6 +247,24 @@ class ControlPlaneClient:
 
     def upload_execution_screenshot(self, job_id: str, content: bytes) -> None:
         self.upload_execution_artifact(job_id, "screenshot", content)
+
+    def upload_agent_media(self, ad_account_id: str, path: Path, label: str) -> dict:
+        worker_id = self._worker_id()
+        content_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+        with path.open("rb") as handle:
+            response = self.http.post(
+                f"/api/workers/{worker_id}/agent-tools/media",
+                params={
+                    "ad_account_id": ad_account_id,
+                    "label": label[:200],
+                    "file_name": path.name,
+                },
+                headers={"Content-Type": content_type},
+                content=handle,
+                timeout=300,
+            )
+        response.raise_for_status()
+        return dict(response.json())
 
     def download_execution_asset(
         self,

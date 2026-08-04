@@ -212,6 +212,7 @@ def create_preflight_job(
     role: str,
     campaign_id: str,
     confirmation: str,
+    actor_type: str = "user",
 ) -> ExecutionJob:
     if role not in APPROVER_ROLES:
         raise HTTPException(status_code=403, detail="Bạn không có quyền tạo execution job.")
@@ -267,7 +268,7 @@ def create_preflight_job(
         db,
         tenant_id=tenant_id,
         actor_user_id=user_id,
-        actor_type="user",
+        actor_type=actor_type,
         action="execution_job.queued",
         entity_id=job.id,
         payload={"campaign_id": campaign.id, "job_type": "preflight"},
@@ -285,6 +286,7 @@ def create_draft_build_job(
     role: str,
     campaign_id: str,
     confirmation: str,
+    actor_type: str = "user",
 ) -> ExecutionJob:
     if role not in APPROVER_ROLES:
         raise HTTPException(status_code=403, detail="Bạn không có quyền tạo Meta draft job.")
@@ -357,7 +359,7 @@ def create_draft_build_job(
         db,
         tenant_id=tenant_id,
         actor_user_id=user_id,
-        actor_type="user",
+        actor_type=actor_type,
         action="execution_job.queued",
         entity_id=job.id,
         payload={"campaign_id": campaign.id, "job_type": "draft_build"},
@@ -541,6 +543,12 @@ def sync_worker_job(
             payload={"attempt_count": job.attempt_count, "readiness": result_json.get("readiness")},
         )
     db.commit()
+    db.refresh(job)
+    # Keep the agent-facing work request in sync and automatically advance
+    # preflight -> draft builder without asking the user to operate the web UI.
+    from . import automation
+
+    automation.on_execution_synced(db, job)
     db.refresh(job)
     return job
 

@@ -195,3 +195,13 @@
 - Decommission, đổi password Hermes Dashboard và Codex connect/disconnect giải mã credential ngay trước background task; plaintext chỉ tồn tại trong RAM và không ghi vào audit, operation message hay log.
 - Revoke worker xóa ciphertext. Telegram Bot Token vẫn là bootstrap secret transient và không thuộc cơ chế lưu SSH này.
 - Worker được enrollment thủ công có thể chưa có credential; remote action phải trả `409` và yêu cầu owner lưu password tại `Bot VPS -> Sửa thiết lập`.
+
+## DEC-028 — Agent-orchestrated ad work; control-plane chỉ setup và theo dõi
+
+- Luồng chính là `Telegram/Hermes + media → intent/plan → control-plane resolve account/resource → worker Ads Manager → Telegram/timeline result`.
+- `/ad-accounts` là setup surface cho Facebook profile mapping, ad account, Page, Instagram, Pixel/Dataset, Instant Form và App. `/campaigns` chỉ là work queue/timeline; không còn form campaign, asset upload, approval panel hay nút execution thủ công trong primary UX.
+- `CampaignDraft`, `ApprovalRequest`, `CreativeAsset` và `ExecutionJob` vẫn là internal source of truth. Agent tự ingest media Telegram vào registry, tạo snapshot và hỏi xác nhận trong hội thoại; user không phải mở web để tiếp tục.
+- Sau conversational approval, control-plane tự nối preflight sang draft builder. Worker dừng tại Review và `allow_publish=false`; action publish/chi tiêu thật vẫn cần explicit confirmation riêng.
+- noVNC chỉ dùng cho login, 2FA hoặc Meta challenge. Tiến độ bình thường đi qua `AdAutomationRequest`, event timeline, artifact và Telegram fail-soft delivery.
+- Lỗi worker được retry đúng một lần từ checkpoint. Recovery thành công được lưu thành verified workflow learning; đề xuất chưa kiểm chứng không được tự sửa/kích hoạt production source.
+- `Experimental Full Access` cho phép Hermes dùng terminal/file/code/browser/delegation để điều tra và tạo artifact/skill, nhưng không được đi vòng tenant, typed-tool, approval hoặc publish boundary.

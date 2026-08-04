@@ -23,14 +23,19 @@ from ..schemas import (
     WorkerHeartbeatRequest,
     WorkerAIProviderRuntimeView,
     AgentCampaignQuery,
+    AgentCampaignPrepareRequest,
+    AgentCampaignConfirmRequest,
+    AgentWorkStatusRequest,
+    AgentWorkflowLearningRequest,
     AgentKPIQuery,
     AgentReportRequest,
     AgentJobSyncRequest,
     CampaignDraftCreateRequest,
+    CreativeAssetView,
     AgentJobView,
     WorkerAgentJobItem,
 )
-from ..services import account_sessions, agent_chat, agent_tools, ai_settings, execution_jobs, fleet, reporting, resources
+from ..services import account_sessions, agent_chat, agent_tools, ai_settings, automation, execution_jobs, fleet, reporting, resources
 
 
 router = APIRouter(
@@ -320,6 +325,107 @@ def get_agent_workspace_context(
 ):
     _require_node_credential(request, worker_id)
     return agent_tools.workspace_context(db, worker_id)
+
+
+@router.get("/{worker_id}/agent-tools/resource-context")
+def get_agent_resource_context(
+    worker_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return automation.resource_context(db, worker_id)
+
+
+@router.post("/{worker_id}/agent-tools/media", response_model=CreativeAssetView)
+async def upload_agent_media(
+    worker_id: str,
+    request: Request,
+    ad_account_id: str = Query(min_length=1, max_length=36),
+    label: str = Query(min_length=1, max_length=200),
+    file_name: str = Query(min_length=1, max_length=255),
+    settings: Settings = Depends(get_settings),
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    config, user_id, _role = automation._worker_context(db, worker_id)
+    automation._owned_account(
+        db,
+        worker_id=worker_id,
+        tenant_id=config.tenant_id,
+        ad_account_id=ad_account_id,
+    )
+    return await resources.store_asset(
+        db,
+        tenant_id=config.tenant_id,
+        user_id=user_id,
+        ad_account_id=ad_account_id,
+        label=label,
+        file_name=file_name,
+        content_type=request.headers.get("content-type", ""),
+        chunks=request.stream(),
+        storage_root=settings.creative_asset_root,
+        max_bytes=settings.creative_asset_max_bytes,
+        allow_existing=True,
+        metadata_json={"source": "telegram_or_hermes", "managed_by": "agent"},
+    )
+
+
+@router.post("/{worker_id}/agent-tools/ad-work/prepare")
+def prepare_agent_ad_work(
+    worker_id: str,
+    payload: AgentCampaignPrepareRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return automation.prepare_campaign_request(db, worker_id, **payload.model_dump())
+
+
+@router.post("/{worker_id}/agent-tools/ad-work/confirm")
+def confirm_agent_ad_work(
+    worker_id: str,
+    payload: AgentCampaignConfirmRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return automation.confirm_campaign_request(db, worker_id, **payload.model_dump())
+
+
+@router.post("/{worker_id}/agent-tools/ad-work/status")
+def get_agent_ad_work_status(
+    worker_id: str,
+    payload: AgentWorkStatusRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    config, _user_id, _role = automation._worker_context(db, worker_id)
+    work = automation.get_request(db, config.tenant_id, payload.request_id, worker_id=worker_id)
+    return automation.request_payload(db, work)
+
+
+@router.get("/{worker_id}/agent-tools/workflow-learnings")
+def list_agent_workflow_learnings(
+    worker_id: str,
+    request: Request,
+    include_proposed: bool = Query(default=True),
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return automation.list_learnings(db, worker_id, include_proposed=include_proposed)
+
+
+@router.post("/{worker_id}/agent-tools/workflow-learnings")
+def record_agent_workflow_learning(
+    worker_id: str,
+    payload: AgentWorkflowLearningRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    _require_node_credential(request, worker_id)
+    return automation.record_learning(db, worker_id, **payload.model_dump())
 
 
 @router.post("/{worker_id}/agent-tools/latest-kpi")

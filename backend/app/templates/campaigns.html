@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ads Meta Master — Campaigns</title>
+  <title>Ads Meta Master — Công việc quảng cáo</title>
   <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,8 +18,8 @@
     </a>
     <nav aria-label="Điều hướng chính">
       <a class="nav-item" href="/">Tài khoản Facebook</a>
-      <a class="nav-item" href="#ad-accounts">Ad accounts</a>
-      <a class="nav-item is-active" href="/campaigns">Campaigns</a>
+      <a class="nav-item" href="/ad-accounts">Ad accounts &amp; Resources</a>
+      <a class="nav-item is-active" href="/campaigns">Công việc quảng cáo</a>
       <a class="nav-item" href="/reports">Báo cáo</a>
       <a class="nav-item" href="/bot-nodes">Bot VPS</a>
       <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
@@ -34,249 +34,85 @@
   <main class="main">
     <header class="topbar">
       <div>
-        <h1>Campaign drafts</h1>
-        <p>Soạn, duyệt, kiểm tra profile và tạo Meta draft có checkpoint.</p>
+        <h1>Công việc quảng cáo</h1>
+        <p>Theo dõi yêu cầu mà Hermes đang giao cho worker, không thay thế Ads Manager.</p>
       </div>
       <div class="topbar-actions">
         <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
         <button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button>
-        <button id="add-campaign-button" class="button button-primary" type="button">Tạo campaign draft</button>
+        <button id="refresh-button" class="button button-primary" type="button">Làm mới tiến độ</button>
       </div>
     </header>
 
-    <div class="safety-banner"><strong>Không tự publish.</strong> Preflight chỉ đọc; Meta draft builder được click và điền Campaign/Ad Set/Ad nhưng luôn dừng trước nút <span class="mono-text">Đăng</span>.</div>
+    <div class="workflow-banner">
+      <div class="workflow-banner-index">01</div>
+      <div><strong>Ra lệnh và gửi media trên Telegram hoặc Hermes Dashboard.</strong><span>Hermes tự phân giải account/resource, worker thao tác Ads Manager và cập nhật kết quả tại đây. noVNC chỉ mở khi Meta yêu cầu login, 2FA hoặc challenge.</span></div>
+    </div>
 
-    <section class="summary" aria-label="Tổng quan campaign">
-      <div><span>Ad accounts</span><strong id="ad-account-count">0</strong></div>
-      <div><span>Drafts</span><strong id="draft-count">0</strong></div>
-      <div><span>Chờ duyệt</span><strong id="pending-count">0</strong></div>
-      <div><span>Đã duyệt nội bộ</span><strong id="approved-count">0</strong></div>
+    <section class="summary" aria-label="Tổng quan công việc">
+      <div><span>Đang xử lý</span><strong id="active-count">0</strong></div>
+      <div><span>Cần bạn xử lý</span><strong id="handoff-count">0</strong></div>
+      <div><span>Tự phục hồi</span><strong id="recovery-count">0</strong></div>
+      <div><span>Hoàn tất</span><strong id="completed-count">0</strong></div>
     </section>
 
     <div id="notice" class="notice page-notice" hidden></div>
 
-    <section id="ad-accounts" class="content-section">
-      <div class="section-toolbar">
-        <div><h2>Ad accounts</h2><p>Liên kết mã ad account với tài khoản Facebook và đơn vị tiền tệ.</p></div>
-        <button id="add-ad-account-button" class="button button-secondary" type="button">Thêm ad account</button>
+    <section class="content-section work-queue-section">
+      <div class="section-toolbar work-toolbar">
+        <div><h2>Hàng công việc</h2><p>Mỗi hàng là một yêu cầu xuyên suốt từ hội thoại đến checkpoint cuối.</p></div>
+        <div class="table-filters">
+          <label class="compact-field">Trạng thái
+            <select id="status-filter">
+              <option value="">Tất cả</option>
+              <option value="active">Đang xử lý</option>
+              <option value="awaiting_user">Cần bạn xử lý</option>
+              <option value="completed">Hoàn tất</option>
+              <option value="failed">Lỗi</option>
+            </select>
+          </label>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Ad account</th><th>Tài khoản Facebook</th><th>Tiền tệ</th><th>Múi giờ</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead>
-          <tbody id="ad-accounts-body"></tbody>
+          <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Ad account</th><th>Tiến độ</th><th>Trạng thái</th><th>Cập nhật</th><th class="actions-heading">Chi tiết</th></tr></thead>
+          <tbody id="work-requests-body"></tbody>
         </table>
-        <div id="ad-accounts-empty" class="empty-state" hidden><strong>Chưa có ad account</strong><p>Thêm ad account trước khi soạn campaign draft.</p><button class="button button-secondary" type="button" data-open-ad-account>Thêm ad account</button></div>
-      </div>
-    </section>
-
-    <section id="meta-resources" class="content-section">
-      <div class="section-toolbar">
-        <div><h2>Meta resources</h2><p>Page, Instagram, Pixel/Dataset, Instant Form và App dùng exact-match trong Ads Manager.</p></div>
-        <button id="add-resource-button" class="button button-secondary" type="button">Thêm resource</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Resource</th><th>Loại</th><th>Ad account</th><th>External ID</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead>
-          <tbody id="meta-resources-body"></tbody>
-        </table>
-        <div id="meta-resources-empty" class="empty-state compact-empty" hidden><strong>Chưa có Meta resource</strong><p>Thêm resource sau khi bạn nhìn thấy đúng tên hoặc ID trong Ads Manager.</p><button class="button button-secondary" type="button" data-open-resource>Thêm resource</button></div>
-      </div>
-    </section>
-
-    <section id="creative-assets" class="content-section">
-      <div class="section-toolbar">
-        <div><h2>Creative assets</h2><p>Ảnh/video được lưu theo ad account và kiểm tra SHA-256 trước khi worker upload.</p></div>
-        <button id="add-asset-button" class="button button-secondary" type="button">Tải asset lên</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Asset</th><th>Ad account</th><th>Loại</th><th>Dung lượng</th><th>SHA-256</th><th>Trạng thái</th></tr></thead>
-          <tbody id="creative-assets-body"></tbody>
-        </table>
-        <div id="creative-assets-empty" class="empty-state compact-empty" hidden><strong>Chưa có creative asset</strong><p>Tải JPG, PNG, WEBP, MP4 hoặc MOV. Việc tải lên đây chưa gửi file sang Meta.</p><button class="button button-secondary" type="button" data-open-asset>Tải asset lên</button></div>
-      </div>
-    </section>
-
-    <section class="content-section">
-      <div class="section-toolbar">
-        <div><h2>Danh sách campaign</h2><p>Mọi campaign bắt đầu ở draft và phải được duyệt trước phase thực thi.</p></div>
-        <button id="refresh-button" class="button button-secondary" type="button">Làm mới</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Campaign</th><th>Ad account</th><th>Mục tiêu</th><th>Ngân sách/ngày</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead>
-          <tbody id="campaigns-body"></tbody>
-        </table>
-        <div id="campaigns-empty" class="empty-state" hidden><strong>Chưa có campaign draft</strong><p>Tạo bản nháp đầu tiên. Không có dữ liệu nào được gửi sang Meta ở bước này.</p><button class="button button-primary" type="button" data-open-campaign>Tạo campaign draft</button></div>
-      </div>
-    </section>
-
-    <section class="content-section">
-      <div class="section-toolbar"><div><h2>Hàng chờ duyệt</h2><p>Owner hoặc admin kiểm tra snapshot trước khi quyết định.</p></div></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Campaign</th><th>Version</th><th>Ngân sách/ngày</th><th>Gửi lúc</th><th class="actions-heading">Thao tác</th></tr></thead>
-          <tbody id="approvals-body"></tbody>
-        </table>
-        <div id="approvals-empty" class="empty-state compact-empty" hidden><strong>Không có yêu cầu đang chờ</strong><p>Campaign được gửi duyệt sẽ xuất hiện tại đây.</p></div>
-      </div>
-    </section>
-
-    <section class="content-section">
-      <div class="section-toolbar"><div><h2>Execution jobs</h2><p>Preflight xác minh profile; draft builder tạo cấu hình trên Meta và dừng trước publish.</p></div></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Campaign</th><th>Loại job</th><th>Trạng thái</th><th>Kết quả</th><th>Lần chạy</th><th>Yêu cầu lúc</th><th class="actions-heading">Thao tác</th></tr></thead>
-          <tbody id="execution-jobs-body"></tbody>
-        </table>
-        <div id="execution-jobs-empty" class="empty-state compact-empty" hidden><strong>Chưa có execution job</strong><p>Campaign đã duyệt có thể chạy preflight rồi tạo Meta draft.</p></div>
-      </div>
-    </section>
-
-    <section class="content-section">
-      <div class="section-toolbar"><div><h2>Audit gần đây</h2><p>Lịch sử campaign, approval và execution job.</p></div></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Thời gian</th><th>Hành động</th><th>Đối tượng</th><th>Chi tiết</th></tr></thead>
-          <tbody id="audit-body"></tbody>
-        </table>
+        <div id="work-requests-empty" class="empty-state" hidden>
+          <strong>Chưa có công việc từ Hermes</strong>
+          <p>Hãy gửi một yêu cầu trên Telegram, ví dụ “Tạo camp bán sản phẩm X, dùng ảnh này, ngân sách 500k/ngày”.</p>
+          <a class="button button-secondary" href="/ai-copilot" target="_blank" rel="noopener">Mở Hermes Dashboard</a>
+        </div>
       </div>
     </section>
   </main>
 
-  <dialog id="ad-account-dialog">
-    <form id="ad-account-form">
-      <div class="dialog-header"><div><h2 id="ad-account-dialog-title">Thêm ad account</h2><p id="ad-account-dialog-description">Thông tin quản lý nội bộ, chưa gọi Meta API.</p></div><button class="icon-button" type="button" data-close="ad-account-dialog" aria-label="Đóng">×</button></div>
-      <label>Tài khoản Facebook<select id="facebook-account-select" required></select></label>
-      <label>Mã ad account<input id="meta-ad-account-id" required maxlength="80" placeholder="Ví dụ: act_123456789"></label>
-      <label>Tên gợi nhớ<input id="ad-account-label" required maxlength="160" placeholder="Ví dụ: Bán hàng Việt Nam"></label>
-      <div class="form-grid">
-        <label>Tiền tệ<select id="ad-account-currency" required><option value="VND">VND</option><option value="USD">USD</option></select></label>
-        <label>Múi giờ<input id="ad-account-timezone" required maxlength="80" value="Asia/Ho_Chi_Minh"></label>
-      </div>
-      <div id="ad-account-edit-warning" class="approval-warning" hidden>Khi account đã có campaign, resource hoặc asset, hệ thống chỉ cho đổi tên gợi nhớ để bảo toàn snapshot và liên kết thực thi.</div>
-      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="ad-account-dialog">Hủy</button><button id="ad-account-submit-button" class="button button-primary" type="submit">Lưu ad account</button></div>
-    </form>
-  </dialog>
-
-  <dialog id="resource-dialog">
-    <form id="resource-form">
-      <div class="dialog-header"><div><h2>Thêm Meta resource</h2><p>Resource mới ở trạng thái chưa xác minh.</p></div><button class="icon-button" type="button" data-close="resource-dialog" aria-label="Đóng">×</button></div>
-      <label>Ad account<select id="resource-ad-account" required></select></label>
-      <label>Loại<select id="resource-kind" required><option value="page">Facebook Page</option><option value="instagram_account">Instagram account</option><option value="dataset">Pixel/Dataset</option><option value="instant_form">Instant Form</option><option value="app">Ứng dụng</option></select></label>
-      <label>Tên exact-match<input id="resource-label" required maxlength="200" placeholder="Đúng như hiển thị trong Meta"></label>
-      <label>External ID<input id="resource-external-id" maxlength="160" placeholder="Không bắt buộc nếu Meta chưa hiển thị ID"></label>
-      <div class="approval-warning">Chỉ đánh dấu xác minh sau khi bạn đã kiểm tra tên/ID trong Ads Manager hoặc noVNC.</div>
-      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="resource-dialog">Hủy</button><button class="button button-primary" type="submit">Lưu resource</button></div>
-    </form>
-  </dialog>
-
-  <dialog id="asset-dialog">
-    <form id="asset-form">
-      <div class="dialog-header"><div><h2>Tải creative asset</h2><p>File được lưu nội bộ; chưa upload sang Meta.</p></div><button class="icon-button" type="button" data-close="asset-dialog" aria-label="Đóng">×</button></div>
-      <label>Ad account<select id="asset-ad-account" required></select></label>
-      <label>Tên gợi nhớ<input id="asset-label" required maxlength="200" placeholder="Ví dụ: Video UGC sản phẩm A"></label>
-      <label>File<input id="asset-file" type="file" required accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"></label>
-      <div id="asset-upload-status" class="inline-help">Giới hạn 250 MB. Hỗ trợ JPG, PNG, WEBP, MP4 và MOV.</div>
-      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="asset-dialog">Hủy</button><button class="button button-primary" type="submit">Tải lên</button></div>
-    </form>
-  </dialog>
-
-  <dialog id="resource-verify-dialog">
-    <div class="session-dialog">
-      <div class="dialog-header"><div><h2>Xác minh Meta resource</h2><p id="resource-verify-summary"></p></div><button class="icon-button" type="button" data-close="resource-verify-dialog" aria-label="Đóng">×</button></div>
-      <label>Xác nhận<input id="resource-verify-confirmation" autocomplete="off" placeholder="Nhập: ĐÃ XÁC MINH TRÊN META"></label>
-      <div class="approval-warning">Trạng thái này cho phép resource đi qua execution preview. Chỉ xác nhận sau khi đã kiểm tra trực tiếp trong Ads Manager.</div>
-      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="resource-verify-dialog">Hủy</button><button id="confirm-resource-verify-button" class="button button-primary" type="button">Đánh dấu đã xác minh</button></div>
+  <dialog id="work-detail-dialog" class="wide-dialog work-detail-dialog">
+    <div class="dialog-header">
+      <div><p id="work-detail-eyebrow" class="dialog-eyebrow">Công việc quảng cáo</p><h2 id="work-detail-title">Chi tiết công việc</h2><p id="work-detail-progress"></p></div>
+      <button class="icon-button" type="button" data-close="work-detail-dialog" aria-label="Đóng">×</button>
     </div>
-  </dialog>
-
-  <dialog id="campaign-dialog" class="wide-dialog">
-    <form id="campaign-form">
-      <div class="dialog-header"><div><h2>Tạo campaign draft</h2><p>Chỉ lưu bản nháp trong Ads Meta Master.</p></div><button class="icon-button" type="button" data-close="campaign-dialog" aria-label="Đóng">×</button></div>
-      <label>Ad account<select id="campaign-ad-account" required></select></label>
-      <label>Tên campaign<input id="campaign-name" required maxlength="200" placeholder="Ví dụ: Lead form — Tháng 8"></label>
-      <div class="form-grid">
-        <label>Mục tiêu<select id="campaign-objective" required></select></label>
-        <label><span id="budget-label">Ngân sách mỗi ngày</span><input id="campaign-budget" type="number" min="1" step="1" required placeholder="100000"></label>
-      </div>
-      <div id="objective-summary" class="objective-summary" aria-live="polite"></div>
-      <div class="form-grid">
-        <label>Bắt đầu<input id="campaign-start" type="datetime-local"></label>
-        <label>Kết thúc<input id="campaign-end" type="datetime-local"></label>
-      </div>
-      <fieldset class="form-section">
-        <legend>Ad Set</legend>
-        <div class="form-grid">
-          <label>Vị trí chuyển đổi<input id="campaign-conversion-location" readonly></label>
-          <label>Mục tiêu hiệu quả<input id="campaign-performance-goal" readonly></label>
-        </div>
-        <div class="form-grid">
-          <label>Page Facebook<select id="campaign-page-resource"><option value="">Chưa chọn Page</option></select></label>
-          <label>Quốc gia<input id="campaign-countries" maxlength="120" value="VN" placeholder="VN, TH"></label>
-        </div>
-        <div class="form-grid form-grid-three">
-          <label>Tuổi tối thiểu<input id="campaign-age-min" type="number" min="18" max="65" value="18"></label>
-          <label>Tuổi tối đa<input id="campaign-age-max" type="number" min="18" max="65" value="65"></label>
-          <label>Vị trí quảng cáo<select id="campaign-placements"><option value="advantage_plus">Advantage+</option><option value="manual">Thủ công</option></select></label>
-        </div>
-        <div class="form-grid objective-fields" data-objectives="engagement" hidden>
-          <label>Kênh nhận tin nhắn<select id="campaign-messaging-destination"><option value="messenger">Messenger</option><option value="instagram">Instagram</option><option value="whatsapp">WhatsApp</option></select></label>
-        </div>
-        <div class="form-grid objective-fields" data-objectives="app_promotion" hidden>
-          <label>Ứng dụng<select id="campaign-app-resource"><option value="">Chưa chọn ứng dụng</option></select></label>
-          <label>Quốc gia trên cửa hàng<input id="campaign-app-store-country" maxlength="2" value="VN" placeholder="VN"></label>
-        </div>
-        <div class="form-grid objective-fields" data-objectives="sales" hidden>
-          <label>Pixel hoặc dataset<select id="campaign-dataset-resource"><option value="">Chưa chọn Pixel/Dataset</option></select></label>
-          <label>Conversion event<input id="campaign-conversion-event" maxlength="120" placeholder="Ví dụ: Purchase"></label>
-        </div>
-        <label>Ghi chú targeting<textarea id="campaign-targeting" rows="2" maxlength="2000" placeholder="Ví dụ: remarketing 30 ngày, loại trừ khách đã mua"></textarea></label>
-      </fieldset>
-      <fieldset class="form-section">
-        <legend>Quảng cáo</legend>
-        <label class="objective-fields" data-objectives="leads" hidden>Instant Form<select id="campaign-lead-form-resource"><option value="">Chưa chọn Instant Form</option></select></label>
-        <label>Creative asset<select id="campaign-asset"><option value="">Chưa chọn ảnh/video</option></select></label>
-        <label>Primary text<textarea id="campaign-primary-text" rows="3" maxlength="2200" placeholder="Nội dung chính của quảng cáo"></textarea></label>
-        <div class="form-grid">
-          <label>Headline<input id="campaign-headline" maxlength="255" placeholder="Tiêu đề quảng cáo"></label>
-          <label>CTA<select id="campaign-cta"><option value="LEARN_MORE">Tìm hiểu thêm</option><option value="SHOP_NOW">Mua ngay</option><option value="SIGN_UP">Đăng ký</option><option value="CONTACT_US">Liên hệ</option></select></label>
-        </div>
-        <label class="objective-fields" data-objectives="traffic sales" hidden>Destination URL<input id="campaign-destination-url" type="url" maxlength="2048" placeholder="https://example.com/landing-page"></label>
-        <label>Ghi chú creative<textarea id="campaign-creative" rows="2" maxlength="2000" placeholder="File media hoặc bài viết sẽ dùng; chưa upload ở Phase 4"></textarea></label>
-      </fieldset>
-      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="campaign-dialog">Hủy</button><button class="button button-primary" type="submit">Lưu draft</button></div>
-    </form>
-  </dialog>
-
-  <dialog id="approval-dialog" class="wide-dialog">
-    <div class="dialog-header"><div><h2>Kiểm tra trước khi duyệt</h2><p>Đây là snapshot đã gửi, không phải dữ liệu live đang chỉnh sửa.</p></div><button class="icon-button" type="button" data-close="approval-dialog" aria-label="Đóng">×</button></div>
-    <dl id="approval-facts" class="session-facts"></dl>
-    <label>Ghi chú quyết định<textarea id="decision-note" rows="3" maxlength="2000" placeholder="Bắt buộc khi từ chối"></textarea></label>
-    <div class="approval-warning">Duyệt nội bộ không tự tạo execution job và không publish lên Meta.</div>
-    <div class="dialog-actions"><button id="reject-button" class="button button-danger" type="button">Từ chối</button><button id="approve-button" class="button button-primary" type="button">Duyệt nội bộ</button></div>
-  </dialog>
-
-  <dialog id="execution-dialog" class="wide-dialog">
-    <div class="dialog-header"><div><h2 id="execution-dialog-title">Execution preview</h2><p id="execution-dialog-description">Kiểm tra readiness trước khi đưa job cho worker.</p></div><button class="icon-button" type="button" data-close="execution-dialog" aria-label="Đóng">×</button></div>
-    <dl id="execution-preview-facts" class="session-facts"></dl>
-    <div id="execution-blockers" class="execution-blockers" hidden></div>
-    <label id="execution-confirmation-label">Xác nhận<input id="execution-confirmation" autocomplete="off"></label>
-    <div id="execution-safety-copy" class="approval-warning"></div>
-    <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="execution-dialog">Hủy</button><button id="queue-execution-button" class="button button-primary" type="button">Đưa vào hàng chờ</button></div>
-  </dialog>
-
-  <dialog id="job-result-dialog" class="wide-dialog">
-    <div class="dialog-header"><div><h2 id="job-result-title">Chi tiết execution job</h2><p>Kết quả kỹ thuật và checkpoint do worker trả về.</p></div><button class="icon-button" type="button" data-close="job-result-dialog" aria-label="Đóng">×</button></div>
-    <dl id="job-result-facts" class="session-facts"></dl>
-    <div id="job-error" class="execution-blockers" hidden></div>
-    <section id="job-field-results" class="field-results" hidden>
-      <div class="field-results-header"><h3>Kết quả điền field</h3><p id="job-field-results-summary"></p></div>
-      <div class="table-wrap field-results-table"><table><thead><tr><th>Bước</th><th>Field</th><th>Trạng thái</th><th>Chi tiết</th></tr></thead><tbody id="job-field-results-body"></tbody></table></div>
-    </section>
-    <label id="retry-confirmation-label" hidden>Xác nhận retry<input id="retry-confirmation" autocomplete="off" placeholder="Nhập: CHẠY PREFLIGHT"></label>
-    <div id="job-artifact-links" class="artifact-links"></div>
-    <div class="dialog-actions"><button id="handoff-job-button" class="button button-secondary" type="button" hidden>Mở noVNC xử lý</button><button id="retry-job-button" class="button button-primary" type="button" hidden>Retry job</button></div>
+    <div id="work-detail-status" class="work-detail-status"></div>
+    <div class="work-detail-grid">
+      <section>
+        <h3>Yêu cầu gốc</h3>
+        <p id="work-detail-request" class="request-quote"></p>
+        <h3>Account đã phân giải</h3>
+        <dl id="work-detail-resolution" class="session-facts"></dl>
+        <h3>Kế hoạch</h3>
+        <dl id="work-detail-plan" class="session-facts"></dl>
+      </section>
+      <section>
+        <h3>Timeline</h3>
+        <ol id="work-detail-timeline" class="work-timeline"></ol>
+        <div id="work-detail-error" class="execution-blockers" hidden></div>
+        <div id="work-detail-artifacts" class="artifact-links"></div>
+      </section>
+    </div>
+    <div class="dialog-actions">
+      <a id="work-handoff-link" class="button button-secondary" href="/" hidden>Mở tài khoản để xử lý login/2FA</a>
+      <button class="button button-primary" type="button" data-close="work-detail-dialog">Đóng</button>
+    </div>
   </dialog>
 
   {% include "_password_dialog.html" %}

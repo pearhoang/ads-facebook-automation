@@ -15,6 +15,8 @@ from ..schemas import (
     AdAccountCreateRequest,
     AdAccountUpdateRequest,
     AdAccountView,
+    AdAutomationEventView,
+    AdAutomationRequestSummaryView,
     ApprovalDecisionRequest,
     ApprovalRequestView,
     AuditEventView,
@@ -27,7 +29,7 @@ from ..schemas import (
     MetaResourceView,
     ObjectiveSpecView,
 )
-from ..services import auth, campaigns, objective_specs, resources
+from ..services import auth, automation, campaigns, objective_specs, resources
 
 
 router = APIRouter(prefix="/api", tags=["campaigns"])
@@ -135,6 +137,41 @@ def list_creative_assets(
     db: Session = Depends(get_db),
 ):
     return resources.list_assets(db, tenant_id, ad_account_id)
+
+
+@router.get(
+    "/ad-automation-requests",
+    response_model=list[AdAutomationRequestSummaryView],
+)
+def list_ad_automation_requests(
+    status_filter: str | None = Query(default=None, alias="status", max_length=32),
+    limit: int = Query(default=100, ge=1, le=200),
+    tenant_id: str = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    return automation.list_requests(db, tenant_id, status=status_filter, limit=limit)
+
+
+@router.get("/ad-automation-requests/{request_id}")
+def get_ad_automation_request(
+    request_id: str,
+    tenant_id: str = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    work = automation.get_request(db, tenant_id, request_id)
+    return automation.request_payload(db, work)
+
+
+@router.get(
+    "/ad-automation-requests/{request_id}/events",
+    response_model=list[AdAutomationEventView],
+)
+def list_ad_automation_events(
+    request_id: str,
+    tenant_id: str = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    return automation.list_events(db, tenant_id, request_id)
 
 
 @router.post(

@@ -555,6 +555,101 @@ class ExecutionArtifact(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
 
+class AdAutomationRequest(Base):
+    __tablename__ = "ad_automation_requests"
+    __table_args__ = (
+        Index("ix_ad_automation_requests_tenant_updated", "tenant_id", "updated_at"),
+        Index("ix_ad_automation_requests_worker_status", "worker_id", "status"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    worker_id: Mapped[str] = mapped_column(ForeignKey("workers.id"), index=True)
+    facebook_account_id: Mapped[str] = mapped_column(
+        ForeignKey("facebook_accounts.id"), index=True
+    )
+    ad_account_id: Mapped[str] = mapped_column(ForeignKey("ad_accounts.id"), index=True)
+    campaign_draft_id: Mapped[str | None] = mapped_column(
+        ForeignKey("campaign_drafts.id"), nullable=True, index=True
+    )
+    approval_request_id: Mapped[str | None] = mapped_column(
+        ForeignKey("approval_requests.id"), nullable=True
+    )
+    execution_job_id: Mapped[str | None] = mapped_column(
+        ForeignKey("execution_jobs.id"), nullable=True, index=True
+    )
+    source: Mapped[str] = mapped_column(String(32), default="telegram", index=True)
+    source_session_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    source_message_id: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    intent: Mapped[str] = mapped_column(String(64), default="create_campaign")
+    request_text: Mapped[str] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(String(240))
+    status: Mapped[str] = mapped_column(String(32), default="planning", index=True)
+    stage: Mapped[str] = mapped_column(String(48), default="intent")
+    progress_message: Mapped[str] = mapped_column(Text, default="Đang phân tích yêu cầu.")
+    plan_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    resolution_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    recovery_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    requested_by_user_id: Mapped[str | None] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )
+    attempt_count: Mapped[int] = mapped_column(Integer, default=0)
+    recovery_count: Mapped[int] = mapped_column(Integer, default=0)
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+
+class AdAutomationEvent(Base):
+    __tablename__ = "ad_automation_events"
+    __table_args__ = (
+        Index("ix_ad_automation_events_request_created", "request_id", "created_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    request_id: Mapped[str] = mapped_column(
+        ForeignKey("ad_automation_requests.id"), index=True
+    )
+    actor_type: Mapped[str] = mapped_column(String(24), default="agent")
+    event_type: Mapped[str] = mapped_column(String(64), index=True)
+    stage: Mapped[str] = mapped_column(String(48))
+    message: Mapped[str] = mapped_column(Text)
+    payload_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+
+class AgentWorkflowLearning(Base):
+    __tablename__ = "agent_workflow_learnings"
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id", "worker_id", "learning_key", name="uq_agent_learning_worker_key"
+        ),
+        Index("ix_agent_learning_worker_status", "worker_id", "status"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    worker_id: Mapped[str] = mapped_column(ForeignKey("workers.id"), index=True)
+    learning_key: Mapped[str] = mapped_column(String(160))
+    symptom: Mapped[str] = mapped_column(Text)
+    cause: Mapped[str | None] = mapped_column(Text, nullable=True)
+    recovery_plan_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    status: Mapped[str] = mapped_column(String(24), default="proposed", index=True)
+    success_count: Mapped[int] = mapped_column(Integer, default=0)
+    failure_count: Mapped[int] = mapped_column(Integer, default=0)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+
 class ReportSchedule(Base):
     __tablename__ = "report_schedules"
     __table_args__ = (

@@ -2,18 +2,18 @@
 
 ## Responsibility
 - Quản lý exact metadata cho Page, Instagram account, Dataset/Pixel, Instant Form và App theo tenant/ad account.
-- Lưu creative image/video trên control plane với SHA-256 và cung cấp download chỉ cho worker/job hợp lệ.
+- Lưu creative image/video được ingest từ Telegram/Hermes trên control plane với SHA-256 và cung cấp download chỉ cho worker/job hợp lệ.
 - Không tự khám phá hoặc tự xác minh resource trên Meta; trạng thái verified cần hành động rõ của user/admin.
 
 ## Entry Points
 - API route: `backend/app/api/campaigns.py`, worker download tại `backend/app/api/worker.py`.
-- UI page: `/campaigns` resource/asset sections và campaign form.
+- UI page: `/ad-accounts` chỉ quản lý Meta resource; creative asset registry là backend contract, không phải thư viện upload thủ công cho user.
 - Worker consumer: `ExecutionJobSupervisor` tải asset trước khi chạy `MetaDraftBuildRuntime`.
 
 ## Key Files
 - `backend/app/models.py`
 - `backend/app/services/resources.py`
-- `backend/app/static/campaigns.js`
+- `backend/app/static/ad_accounts.js`
 - `workers/agent/control_plane.py`
 - `workers/agent/execution.py`
 
@@ -21,7 +21,7 @@
 - Authenticated tenant/CSRF boundary, ad account ownership, execution job worker ownership và persistent runtime storage.
 
 ## Used By
-- Campaign draft/approval snapshot, execution preview, Meta draft builder và noVNC recovery flow.
+- Agent orchestration snapshot, Meta draft builder và noVNC challenge recovery flow.
 
 ## Invariants
 - Resource/asset không thể được dùng chéo tenant hoặc ad account.
@@ -36,6 +36,7 @@
 ## Related Decisions
 - `DEC-015`
 - `DEC-016`
+- `DEC-028`
 
 ## Production Evidence
 

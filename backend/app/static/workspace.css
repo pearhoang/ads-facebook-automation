@@ -126,6 +126,37 @@ input:focus, select:focus, textarea:focus { border-color: var(--accent); box-sha
 .password-status { margin-top: 14px; padding: 10px 12px; border: 1px solid; border-radius: 8px; line-height: 1.5; }
 .password-status-error { border-color: #dca9a9; background: #fff3f3; color: #8a2e2e; }
 .password-status-success { border-color: #a7f3d0; background: #ecfdf5; color: var(--success); }
+.workflow-banner, .setup-boundary { margin: 20px 32px 0; padding: 14px 16px; display: flex; align-items: flex-start; gap: 13px; border: 1px solid #cbd8ea; border-radius: 9px; background: #f8fbff; color: #30405a; line-height: 1.55; }
+.workflow-banner-index { flex: 0 0 auto; padding: 2px 7px; border-radius: 5px; background: #e6effc; color: #175fbf; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; font-weight: 700; }
+.workflow-banner strong, .workflow-banner span, .setup-boundary strong, .setup-boundary span { display: block; }
+.workflow-banner span, .setup-boundary span { margin-top: 2px; color: var(--muted); font-size: 12px; }
+.work-queue-section { margin-top: 20px; }
+.work-toolbar { gap: 20px; }
+.table-filters { min-width: 190px; }
+.compact-field { margin: 0; color: var(--muted); }
+.compact-field select { min-height: 36px; margin-top: 5px; }
+.cell-subtext { display: block; max-width: 440px; margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.source-label { font-size: 12px; font-weight: 600; }
+.actions-cell { text-align: right; }
+.status-pill { display: inline-flex; min-height: 24px; align-items: center; padding: 3px 8px; border-radius: 6px; background: #eef2f7; color: #475467; font-size: 11px; font-weight: 600; }
+.status-success { background: #ecfdf5; color: var(--success); }
+.status-warning { background: #eef2ff; color: #4338ca; }
+.status-error { background: #fff3f3; color: var(--danger); }
+.status-neutral { background: #eff6ff; color: #1d4ed8; }
+.dialog-eyebrow { margin-bottom: 5px; color: var(--accent); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.work-detail-dialog { width: min(940px, calc(100vw - 32px)); }
+.work-detail-status { display: flex; align-items: center; gap: 10px; margin: -5px 0 18px; padding-bottom: 16px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+.work-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .9fr); gap: 28px; }
+.work-detail-grid h3 { margin: 20px 0 9px; font-size: 13px; }
+.work-detail-grid h3:first-child { margin-top: 0; }
+.request-quote { padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--surface-subtle); line-height: 1.65; white-space: pre-wrap; }
+.work-timeline { margin: 0; padding: 0; list-style: none; }
+.work-timeline li { position: relative; display: grid; grid-template-columns: 14px 1fr; gap: 10px; padding-bottom: 18px; }
+.work-timeline li:not(:last-child)::before { content: ""; position: absolute; left: 5px; top: 11px; bottom: 0; width: 1px; background: var(--border); }
+.timeline-marker { position: relative; z-index: 1; width: 11px; height: 11px; margin-top: 3px; border: 2px solid var(--accent); border-radius: 50%; background: white; }
+.work-timeline strong { font-size: 12px; }
+.work-timeline p { margin-top: 3px; color: #344054; font-size: 12px; line-height: 1.5; }
+.work-timeline time { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
 
 @media (max-width: 860px) {
   .sidebar { position: static; width: 100%; height: auto; }
@@ -140,8 +171,11 @@ input:focus, select:focus, textarea:focus { border-color: var(--accent); box-sha
   .summary div:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
   .content-section { margin: 16px; }
   .safety-banner, .page-notice { margin-right: 16px; margin-left: 16px; }
+  .workflow-banner, .setup-boundary { margin-right: 16px; margin-left: 16px; }
   .form-grid { grid-template-columns: 1fr; gap: 0; }
   .form-grid-three { grid-template-columns: 1fr; }
+  .work-toolbar { align-items: stretch; flex-direction: column; }
+  .work-detail-grid { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 861px) and (max-width: 1080px) {

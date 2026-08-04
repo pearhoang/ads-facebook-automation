@@ -1889,6 +1889,26 @@ class ExecutionJobSupervisor:
         self.runtime = runtime or CampaignPreflightRuntime(config)
         self.draft_runtime = draft_runtime or MetaDraftBuildRuntime(config)
 
+    def _notify_telegram(self, assignment: ExecutionJobAssignment, message: str) -> None:
+        request_meta = assignment.payload.get("automation_request") or {}
+        if not request_meta or not self.config.telegram_bot_token:
+            return
+        title = str(request_meta.get("title") or "Công việc quảng cáo")
+        request_id = str(request_meta.get("id") or "")[:8]
+        text = f"{title}\n{message}\nMã công việc: {request_id}"
+        for chat_id in self.config.telegram_allowed_users:
+            try:
+                body = urlencode({"chat_id": chat_id, "text": text}).encode("utf-8")
+                with urlopen(
+                    f"https://api.telegram.org/bot{self.config.telegram_bot_token}/sendMessage",
+                    data=body,
+                    timeout=10,
+                ) as response:
+                    response.read()
+            except (HTTPError, URLError, TimeoutError, OSError):
+                # Delivery is fail-soft; control-plane timeline remains canonical.
+                continue
+
     def _prepare_creative_asset(self, assignment: ExecutionJobAssignment) -> None:
         draft_spec = assignment.payload.get("draft_spec") or {}
         creative = draft_spec.get("creative") or {}
@@ -1929,6 +1949,12 @@ class ExecutionJobSupervisor:
             )
             return
         self.client.sync_execution_job(assignment.job_id, status="running")
+        self._notify_telegram(
+            assignment,
+            "Worker đã bắt đầu preflight."
+            if assignment.payload.get("safety", {}).get("mode") != "draft_only"
+            else "Worker đang điền Campaign → Ad Set → Ad; publish vẫn bị khóa.",
+        )
         try:
             if assignment.payload.get("safety", {}).get("mode") == "draft_only":
                 self._prepare_creative_asset(assignment)
@@ -1944,6 +1970,12 @@ class ExecutionJobSupervisor:
                     status="succeeded",
                     result_json=result,
                 )
+                self._notify_telegram(
+                    assignment,
+                    "Preflight đạt, hệ thống đang tự chuyển sang draft builder."
+                    if assignment.payload.get("safety", {}).get("mode") != "draft_only"
+                    else "Đã điền xong và dừng tại Review. Chưa publish quảng cáo.",
+                )
             else:
                 self.client.sync_execution_job(
                     assignment.job_id,
@@ -1955,9 +1987,17 @@ class ExecutionJobSupervisor:
                         else "Preflight cần người dùng kiểm tra đăng nhập hoặc quyền ad account."
                     ),
                 )
+                self._notify_telegram(
+                    assignment,
+                    "Meta đang cần login/2FA/challenge hoặc còn field chưa thể tự xác định. Hãy mở Tài khoản Facebook khi sẵn sàng.",
+                )
         except Exception as exc:
             self.client.sync_execution_job(
                 assignment.job_id,
                 status="failed",
                 last_error=str(exc),
+            )
+            self._notify_telegram(
+                assignment,
+                "Worker gặp lỗi và đã chuyển cho cơ chế recovery/checkpoint xử lý; bạn không cần tạo lại yêu cầu.",
             )

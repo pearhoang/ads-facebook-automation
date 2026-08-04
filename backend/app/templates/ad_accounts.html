@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ads Meta Master — Ad accounts &amp; Resources</title>
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css">
+</head>
+<body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Ads Meta Master"><img class="brand-mark" src="/static/ads-meta-master.svg" alt=""><span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span></a>
+    <nav aria-label="Điều hướng chính">
+      <a class="nav-item" href="/">Tài khoản Facebook</a>
+      <a class="nav-item is-active" href="/ad-accounts">Ad accounts &amp; Resources</a>
+      <a class="nav-item" href="/campaigns">Công việc quảng cáo</a>
+      <a class="nav-item" href="/reports">Báo cáo</a>
+      <a class="nav-item" href="/bot-nodes">Bot VPS</a>
+      <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
+      <a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
+    </nav>
+    <div class="sidebar-footer"><span class="environment-dot"></span><span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><h1>Ad accounts &amp; Resources</h1><p>Setup một lần để Hermes luôn chọn đúng account, Page, Pixel và profile.</p></div>
+      <div class="topbar-actions"><div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div><button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button><button id="add-ad-account-button" class="button button-primary" type="button">Thêm ad account</button></div>
+    </header>
+
+    <div class="setup-boundary"><strong>Đây là dữ liệu định tuyến, không phải giao diện chạy quảng cáo.</strong><span>Ảnh/video gửi qua Telegram được agent ingest tự động và không cần quản lý thủ công tại trang này.</span></div>
+
+    <section class="summary" aria-label="Tổng quan tài nguyên">
+      <div><span>Ad accounts</span><strong id="ad-account-count">0</strong></div>
+      <div><span>Resources</span><strong id="resource-count">0</strong></div>
+      <div><span>Đã xác minh</span><strong id="verified-count">0</strong></div>
+      <div><span>Cần kiểm tra</span><strong id="unverified-count">0</strong></div>
+    </section>
+
+    <div id="notice" class="notice page-notice" hidden></div>
+
+    <section class="content-section">
+      <div class="section-toolbar"><div><h2>Ad accounts</h2><p>Liên kết Meta ad account với đúng Facebook profile và worker sở hữu cookie.</p></div><button id="refresh-button" class="button button-secondary" type="button">Làm mới</button></div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Ad account</th><th>Facebook profile</th><th>Meta ID</th><th>Tiền tệ</th><th>Múi giờ</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="ad-accounts-body"></tbody></table>
+        <div id="ad-accounts-empty" class="empty-state" hidden><strong>Chưa có ad account</strong><p>Thêm account đầu tiên sau khi Facebook profile đã đăng nhập.</p><button class="button button-secondary" type="button" data-open-ad-account>Thêm ad account</button></div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-toolbar"><div><h2>Meta resources</h2><p>Exact-match Page, Instagram, Pixel/Dataset, Instant Form và App cho từng ad account.</p></div><button id="add-resource-button" class="button button-secondary" type="button">Thêm resource</button></div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Resource</th><th>Loại</th><th>Ad account</th><th>External ID</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="resources-body"></tbody></table>
+        <div id="resources-empty" class="empty-state compact-empty" hidden><strong>Chưa có resource</strong><p>Setup resource mà agent cần chọn khi thao tác Ads Manager.</p><button class="button button-secondary" type="button" data-open-resource>Thêm resource</button></div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="ad-account-dialog">
+    <form id="ad-account-form">
+      <div class="dialog-header"><div><h2 id="ad-account-dialog-title">Thêm ad account</h2><p>Thông tin định tuyến nội bộ, chưa thao tác Meta.</p></div><button class="icon-button" type="button" data-close="ad-account-dialog" aria-label="Đóng">×</button></div>
+      <label>Facebook profile<select id="facebook-account-select" required></select></label>
+      <label>Meta ad account ID<input id="meta-ad-account-id" required maxlength="80" placeholder="Ví dụ: 123456789 hoặc act_123456789"></label>
+      <label>Tên gợi nhớ<input id="ad-account-label" required maxlength="160" placeholder="Ví dụ: Bán hàng Việt Nam"></label>
+      <div class="form-grid"><label>Tiền tệ<select id="ad-account-currency" required><option value="VND">VND</option><option value="USD">USD</option></select></label><label>Múi giờ<input id="ad-account-timezone" required maxlength="80" value="Asia/Ho_Chi_Minh"></label></div>
+      <div id="ad-account-edit-warning" class="approval-warning" hidden>Khi account đã có dependency, chỉ đổi được tên gợi nhớ để giữ đúng snapshot và history.</div>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="ad-account-dialog">Hủy</button><button class="button button-primary" type="submit">Lưu ad account</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="resource-dialog">
+    <form id="resource-form">
+      <div class="dialog-header"><div><h2>Thêm Meta resource</h2><p>Nhập đúng tên/ID như Ads Manager đang hiển thị.</p></div><button class="icon-button" type="button" data-close="resource-dialog" aria-label="Đóng">×</button></div>
+      <label>Ad account<select id="resource-ad-account" required></select></label>
+      <label>Loại<select id="resource-kind" required><option value="page">Facebook Page</option><option value="instagram_account">Instagram account</option><option value="dataset">Pixel/Dataset</option><option value="instant_form">Instant Form</option><option value="app">Ứng dụng</option></select></label>
+      <label>Tên exact-match<input id="resource-label" required maxlength="200" placeholder="Đúng như hiển thị trong Meta"></label>
+      <label>External ID<input id="resource-external-id" maxlength="160" placeholder="Nên nhập nếu Meta hiển thị ID"></label>
+      <div class="approval-warning">Resource mới cần được đối chiếu một lần trước khi Hermes dùng cho execution.</div>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="resource-dialog">Hủy</button><button class="button button-primary" type="submit">Lưu resource</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="resource-verify-dialog">
+    <div class="session-dialog">
+      <div class="dialog-header"><div><h2>Xác minh resource</h2><p id="resource-verify-summary"></p></div><button class="icon-button" type="button" data-close="resource-verify-dialog" aria-label="Đóng">×</button></div>
+      <label>Xác nhận<input id="resource-verify-confirmation" autocomplete="off" placeholder="Nhập: ĐÃ XÁC MINH TRÊN META"></label>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="resource-verify-dialog">Hủy</button><button id="confirm-resource-verify-button" class="button button-primary" type="button">Đánh dấu đã xác minh</button></div>
+    </div>
+  </dialog>
+
+  {% include "_password_dialog.html" %}
+  <script src="/static/ad_accounts.js" defer></script>
+  <script src="/static/account_settings.js" defer></script>
+</body>
+</html>

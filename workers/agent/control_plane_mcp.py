@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -85,6 +86,104 @@ TOOLS: list[dict[str, Any]] = [
             "additionalProperties": False,
         },
     },
+    {
+        "name": "ads_resolve_context",
+        "description": (
+            "Lấy đúng Facebook profile, worker, ad account và Page/Instagram/Pixel/Form/App đã lưu. "
+            "Gọi trước khi lập kế hoạch; noVNC chỉ dùng khi login/2FA/challenge."
+        ),
+        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    {
+        "name": "ads_prepare_campaign_work",
+        "description": (
+            "Nhận kế hoạch đã hiểu từ hội thoại, tự ingest media Telegram/Hermes, tạo action preview "
+            "và chờ xác nhận trong chính cuộc trò chuyện. Không cần thao tác form web và chưa publish."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "ad_account_id": {"type": "string"},
+                "request_text": {"type": "string", "minLength": 1, "maxLength": 12000},
+                "title": {"type": "string", "minLength": 1, "maxLength": 240},
+                "name": {"type": "string", "minLength": 1, "maxLength": 200},
+                "objective": {"type": "string", "minLength": 1, "maxLength": 40},
+                "daily_budget_minor": {"type": "integer", "minimum": 1},
+                "start_at": {"type": ["string", "null"], "format": "date-time"},
+                "end_at": {"type": ["string", "null"], "format": "date-time"},
+                "targeting_json": {"type": "object"},
+                "creative_json": {"type": "object"},
+                "media_paths": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "maxItems": 8,
+                    "description": "Exact local paths của ảnh/video Hermes đã lưu từ Telegram.",
+                },
+                "source": {"type": "string", "enum": ["telegram", "hermes", "web", "import"]},
+                "source_session_id": {"type": ["string", "null"]},
+                "source_message_id": {"type": ["string", "null"]},
+            },
+            "required": [
+                "ad_account_id", "request_text", "title", "name", "objective",
+                "daily_budget_minor", "targeting_json", "creative_json"
+            ],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "ads_confirm_campaign_work",
+        "description": (
+            "Sau khi user xác nhận rõ bằng ngôn ngữ tự nhiên, cho worker chạy preflight rồi tự chuyển "
+            "sang Campaign → Ad Set → Ad và dừng ở Review. Có thể cancel; không publish."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "request_id": {"type": "string"},
+                "decision": {"type": "string", "enum": ["execute_draft", "cancel"]},
+                "note": {"type": ["string", "null"], "maxLength": 2000},
+            },
+            "required": ["request_id", "decision"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "ads_get_work_status",
+        "description": "Đọc tiến độ, timeline, recovery và artifact của một công việc quảng cáo.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"request_id": {"type": "string"}},
+            "required": ["request_id"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "ads_list_workflow_learnings",
+        "description": "Đọc các phương án recovery đã đề xuất hoặc đã kiểm chứng trên worker này.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"include_proposed": {"type": "boolean", "default": True}},
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "ads_record_workflow_learning",
+        "description": (
+            "Ghi một recovery/workflow improvement dưới dạng proposal có cấu trúc. "
+            "Không tự sửa source production hoặc tự kích hoạt proposal chưa kiểm chứng."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "learning_key": {"type": "string", "minLength": 1, "maxLength": 160},
+                "symptom": {"type": "string", "minLength": 1, "maxLength": 4000},
+                "cause": {"type": ["string", "null"], "maxLength": 4000},
+                "recovery_plan_json": {"type": "object"},
+            },
+            "required": ["learning_key", "symptom", "recovery_plan_json"],
+            "additionalProperties": False,
+        },
+    },
 ]
 
 
@@ -131,6 +230,52 @@ def _call(client: ControlPlaneClient, name: str, arguments: dict) -> dict:
         payload.setdefault("start_at", None)
         payload.setdefault("end_at", None)
         return client.call_agent_tool("campaign-drafts", payload)
+    if name == "ads_resolve_context":
+        return client.call_agent_tool("resource-context")
+    if name == "ads_prepare_campaign_work":
+        payload = dict(arguments)
+        media_paths = list(payload.pop("media_paths", []) or [])
+        creative = dict(payload.get("creative_json") or {})
+        uploaded: list[dict] = []
+        allowed_roots = [
+            (client.config.hermes_home or (client.config.data_dir / "hermes")).resolve(),
+            (client.config.data_dir / "artifacts").resolve(),
+            (client.config.data_dir / "codex" / "uploads").resolve(),
+        ]
+        for index, raw_path in enumerate(media_paths):
+            media_path = Path(str(raw_path)).expanduser().resolve(strict=True)
+            if not any(media_path.is_relative_to(root) for root in allowed_roots):
+                raise ValueError(f"Media path nằm ngoài vùng Hermes/worker được cấp: {media_path.name}")
+            uploaded.append(
+                client.upload_agent_media(
+                    str(payload["ad_account_id"]),
+                    media_path,
+                    f"{payload.get('name') or 'Campaign'} — media {index + 1}",
+                )
+            )
+        if uploaded and not creative.get("asset_id"):
+            primary = uploaded[0]
+            creative["asset_id"] = primary["id"]
+            creative["telegram_media_asset_ids"] = [item["id"] for item in uploaded]
+        payload["creative_json"] = creative
+        payload.setdefault("start_at", None)
+        payload.setdefault("end_at", None)
+        payload.setdefault("source", "telegram")
+        result = client.call_agent_tool("ad-work/prepare", payload)
+        result["ingested_media"] = [
+            {"id": item["id"], "file_name": item["file_name"], "sha256": item["sha256"]}
+            for item in uploaded
+        ]
+        return result
+    if name == "ads_confirm_campaign_work":
+        return client.call_agent_tool("ad-work/confirm", arguments)
+    if name == "ads_get_work_status":
+        return client.call_agent_tool("ad-work/status", {"request_id": arguments["request_id"]})
+    if name == "ads_list_workflow_learnings":
+        include = "true" if arguments.get("include_proposed", True) else "false"
+        return client.call_agent_tool(f"workflow-learnings?include_proposed={include}")
+    if name == "ads_record_workflow_learning":
+        return client.call_agent_tool("workflow-learnings", arguments)
     raise ValueError(f"Unknown tool: {name}")
 
 

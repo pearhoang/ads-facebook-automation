@@ -3,7 +3,7 @@
 ## Purpose
 
 - Xây dựng SaaS quản lý và tự động hóa Meta Ads qua browser cho khách hàng dùng chính Facebook/ad account của họ.
-- Cung cấp dashboard tài khoản, browser session/noVNC, campaign jobs, KPI/reporting và AI copilot qua web/Telegram.
+- Cung cấp dashboard setup account/resource, browser session/noVNC, theo dõi ad work, KPI/reporting và AI orchestration qua Telegram/Hermes.
 - Tái sử dụng mô hình đã vận hành ổn của `Youtube_Upload_Lush`: FastAPI control plane + outbound Python worker + persistent Chrome profile.
 
 ## System Shape
@@ -29,6 +29,10 @@
 - Chromium main/child process phải dùng exact `profile_key` path; runtime không được fallback sang Snap global user-data directory.
 - noVNC chỉ mở theo phiên có token hết hạn; CDP/debug port không public.
 - Core workflow dùng deterministic state machine; LLM không điều khiển từng click trong happy path.
+- Control-plane không thay thế Ads Manager: user gửi yêu cầu/media qua Telegram hoặc Hermes; web chỉ setup account/resource và theo dõi work request/timeline.
+- Campaign draft/approval/execution vẫn là contract nội bộ cho idempotency, guardrail và audit; không phải form thao tác chính của user.
+- Media Telegram/Hermes được worker ingest vào asset registry theo đúng ad account, lưu digest rồi tự gắn vào execution snapshot.
+- Agent được dùng tool hệ thống khi owner bật `Experimental Full Access`, có thể recovery, tạo artifact/skill và lưu workflow learning; source production chỉ đổi sau review/test.
 - Sáu objective dùng catalog adapter canonical; chỉ default path đã khảo sát mới được tự động hóa.
 - Mỗi field mutation phải có kết quả DOM riêng (`applied`, `already_set`, `verified`, `blocked`, `not_available`); không suy diễn thành công từ việc đã đi qua stage.
 - Meta resource và creative asset phải theo tenant/ad account; approved snapshot giữ exact resource metadata và SHA-256 của asset.

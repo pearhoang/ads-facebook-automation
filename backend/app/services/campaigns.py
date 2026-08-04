@@ -349,7 +349,12 @@ def _snapshot(campaign: CampaignDraft) -> dict:
 
 
 def submit_campaign(
-    db: Session, *, tenant_id: str, user_id: str, campaign_id: str
+    db: Session,
+    *,
+    tenant_id: str,
+    user_id: str,
+    campaign_id: str,
+    actor_type: str = "user",
 ) -> ApprovalRequest:
     campaign = get_campaign(db, tenant_id, campaign_id)
     if campaign.status != "draft":
@@ -370,6 +375,7 @@ def submit_campaign(
         db,
         tenant_id=tenant_id,
         user_id=user_id,
+        actor_type=actor_type,
         action="campaign_draft.submitted",
         entity_type="campaign_draft",
         entity_id=campaign.id,
@@ -410,6 +416,7 @@ def decide_approval(
     approval_id: str,
     decision: str,
     note: str | None,
+    actor_type: str = "user",
 ) -> ApprovalRequest:
     if role not in APPROVER_ROLES:
         raise HTTPException(status_code=403, detail="Bạn không có quyền duyệt campaign.")
@@ -433,6 +440,7 @@ def decide_approval(
         db,
         tenant_id=tenant_id,
         user_id=user_id,
+        actor_type=actor_type,
         action=f"campaign_draft.{decision}",
         entity_type="campaign_draft",
         entity_id=campaign.id,

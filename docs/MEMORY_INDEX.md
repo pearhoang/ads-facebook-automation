@@ -25,6 +25,14 @@
 - `docs/modules/auth-tenant.md`
 - `docs/DECISIONS_INDEX.md`
 
+### Telegram media -> agent -> worker ad execution
+
+- `docs/modules/agent-ad-orchestration.md`
+- `docs/modules/resource-asset-registry.md`
+- `docs/modules/meta-draft-builder.md`
+- `docs/modules/control-plane-worker.md`
+- `docs/DECISIONS_INDEX.md`
+
 ### Execution job, preflight hoặc worker artifact
 
 - `docs/modules/execution-preflight.md`
@@ -93,6 +101,7 @@
 - account/profile/session/noVNC code -> `docs/modules/account-session.md`
 - auth/user/tenant/session cookie code -> `docs/modules/auth-tenant.md`
 - ad account/campaign/approval/audit code -> `docs/modules/campaign-approval.md`
+- ad automation request/timeline/recovery/Telegram media -> `docs/modules/agent-ad-orchestration.md`
 - execution job/preflight/artifact code -> `docs/modules/execution-preflight.md`
 - Meta draft mutation/checkpoint/resume code -> `docs/modules/meta-draft-builder.md`
 - objective catalog, conditional form, setup/default path -> `docs/modules/objective-adapters.md`

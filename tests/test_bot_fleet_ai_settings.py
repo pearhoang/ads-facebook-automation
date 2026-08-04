@@ -706,6 +706,12 @@ def test_mcp_bridge_lists_only_ads_typed_tools():
         "ads_list_campaign_drafts",
         "ads_request_kpi_collection",
         "ads_create_campaign_draft",
+        "ads_resolve_context",
+        "ads_prepare_campaign_work",
+        "ads_confirm_campaign_work",
+        "ads_get_work_status",
+        "ads_list_workflow_learnings",
+        "ads_record_workflow_learning",
     }
     called = control_plane_mcp._handle(
         FakeClient(),

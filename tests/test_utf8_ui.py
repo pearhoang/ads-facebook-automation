@@ -6,6 +6,8 @@ from pathlib import Path
 UI_FILES = (
     Path("backend/app/templates/campaigns.html"),
     Path("backend/app/static/campaigns.js"),
+    Path("backend/app/templates/ad_accounts.html"),
+    Path("backend/app/static/ad_accounts.js"),
     Path("backend/app/static/workspace.css"),
     Path("backend/app/templates/reports.html"),
     Path("backend/app/static/reports.js"),
@@ -57,6 +59,7 @@ def test_copilot_attachment_trigger_is_compact_and_inside_composer_input():
 def test_primary_navigation_uses_native_hermes_dashboard():
     active_templates = (
         Path("backend/app/templates/workspace.html"),
+        Path("backend/app/templates/ad_accounts.html"),
         Path("backend/app/templates/campaigns.html"),
         Path("backend/app/templates/reports.html"),
         Path("backend/app/templates/bot_nodes.html"),
