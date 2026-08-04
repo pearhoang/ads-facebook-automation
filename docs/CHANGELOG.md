@@ -328,3 +328,9 @@
 - Changed: Chuyển tâm radial glow từ content canvas lên góc trên trái sidebar, cho ánh peach phủ nhẹ brand và tan dần xuống navigation; main canvas trở lại neutral.
 - Verified: `13 passed`, diff check sạch; browser local xác nhận glow nằm ở sidebar, canvas chỉ còn neutral base và console không có warning/error.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-04 - Kéo sidebar glow xuyên qua topbar
+
+- Changed: Dùng cùng ellipse `820×390` với tâm chung tại góc viewport để warm glow nối liền từ sidebar qua vùng breadcrumb/title trên topbar; responsive rail dùng offset `82px`.
+- Verified: `13 passed`, diff check sạch; browser local xác nhận sidebar/topbar có cùng computed radial gradient với offset `0px`/`-248px` và console không có warning/error.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
