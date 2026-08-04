@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import json
 from pathlib import Path
 
 import paramiko
@@ -497,6 +498,30 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal_by_default(
     assert "host.docker.internal:9119" in caddy
     assert "@hermes_websocket header Upgrade websocket" in caddy
     assert "header_up Origin http://172.17.0.1:9119" in caddy
+
+
+def test_hermes_config_schema_upgrade_rewrites_unchanged_provider(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr("workers.agent.hermes_config.subprocess.run", lambda *args, **kwargs: None)
+    provider = {
+        "provider_name": "deepseek",
+        "base_url": "https://api.deepseek.com",
+        "model": "deepseek-v4-flash",
+        "api_key": "sk-test-only",
+    }
+    manager = HermesConfigManager(tmp_path / "hermes")
+    manager.home.mkdir(parents=True)
+    legacy = json.dumps(
+        {"schema_version": 7, "provider": provider},
+        sort_keys=True,
+        ensure_ascii=False,
+    ).encode("utf-8")
+    manager.managed_hash_path.write_text(hashlib.sha256(legacy).hexdigest(), encoding="utf-8")
+    manager.api_key_path.write_text("existing-api-key", encoding="utf-8")
+    manager.config_path.write_text("mcp_servers: {}\n", encoding="utf-8")
+
+    assert manager.apply(provider) is True
+    config = __import__("yaml").safe_load(manager.config_path.read_text(encoding="utf-8"))
+    assert "codex_capabilities" in config["mcp_servers"]
 
 
 def test_hermes_experimental_full_access_removes_managed_toolset_blocks(tmp_path: Path, monkeypatch):

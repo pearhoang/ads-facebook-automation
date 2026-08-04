@@ -9,6 +9,7 @@
 - UI: `Hermes Agents` → `Codex Search & Vision` → `Kết nối Codex`.
 - Auth: `codex login --device-auth`, token chỉ ở `<WORKER_DATA_DIR>/codex/auth.json` mode `0600`.
 - Runtime: MCP stdio `workers.agent.codex_capabilities_mcp` có `codex_search`, `codex_vision`.
+- Upgrade: managed Hermes config schema phải tăng khi MCP contract đổi để node hiện hữu không bị short-circuit bởi provider hash cũ.
 - Status: heartbeat `capabilities_json.codex`; control-plane không nhận raw OAuth token.
 - Safety: search/vision read-only; vision chỉ đọc ảnh dưới allowed worker roots; Meta publish/budget boundary giữ nguyên.
 

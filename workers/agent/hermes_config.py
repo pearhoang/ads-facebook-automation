@@ -10,6 +10,8 @@ from pathlib import Path
 
 import yaml
 
+MANAGED_CONFIG_SCHEMA_VERSION = 8
+
 
 class HermesConfigManager:
     def __init__(self, hermes_home: Path):
@@ -24,7 +26,7 @@ class HermesConfigManager:
         if not provider:
             return False
         canonical = json.dumps(
-            {"schema_version": 7, "provider": provider},
+            {"schema_version": MANAGED_CONFIG_SCHEMA_VERSION, "provider": provider},
             sort_keys=True,
             ensure_ascii=False,
         ).encode("utf-8")
