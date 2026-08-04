@@ -409,3 +409,9 @@
 - Changed: Dùng inline loop mark để giữ đúng visual box brand/footer, thêm border-left 1px cho selected nav, tăng section icon lên `18px/2px`, đồng bộ sprite search/bell theo Lucide reference và đưa campaign list lên ngay sau Ad accounts.
 - Fidelity: Topbar search bắt đầu tại `x=526`, notification tại `x=964`, CTA tại `x=1022` ở viewport `1212×910`; section icon và nav content trùng prototype.
 - Verified: Full suite, `node --check backend/app/static/ui.js`, `git diff --check`.
+
+### 2026-08-04 - Deploy Meta Light Focus lên production
+
+- Deploy: Push `main` tại commit `6aeba67`; VPS pull fast-forward từ `379a77c`, chỉ restart `meta-ads-copilot-web.service`.
+- Verified: Preflight có `0` browser session, `0` job active và `0` Chromium; source backup, PostgreSQL dump và worker env backup đã tạo trước deploy. Alembic `20260804_0010 (head)`, web/worker `active`, health `ok`, public Login `200` và Reports `303` khi chưa đăng nhập.
+- Live UI: Browser xác nhận shell Meta Light Focus hiển thị tại Account sessions và `/reports`, không có console warning/error.
