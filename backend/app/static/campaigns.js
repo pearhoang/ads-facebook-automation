@@ -710,11 +710,6 @@ byId("queue-execution-button").addEventListener("click", queueExecution);
 byId("retry-job-button").addEventListener("click", retryJob);
 byId("handoff-job-button").addEventListener("click", openJobHandoff);
 byId("confirm-resource-verify-button").addEventListener("click", verifyMetaResource);
-byId("logout-button").addEventListener("click", async () => {
-  try { await api("/api/auth/logout", { method: "POST", body: "{}" }); window.location.assign("/login"); }
-  catch (error) { showNotice(error.message); }
-});
-
 loadPage();
 
 setInterval(() => {

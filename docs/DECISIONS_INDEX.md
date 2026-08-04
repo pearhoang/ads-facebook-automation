@@ -29,3 +29,4 @@
 | DEC-025 | Chat Web dùng native Hermes Dashboard; Telegram vẫn là kênh lệnh chính | Active | backend/UI/infra/agent | High |
 | DEC-026 | Search/vision fallback dùng per-worker Codex OAuth device login và Hermes MCP read-only | Active | backend/UI/worker/agent | High |
 | DEC-027 | Lưu SSH credential mã hóa theo worker để tái sử dụng remote operation | Active | backend/UI/infra | High |
+| DEC-028 | Chọn Meta Light Focus làm visual canonical cho toàn bộ app chính | Active | UI/templates/static | Medium |

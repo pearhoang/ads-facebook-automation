@@ -4,53 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Campaigns</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-3">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
-  <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Ads Meta Master">
-      <img class="brand-mark" src="/static/ads-meta-master.svg" alt="">
-      <span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span>
-    </a>
-    <nav aria-label="Điều hướng chính">
-      <a class="nav-item" href="/">Tài khoản Facebook</a>
-      <a class="nav-item" href="#ad-accounts">Ad accounts</a>
-      <a class="nav-item is-active" href="/campaigns">Campaigns</a>
-      <a class="nav-item" href="/reports">Báo cáo</a>
-      <a class="nav-item" href="/bot-nodes">Bot VPS</a>
-      <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
-      <a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
-    </nav>
-    <div class="sidebar-footer">
-      <span class="environment-dot"></span>
-      <span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span>
-    </div>
-  </aside>
+  {% set active_nav = "campaigns" %}
+  {% include "_sidebar.html" %}
 
   <main class="main">
     <header class="topbar">
-      <div>
+      <div class="page-identity">
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#layout"></use></svg><span>Campaigns</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Campaign drafts</span></div>
         <h1>Campaign drafts</h1>
-        <p>Soạn, duyệt, kiểm tra profile và tạo Meta draft có checkpoint.</p>
       </div>
       <div class="topbar-actions">
-        <div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div>
-        <button id="logout-button" class="button button-secondary" type="button">Đăng xuất</button>
-        <button id="add-campaign-button" class="button button-primary" type="button">Tạo campaign draft</button>
+        {% set global_search_placeholder = "Tìm campaign, ad account…" %}
+        {% include "_topbar_tools.html" %}
+        <button id="add-campaign-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Tạo campaign draft</button>
       </div>
     </header>
 
+    <div class="content-pane">
+      <div class="content">
     <div class="safety-banner"><strong>Không tự publish.</strong> Preflight chỉ đọc; Meta draft builder được click và điền Campaign/Ad Set/Ad nhưng luôn dừng trước nút <span class="mono-text">Đăng</span>.</div>
 
     <section class="summary" aria-label="Tổng quan campaign">
-      <div><span>Ad accounts</span><strong id="ad-account-count">0</strong></div>
-      <div><span>Drafts</span><strong id="draft-count">0</strong></div>
-      <div><span>Chờ duyệt</span><strong id="pending-count">0</strong></div>
-      <div><span>Đã duyệt nội bộ</span><strong id="approved-count">0</strong></div>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#credit-card"></use></svg></span><div><div class="metric-label">Ad accounts</div><div class="metric-value" id="ad-account-count">0</div><div class="metric-meta">Account đã liên kết</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#files"></use></svg></span><div><div class="metric-label">Campaign drafts</div><div class="metric-value" id="draft-count">0</div><div class="metric-meta">Bản nháp đang quản lý</div></div></article>
+      <article class="metric" data-notification-label="campaign chờ duyệt" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg></span><div><div class="metric-label">Chờ duyệt</div><div class="metric-value" id="pending-count">0</div><div class="metric-meta">Cần owner kiểm tra</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#badge-check"></use></svg></span><div><div class="metric-label">Đã duyệt nội bộ</div><div class="metric-value" id="approved-count">0</div><div class="metric-meta">Chưa publish lên Meta</div></div></article>
     </section>
 
     <div id="notice" class="notice page-notice" hidden></div>
@@ -97,7 +82,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="campaign-list" class="content-section">
       <div class="section-toolbar">
         <div><h2>Danh sách campaign</h2><p>Mọi campaign bắt đầu ở draft và phải được duyệt trước phase thực thi.</p></div>
         <button id="refresh-button" class="button button-secondary" type="button">Làm mới</button>
@@ -111,7 +96,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="campaign-approvals" class="content-section">
       <div class="section-toolbar"><div><h2>Hàng chờ duyệt</h2><p>Owner hoặc admin kiểm tra snapshot trước khi quyết định.</p></div></div>
       <div class="table-wrap">
         <table>
@@ -122,7 +107,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="execution-jobs" class="content-section">
       <div class="section-toolbar"><div><h2>Execution jobs</h2><p>Preflight xác minh profile; draft builder tạo cấu hình trên Meta và dừng trước publish.</p></div></div>
       <div class="table-wrap">
         <table>
@@ -133,7 +118,7 @@
       </div>
     </section>
 
-    <section class="content-section">
+    <section id="audit-log" class="content-section">
       <div class="section-toolbar"><div><h2>Audit gần đây</h2><p>Lịch sử campaign, approval và execution job.</p></div></div>
       <div class="table-wrap">
         <table>
@@ -142,6 +127,8 @@
         </table>
       </div>
     </section>
+      </div>
+    </div>
   </main>
 
   <dialog id="ad-account-dialog">
@@ -280,7 +267,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/campaigns.js" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
+  <script src="/static/campaigns.js?v=meta-light-focus" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

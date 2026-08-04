@@ -195,3 +195,13 @@
 - Decommission, đổi password Hermes Dashboard và Codex connect/disconnect giải mã credential ngay trước background task; plaintext chỉ tồn tại trong RAM và không ghi vào audit, operation message hay log.
 - Revoke worker xóa ciphertext. Telegram Bot Token vẫn là bootstrap secret transient và không thuộc cơ chế lưu SSH này.
 - Worker được enrollment thủ công có thể chưa có credential; remote action phải trả `409` và yêu cầu owner lưu password tại `Bot VPS -> Sửa thiết lập`.
+- Owner xoay mật khẩu Dashboard theo worker bằng SSH credential dùng một lần; control-plane không lưu plaintext, worker thay scrypt hash và signing secret rồi chỉ restart dashboard service để thu hồi mọi phiên Dashboard cũ.
+
+## DEC-028 — Meta Light Focus là visual canonical của app chính
+
+- Toàn bộ surface server-rendered dùng chung app shell trắng, warm-peach glow rất nhẹ ở góc trên trái, canvas `#F1F4F8`, panel trắng và shadow nông.
+- Custom loop mark màu `#0866FF` là brand/favicon; primary CTA và selected navigation dùng indigo `#4F46E5`, hover `#4338CA`. Success giữ green, pending giữ amber và destructive giữ red.
+- KPI dùng một strip liền với divider và semantic bottom accent. Main content không khóa `max-width`, dùng gutter `20px` desktop/tablet và `12px` mobile.
+- Dialog dùng flat header/footer, không accent line hoặc banner trang trí. Native single-select được progressive-enhance thành popover bo `10px`, cách trigger `4px`, nhưng vẫn giữ nguyên field ID, form semantics và event contract.
+- Login được phép dùng gradient xanh–tím–hồng có chủ đích để tạo identity; các màn vận hành còn lại ưu tiên hierarchy dữ liệu và không thêm chrome cạnh tranh với trạng thái/action chính.
+- Quyết định này chỉ thay presentation layer; không thay route, API field, safety boundary hoặc business workflow.

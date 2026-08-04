@@ -4,37 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Bot VPS</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css">
-  <link rel="stylesheet" href="/static/fleet.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-3">
+  <link rel="stylesheet" href="/static/fleet.css?v=meta-light-focus">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-default-repo-url="{{ default_repo_url }}" data-default-repo-branch="{{ default_repo_branch }}">
-  <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Ads Meta Master"><img class="brand-mark" src="/static/ads-meta-master.svg" alt=""><span><strong>Ads Meta Master</strong><small>Meta Ads Automation</small></span></a>
-    <nav aria-label="Điều hướng chính">
-      <a class="nav-item" href="/">Tài khoản Facebook</a>
-      <a class="nav-item" href="/campaigns#ad-accounts">Ad accounts</a>
-      <a class="nav-item" href="/campaigns">Campaigns</a>
-      <a class="nav-item" href="/reports">Báo cáo</a>
-      <a class="nav-item is-active" href="/bot-nodes">Bot VPS</a>
-      <a class="nav-item" href="/hermes-agents">Hermes Agents</a>
-      <a class="nav-item" href="/ai-copilot" target="_blank" rel="noopener">Hermes Dashboard</a>
-    </nav>
-    <div class="sidebar-footer"><span class="environment-dot"></span><span class="sidebar-footer-copy"><strong>Admin</strong><button class="sidebar-account-action" type="button" data-open-password-dialog>Đổi mật khẩu</button></span></div>
-  </aside>
+  {% set active_nav = "bot_nodes" %}
+  {% include "_sidebar.html" %}
   <main class="main">
     <header class="topbar">
-      <div><h1>Bot VPS</h1><p>Fleet browser worker tự đăng ký, tự reconnect và giữ state cục bộ.</p></div>
-      <div class="topbar-actions"><div class="user-identity"><strong>{{ principal.display_name }}</strong><span>{{ principal.email }}</span></div><button id="add-node-button" class="button button-primary" type="button">Thêm Bot VPS</button></div>
+      <div class="page-identity"><div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg><span>Quản trị</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Bot VPS</span></div><h1>Bot VPS</h1></div>
+      <div class="topbar-actions">{% set global_search_placeholder = "Tìm node, host…" %}{% include "_topbar_tools.html" %}<button id="add-node-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thêm Bot VPS</button></div>
     </header>
+
+    <div class="content-pane">
+      <div class="content">
     <section class="summary" aria-label="Tổng quan fleet">
-      <div><span>Tổng node</span><strong id="node-total">0</strong></div>
-      <div><span>Online</span><strong id="node-online">0</strong></div>
-      <div><span>Đang drain</span><strong id="node-draining">0</strong></div>
-      <div><span>Outbox hỗ trợ</span><strong id="node-durable">0</strong></div>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg></span><div><div class="metric-label">Tổng node</div><div class="metric-value" id="node-total">0</div><div class="metric-meta">Worker đã đăng ký</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg></span><div><div class="metric-label">Online</div><div class="metric-value" id="node-online">0</div><div class="metric-meta">Đang kết nối</div></div></article>
+      <article class="metric" data-notification-label="node đang drain" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#pause"></use></svg></span><div><div class="metric-label">Đang drain</div><div class="metric-value" id="node-draining">0</div><div class="metric-meta">Không nhận việc mới</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#database"></use></svg></span><div><div class="metric-label">Outbox hỗ trợ</div><div class="metric-value" id="node-durable">0</div><div class="metric-meta">Có durable outbox</div></div></article>
     </section>
     <div class="safety-banner"><strong>Ranh giới an toàn:</strong> Drain dừng cấp việc mới. Revoke vô hiệu hóa credential nhưng giữ audit và dữ liệu profile. Chỉ gỡ service từ popup sau khi worker đã Drain; browser profile vẫn được giữ.</div>
     <section class="content-section">
@@ -48,6 +40,8 @@
       <div class="table-wrap"><table><thead><tr><th>Loại</th><th>Host</th><th>Trạng thái</th><th>Kết quả</th><th>Thời gian</th></tr></thead><tbody id="operation-rows"></tbody></table></div>
       <div id="operation-empty" class="empty-state compact-empty" hidden><strong>Chưa có thao tác</strong></div>
     </section>
+      </div>
+    </div>
   </main>
 
   <dialog id="enrollment-dialog" class="wide-dialog">
@@ -92,6 +86,7 @@
     <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-confirm>Hủy</button><button id="confirm-node-action" class="button button-danger" type="button">Xác nhận</button></div>
   </dialog>
   {% include "_password_dialog.html" %}
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
   <script src="/static/bot_nodes.js?v=20260804-stored-ssh" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>

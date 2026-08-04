@@ -1,0 +1,14 @@
+<label class="global-search">
+  <svg aria-hidden="true"><use href="/static/ui-icons.svg#search"></use></svg>
+  <input type="search" data-global-search placeholder="{{ global_search_placeholder|default('Tìm trong trang…') }}" aria-label="Tìm kiếm trong trang">
+</label>
+<div class="notification-center">
+  <button class="topbar-icon-button" type="button" data-notification-toggle aria-expanded="false" aria-controls="notification-popover" aria-label="Thông báo">
+    <svg aria-hidden="true"><use href="/static/ui-icons.svg#bell"></use></svg>
+    <span class="notification-dot" data-notification-dot hidden></span>
+  </button>
+  <div id="notification-popover" class="notification-popover" data-notification-popover hidden>
+    <div class="notification-heading"><strong>Thông báo</strong><span data-notification-summary>Đang cập nhật</span></div>
+    <div class="notification-list" data-notification-list></div>
+  </div>
+</div>

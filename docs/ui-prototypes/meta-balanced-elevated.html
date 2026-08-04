@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Meta Balanced Elevated — Ads Meta Master UI Prototype</title>
+  <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M4 24C8 12 14 12 24 24C34 36 40 36 44 24C40 12 34 12 24 24C14 36 8 36 4 24Z' fill='none' stroke='%230866FF' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --page: #f3f6fb;
+      --surface: #ffffff;
+      --surface-soft: #f7f9fc;
+      --border: #d8e0eb;
+      --text: #172033;
+      --muted: #667085;
+      --sidebar-start: #1e293b;
+      --sidebar-mid: #283548;
+      --sidebar-end: #334155;
+      --sidebar-text: #f8fafc;
+      --sidebar-muted: #aeb9ca;
+      --primary: #0668e1;
+      --primary-2: #7c3aed;
+      --success: #16865f;
+      --attention: #4f46e5;
+      --warning: #a76513;
+      --danger: #b83a3a;
+      --shadow-1: 0 2px 7px rgba(15,23,42,.06);
+      --shadow-2: 0 12px 28px rgba(15,23,42,.12);
+      --radius: 12px;
+      --font-display: "Be Vietnam Pro", sans-serif;
+      --font-body: "Inter", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      overflow: hidden;
+      background: var(--page);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.45;
+      text-rendering: optimizeLegibility;
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    .hidden { display: none !important; }
+
+    .prototype-frame { min-height: 100vh; }
+    .screen { min-height: 100vh; }
+    .shell {
+      height: 100vh;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
+    .sidebar {
+      position: relative;
+      z-index: 5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, var(--sidebar-start), var(--sidebar-mid) 54%, var(--sidebar-end));
+      color: var(--sidebar-text);
+      border-right: 1px solid rgba(255,255,255,.08);
+    }
+    .brand {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 16px 18px;
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,.11);
+    }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.26);
+      border-radius: 10px;
+      background: rgba(255,255,255,.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
+    }
+    .brand-mark svg { width: 28px; height: 20px; }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 14px;
+      line-height: 1.25;
+      letter-spacing: -.02em;
+    }
+    .brand-copy span { display: block; margin-top: 3px; color: var(--sidebar-muted); font-size: 11px; }
+    .sidebar-scroll { padding: 16px 12px; }
+    .sidebar-section {
+      margin: 14px 10px 7px;
+      color: var(--sidebar-muted);
+      font-size: 10px;
+      font-weight: 650;
+      letter-spacing: .02em;
+    }
+    .sidebar-section:first-child { margin-top: 0; }
+    .nav-link {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 2px 0;
+      padding: 0 12px;
+      border-radius: 9px;
+      color: var(--sidebar-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    }
+    .nav-link:hover { background: rgba(255,255,255,.09); color: var(--sidebar-text); }
+    .nav-link:focus-visible { outline: 3px solid rgba(255,255,255,.42); outline-offset: 2px; }
+    .nav-link svg { width: 17px; height: 17px; flex: 0 0 auto; stroke-width: 1.8; }
+    .active-nav { color: #fff; font-weight: 650; }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px;
+      border-top: 1px solid rgba(255,255,255,.11);
+    }
+    .sidebar-account-button {
+      width: 100%; min-height: 50px; display: flex; align-items: center; gap: 10px; padding: 7px 9px;
+      border: 0; border-radius: 9px; background: transparent; color: inherit; text-align: left; cursor: pointer;
+      transition: background-color 150ms ease;
+    }
+    .sidebar-account-button:hover { background: rgba(255,255,255,.09); }
+    .sidebar-account-button > svg { width: 14px; height: 14px; margin-left: auto; color: var(--sidebar-muted); }
+    .sidebar-account-copy { min-width: 0; line-height: 1.25; }
+    .sidebar-account-copy strong { display: block; font-family: var(--font-display); font-size: 12px; }
+    .sidebar-account-copy span { display: block; margin-top: 2px; color: var(--sidebar-muted); font-size: 9px; }
+    .app-main { min-width: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    .mobilebar { display: none; }
+    .topbar {
+      position: relative;
+      z-index: 4;
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 26px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(15,23,42,.03);
+    }
+    .page-identity { min-width: 210px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
+    .breadcrumb svg { width: 13px; height: 13px; }
+    .page-identity h1 {
+      margin: 4px 0 0;
+      font-family: var(--font-display);
+      font-size: 19px;
+      line-height: 1.25;
+      letter-spacing: -.025em;
+    }
+    .global-search {
+      position: relative;
+      width: min(420px, 36vw);
+      margin-left: auto;
+    }
+    .global-search > svg { position: absolute; z-index: 1; left: 12px; top: 50%; width: 16px; height: 16px; color: var(--muted); transform: translateY(-50%); }
+    .global-search input {
+      width: 100%; height: 40px; padding: 0 12px 0 36px;
+      border: 1px solid var(--border); border-radius: 9px; background: var(--surface-soft); color: var(--text); outline: none;
+    }
+    .global-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent); background: var(--surface); }
+    .icon-button {
+      height: 40px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+    }
+    .icon-button { position: relative; width: 40px; display: inline-grid; place-items: center; }
+    .icon-button svg { width: 17px; height: 17px; }
+    .icon-button:hover { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); background: var(--surface-soft); }
+    .notification-dot { position: absolute; right: 8px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 2px var(--surface); }
+    .avatar { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: color-mix(in srgb, var(--primary) 13%, var(--surface)); color: var(--primary); font-weight: 700; }
+    .popover-wrap { position: relative; }
+    .popover {
+      position: absolute; right: 0; top: calc(100% + 9px); z-index: 20; width: 260px; padding: 8px;
+      border: 1px solid var(--border); border-radius: 11px; background: #fff; box-shadow: var(--shadow-2); color: #172033;
+    }
+    .sidebar-account-popover { top: auto; right: 12px; bottom: calc(100% + 8px); left: 12px; width: auto; min-width: 220px; }
+    .popover-title { padding: 8px 9px 7px; font-family: var(--font-display); font-size: 12px; border-bottom: 1px solid #e7ebf1; }
+    .popover-row { display: flex; gap: 10px; padding: 10px 9px; border-radius: 8px; font-size: 11px; }
+    .popover-row:hover { background: #f6f8fb; }
+    .popover-row svg { width: 16px; height: 16px; color: #526075; }
+    .popover-row strong { display: block; margin-bottom: 2px; font-size: 11px; }
+    .popover-row span { color: #667085; }
+    .popover-action { width: 100%; display: flex; align-items: center; gap: 9px; padding: 9px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; text-align: left; font-size: 11px; }
+    .popover-action:hover { background: #f6f8fb; }
+    .popover-action svg { width: 16px; height: 16px; }
+
+    .content-pane { min-height: 0; flex: 1; overflow: auto; background: var(--page); }
+    .content { width: min(1420px, 100%); margin: 0 auto; padding: 22px 26px 42px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .metric {
+      --metric-accent: var(--primary);
+      position: relative; min-height: 104px; display: grid; grid-template-columns: 42px 1fr; align-items: center; gap: 12px;
+      padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-1);
+      transition: transform 170ms ease, box-shadow 170ms ease;
+    }
+    .metric:nth-child(2) { --metric-accent: #7c3aed; }
+    .metric:nth-child(3) { --metric-accent: #a76513; }
+    .metric:nth-child(4) { --metric-accent: var(--success); }
+    .metric-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; background: color-mix(in srgb, var(--metric-accent) 10%, var(--surface)); color: var(--metric-accent); }
+    .metric-icon svg { width: 19px; height: 19px; }
+    .metric-label { color: var(--muted); font-size: 11px; }
+    .metric-value { margin-top: 3px; font-family: var(--font-display); font-size: 24px; line-height: 1; letter-spacing: -.035em; }
+    .metric-meta { margin-top: 5px; color: var(--muted); font-size: 9px; }
+    .card { margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-1); overflow: hidden; }
+    .card-head { min-height: 62px; display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px; border-bottom: 1px solid var(--border); }
+    .section-icon { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 9px; background: color-mix(in srgb, var(--primary) 10%, var(--surface)); color: var(--primary); }
+    .section-icon svg { width: 17px; height: 17px; }
+    .section-copy { min-width: 0; }
+    .section-copy h2 { margin: 0; font-family: var(--font-display); font-size: 13px; letter-spacing: -.015em; }
+    .section-copy p { margin: 3px 0 0; color: var(--muted); font-size: 10px; }
+    .card-actions { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+    .button {
+      min-height: 36px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 13px;
+      border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 11px; font-weight: 650; cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease, color 150ms ease, transform 150ms ease;
+    }
+    .button:hover { border-color: color-mix(in srgb, var(--primary) 43%, var(--border)); background: var(--surface-soft); }
+    .button:focus-visible, .icon-button:focus-visible, .sidebar-account-button:focus-visible, .chip:focus-visible, .prototype-switcher button:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 24%, transparent); outline-offset: 2px; }
+    .button svg { width: 15px; height: 15px; }
+    .primary-button { border-color: transparent; background: var(--primary); color: #fff; box-shadow: 0 3px 10px color-mix(in srgb, var(--primary) 22%, transparent); }
+    .primary-button:hover { border-color: transparent; background: color-mix(in srgb, var(--primary) 88%, #000); color: #fff; }
+    .danger-button { border-color: var(--danger); background: var(--danger); color: #fff; }
+    .danger-button:hover { border-color: #9c2f2f; background: #9c2f2f; color: #fff; }
+    .danger-ghost { border-color: color-mix(in srgb, var(--danger) 28%, var(--border)); color: var(--danger); }
+    .danger-ghost:hover { border-color: var(--danger); background: #fff5f5; color: var(--danger); }
+    .toolbar { min-height: 48px; display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-bottom: 1px solid var(--border); background: var(--surface-soft); }
+    .toolbar-label { margin-right: 3px; color: var(--muted); font-size: 10px; font-weight: 650; }
+    .chip { height: 30px; padding: 0 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--muted); font-size: 10px; font-weight: 600; cursor: pointer; }
+    .chip:hover, .chip.active { border-color: color-mix(in srgb, var(--primary) 46%, var(--border)); background: color-mix(in srgb, var(--primary) 7%, var(--surface)); color: var(--primary); }
+    .chip svg { width: 13px; height: 13px; vertical-align: -2px; }
+    .toolbar-spacer { margin-left: auto; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 11px; }
+    th { padding: 9px 14px; background: var(--surface-soft); color: var(--muted); font-size: 9px; font-weight: 700; text-align: left; border-bottom: 1px solid var(--border); }
+    td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr { transition: background-color 140ms ease; }
+    tbody tr:hover { background: color-mix(in srgb, var(--primary) 3.5%, var(--surface)); }
+    .item-title { font-weight: 650; font-size: 11px; }
+    .item-meta { margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 7px; font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .status svg { width: 12px; height: 12px; }
+    .status-draft { background: #eef2ff; color: #4338ca; }
+    .status-pending { background: #fff7e8; color: #8a530d; }
+    .status-approved { background: #e7f7f1; color: #126b4d; }
+    .status-online { background: #e7f7f1; color: #126b4d; }
+    .progress-track { min-width: 230px; display: flex; align-items: center; }
+    .progress-step { display: flex; align-items: center; color: var(--muted); font-size: 8px; white-space: nowrap; }
+    .progress-step::before { content: ""; width: 7px; height: 7px; margin-right: 4px; border: 2px solid var(--border); border-radius: 50%; background: var(--surface); }
+    .progress-step.done { color: var(--success); font-weight: 700; }
+    .progress-step.done::before { border-color: var(--success); background: var(--success); }
+    .progress-step.active { color: var(--primary); font-weight: 700; }
+    .progress-step.active::before { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 13%, transparent); }
+    .progress-line { width: 18px; height: 1px; margin: 0 5px; background: var(--border); }
+    .empty-state { min-height: 170px; display: grid; place-items: center; padding: 28px; text-align: center; }
+    .empty-content { max-width: 360px; }
+    .empty-icon { width: 48px; height: 48px; display: grid; place-items: center; margin: 0 auto 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-soft); color: var(--primary); }
+    .empty-icon svg { width: 23px; height: 23px; }
+    .empty-state h3 { margin: 0; font-family: var(--font-display); font-size: 13px; }
+    .empty-state p { margin: 6px 0 13px; color: var(--muted); font-size: 10px; }
+    .row-actions { display: flex; justify-content: flex-end; gap: 5px; }
+    .row-button { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--muted); cursor: pointer; }
+    .row-button:hover { border-color: color-mix(in srgb, var(--primary) 40%, var(--border)); color: var(--primary); }
+    .row-button.danger:hover { border-color: var(--danger); background: #fff5f5; color: var(--danger); }
+    .row-button svg { width: 14px; height: 14px; }
+
+    .login-screen { min-height: 100vh; display: grid; place-items: center; padding: 34px; background: var(--page); }
+    .login-shell { width: min(1020px, 100%); min-height: 620px; display: grid; grid-template-columns: 1.05fr .95fr; overflow: hidden; border: 1px solid var(--border); border-radius: calc(var(--radius) + 2px); background: var(--surface); box-shadow: var(--shadow-2); }
+    .brand-panel { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 46px; color: #fff; }
+    .brand-panel::after { content: ""; position: absolute; right: -100px; bottom: -120px; width: 340px; height: 340px; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; box-shadow: 0 0 0 46px rgba(255,255,255,.045), 0 0 0 92px rgba(255,255,255,.035); }
+    .login-brand { position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; }
+    .login-brand .brand-mark { width: 42px; height: 42px; }
+    .login-brand strong { font-family: var(--font-display); font-size: 16px; }
+    .login-brand span { display: block; margin-top: 2px; color: rgba(255,255,255,.72); font-size: 11px; }
+    .brand-message { position: relative; z-index: 1; max-width: 420px; }
+    .brand-message h2 { margin: 0; font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px); line-height: 1.16; letter-spacing: -.035em; }
+    .brand-message p { max-width: 380px; margin: 16px 0 0; color: rgba(255,255,255,.76); font-size: 13px; line-height: 1.7; }
+    .trust-list { position: relative; z-index: 1; display: grid; gap: 10px; }
+    .trust-row { display: flex; align-items: center; gap: 9px; color: rgba(255,255,255,.82); font-size: 11px; }
+    .trust-row svg { width: 16px; height: 16px; }
+    .login-card { display: flex; flex-direction: column; justify-content: center; padding: 58px; background: var(--surface); }
+    .login-card h1 { margin: 0; font-family: var(--font-display); font-size: 26px; letter-spacing: -.03em; }
+    .login-card > p { margin: 8px 0 28px; color: var(--muted); font-size: 12px; }
+    .field { margin-bottom: 17px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field label { display: block; margin-bottom: 7px; color: var(--text); font-size: 11px; font-weight: 650; }
+    .field input, .field select, .field textarea {
+      width: 100%; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-soft); color: var(--text); outline: 0;
+    }
+    .field input, .field select { height: 43px; padding: 0 12px; }
+    .field textarea { min-height: 88px; padding: 10px 12px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 13%, transparent); }
+    .field-help { margin-top: 6px; color: var(--muted); font-size: 9px; }
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 42px; }
+    .password-toggle { position: absolute; right: 5px; top: 5px; width: 33px; height: 33px; display: grid; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+    .password-toggle svg { width: 16px; height: 16px; }
+    .login-submit { width: 100%; min-height: 43px; margin-top: 5px; }
+    .login-meta { display: flex; justify-content: space-between; margin-top: 18px; color: var(--muted); font-size: 10px; }
+    .login-meta button { padding: 0; border: 0; background: transparent; color: var(--primary); cursor: pointer; }
+
+    dialog { width: min(660px, calc(100vw - 32px)); max-height: min(820px, calc(100vh - 36px)); padding: 0; overflow: hidden; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; color: #172033; box-shadow: 0 18px 50px rgba(15,23,42,.22); }
+    dialog.small-dialog { width: min(470px, calc(100vw - 32px)); }
+    dialog > form { display: flex; max-height: inherit; flex-direction: column; }
+    dialog::backdrop { background: rgba(15,23,42,.42); }
+    .dialog-head { position: relative; min-height: 74px; display: flex; align-items: center; gap: 0; padding: 17px 20px; border-bottom: 1px solid #e1e6ee; }
+    .dialog-title h2 { margin: 0; font-family: var(--font-display); font-size: 18px; line-height: 1.25; letter-spacing: -.015em; }
+    .dialog-title p { margin: 4px 0 0; color: #667085; font-size: 12px; line-height: 1.45; }
+    .dialog-close { margin-left: auto; width: 32px; height: 32px; display: grid; place-items: center; border: 0; border-radius: 8px; background: #f3f5f8; color: #667085; cursor: pointer; }
+    .dialog-close:hover { background: #e8ecf2; color: #172033; }
+    .dialog-close:focus-visible { outline: 3px solid rgba(6,104,225,.2); outline-offset: 2px; }
+    .dialog-close svg { width: 17px; height: 17px; }
+    .dialog-body { max-height: calc(100vh - 210px); overflow: auto; padding: 20px; scrollbar-width: thin; scrollbar-color: #98a2b3 transparent; scrollbar-gutter: stable; }
+    .dialog-body::-webkit-scrollbar, .custom-select-menu::-webkit-scrollbar { width: 10px; }
+    .dialog-body::-webkit-scrollbar-track, .custom-select-menu::-webkit-scrollbar-track { margin-block: 9px; background: transparent; }
+    .dialog-body::-webkit-scrollbar-thumb, .custom-select-menu::-webkit-scrollbar-thumb { border: 3px solid #fff; border-radius: 999px; background: #98a2b3; }
+    .dialog-body::-webkit-scrollbar-corner, .custom-select-menu::-webkit-scrollbar-corner { background: transparent; }
+    .dialog-fields { display: grid; gap: 18px; }
+    .dialog-fields .field { margin-bottom: 0; }
+    dialog .field label { margin-bottom: 8px; font-size: 12px; }
+    dialog .field input, dialog .field select, dialog .field textarea { border-color: #b9c5d6; background: #fff; }
+    dialog .field input, dialog .field select { height: 44px; }
+    dialog .field-help { margin-top: 7px; font-size: 10.5px; line-height: 1.45; }
+    .required-mark { margin-left: 2px; color: #b83a3a; }
+    .dialog-inline-meta { margin-top: -5px; color: #667085; font-size: 10.5px; line-height: 1.5; }
+    .custom-select { position: relative; }
+    .custom-select-trigger { width: 100%; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px; border: 1px solid #b9c5d6; border-radius: 9px; background: #fff; color: #172033; font: inherit; text-align: left; cursor: pointer; }
+    .custom-select-trigger:hover { border-color: #93a4bb; }
+    .custom-select-trigger:focus-visible, .custom-select-trigger[aria-expanded="true"] { border-color: var(--primary); outline: 0; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 13%, transparent); }
+    .custom-select-trigger svg { width: 16px; height: 16px; flex: 0 0 auto; color: #667085; }
+    .custom-select-menu { position: fixed; inset: auto; z-index: 120; margin: 0; padding: 3px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; color: #172033; box-shadow: 0 6px 18px rgba(15,23,42,.13); scrollbar-width: thin; scrollbar-color: #98a2b3 transparent; }
+    .custom-select-menu:popover-open { display: grid; gap: 0; }
+    .custom-select-menu::backdrop { background: transparent; }
+    .custom-select-option { width: 100%; min-height: 31px; display: flex; align-items: center; padding: 5px 10px; border: 0; border-radius: 6px; background: transparent; color: #344054; font: inherit; text-align: left; cursor: pointer; }
+    .custom-select-option:hover { background: #f3f5f8; color: #172033; }
+    .custom-select-option:focus-visible { outline: 0; background: #eef2ff; color: #3730a3; }
+    .custom-select-option[aria-selected="true"] { background: #eef2ff; color: #4338ca; font-weight: 650; }
+    .dialog-foot { min-height: 64px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid #e1e6ee; background: #fff; }
+    .danger-copy { padding: 4px 0 2px; color: #475467; font-size: 12px; line-height: 1.65; }
+    .danger-copy strong { color: #172033; }
+    .confirm-name { margin-top: 14px; padding: 10px 12px; border: 1px solid #f0c7c7; border-radius: 8px; background: #fff7f7; color: #8e2f2f; font-size: 11px; font-weight: 700; }
+
+    .prototype-switcher { position: fixed; right: 16px; bottom: 16px; z-index: 80; display: flex; align-items: center; gap: 4px; padding: 5px; border: 1px solid rgba(100,116,139,.25); border-radius: 10px; background: rgba(15,23,42,.92); box-shadow: 0 12px 28px rgba(15,23,42,.24); color: #fff; backdrop-filter: blur(10px); }
+    .prototype-switcher span { padding: 0 8px; color: #aeb8ca; font-size: 9px; }
+    .prototype-switcher button, .prototype-switcher a { min-height: 30px; display: inline-flex; align-items: center; gap: 6px; padding: 0 9px; border: 0; border-radius: 7px; background: transparent; color: #cbd5e1; font-size: 10px; text-decoration: none; cursor: pointer; }
+    .prototype-switcher button:hover, .prototype-switcher button.active, .prototype-switcher a:hover { background: rgba(255,255,255,.12); color: #fff; }
+    .prototype-switcher svg { width: 13px; height: 13px; }
+    .prototype-toast { position: fixed; left: 50%; bottom: 22px; z-index: 90; display: flex; align-items: center; gap: 8px; padding: 10px 13px; border-radius: 9px; background: #172033; color: #fff; box-shadow: var(--shadow-2); font-size: 11px; transform: translateX(-50%); }
+    .prototype-toast svg { width: 15px; height: 15px; color: #6ee7b7; }
+
+    body[data-variant="meta-balanced-elevated"] .sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0668e1, #7c3aed);
+}
+body[data-variant="meta-balanced-elevated"] .metrics {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+body[data-variant="meta-balanced-elevated"] .metric {
+  border: 0;
+  border-right: 1px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+}
+body[data-variant="meta-balanced-elevated"] .metric:last-child { border-right: 0; }
+body[data-variant="meta-balanced-elevated"] .metric::after {
+  content: "";
+  position: absolute;
+  inset: auto 16px 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--metric-accent);
+}
+body[data-variant="meta-balanced-elevated"] .active-nav {
+  background: linear-gradient(90deg, #0668e1, #7c3aed);
+}
+body[data-variant="meta-balanced-elevated"] .brand-panel {
+  background: linear-gradient(155deg, #1e293b, #334155 70%, #0668e1);
+}
+
+    @media (max-width: 1120px) {
+      .shell { grid-template-columns: 82px minmax(0, 1fr); }
+      .brand { justify-content: center; padding-inline: 12px; }
+      .brand-copy, .nav-label, .sidebar-section, .sidebar-account-copy, .sidebar-account-button > svg { display: none; }
+      .sidebar-scroll { padding-inline: 12px; }
+      .nav-link { justify-content: center; padding: 0; }
+      .sidebar-footer { display: grid; place-items: center; padding-inline: 12px; }
+      .sidebar-account-button { width: 50px; justify-content: center; padding-inline: 0; }
+      .sidebar-account-popover { top: auto; left: calc(100% + 8px); right: auto; bottom: 12px; width: 230px; }
+      .global-search { width: min(320px, 32vw); }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      body[data-variant="meta-balanced-elevated"] .metrics { gap: 0; }
+      body[data-variant="meta-balanced-elevated"] .metric:nth-child(2) { border-right: 0; }
+      body[data-variant="meta-balanced-elevated"] .metric:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+      .content { padding-inline: 20px; }
+      .login-card { padding: 42px; }
+      .brand-panel { padding: 38px; }
+    }
+
+    @media (max-width: 720px) {
+      body { overflow: auto; }
+      .screen { min-height: 100dvh; }
+      .shell { height: auto; min-height: 100dvh; }
+      .shell { display: block; }
+      .sidebar { display: none; }
+      .mobilebar { min-height: 58px; display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: linear-gradient(90deg, var(--sidebar-start), var(--sidebar-end)); color: #fff; }
+      .mobilebar .brand-mark { width: 34px; height: 34px; }
+      .mobilebar strong { font-family: var(--font-display); font-size: 12px; }
+      .mobile-nav { display: flex; gap: 5px; margin-left: auto; }
+      .mobile-nav button { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.2); border-radius: 8px; background: rgba(255,255,255,.1); color: #fff; }
+      .mobile-nav svg { width: 16px; height: 16px; }
+      .topbar { min-height: auto; flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+      .page-identity { min-width: 0; flex: 1; }
+      .page-identity h1 { font-size: 17px; }
+      .global-search { order: 3; width: 100%; }
+      .topbar .popover-wrap { display: none; }
+      .content { padding: 14px 12px 78px; }
+      .metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .metric { min-height: 92px; grid-template-columns: 34px 1fr; gap: 8px; padding: 12px; }
+      .metric-icon { width: 32px; height: 32px; }
+      .metric-value { font-size: 20px; }
+      body[data-variant="meta-balanced-elevated"] .metrics { display: grid; }
+      .card-head { align-items: flex-start; flex-wrap: wrap; }
+      .card-actions { width: 100%; margin-left: 46px; }
+      .toolbar { overflow-x: auto; }
+      .toolbar-label { display: none; }
+      .toolbar-spacer { margin-left: 0; }
+      .login-screen { padding: 12px; }
+      .login-shell { min-height: calc(100dvh - 24px); grid-template-columns: 1fr; }
+      .brand-panel { display: none; }
+      .login-card { padding: 30px 22px; }
+      .field-row { grid-template-columns: 1fr; gap: 0; }
+      dialog { max-height: calc(100dvh - 20px); }
+      .dialog-body { max-height: calc(100dvh - 165px); }
+      .prototype-switcher { right: 8px; bottom: 8px; max-width: calc(100vw - 16px); }
+      .prototype-switcher span { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body data-variant="meta-balanced-elevated">
+  <div class="prototype-frame">
+    <section class="screen" data-screen="dashboard">
+      <div class="shell">
+        <aside class="sidebar" aria-label="Điều hướng chính">
+          <a class="brand" href="#" data-screen-target="dashboard" aria-label="Ads Meta Master">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="brand-copy"><strong>Ads Meta Master</strong><span>Meta Ads Automation</span></span>
+          </a>
+          <nav class="sidebar-scroll">
+            <div class="sidebar-section">Điều hướng</div>
+            <a class="nav-link" href="#"><i data-lucide="users-round"></i><span class="nav-label">Tài khoản Facebook</span></a>
+            <a class="nav-link" href="#"><i data-lucide="credit-card"></i><span class="nav-label">Ad accounts</span></a>
+            <a class="nav-link active-nav" href="#"><i data-lucide="layout-dashboard"></i><span class="nav-label">Campaigns</span></a>
+            <a class="nav-link" href="#"><i data-lucide="chart-no-axes-combined"></i><span class="nav-label">Báo cáo</span></a>
+            <div class="sidebar-section">Quản trị</div>
+            <a class="nav-link" href="#"><i data-lucide="server-cog"></i><span class="nav-label">Bot VPS</span></a>
+            <a class="nav-link" href="#"><i data-lucide="bot"></i><span class="nav-label">Hermes Agents</span></a>
+            <a class="nav-link" href="#"><i data-lucide="messages-square"></i><span class="nav-label">Hermes Dashboard</span></a>
+          </nav>
+          <footer class="sidebar-footer popover-wrap">
+            <button class="sidebar-account-button" type="button" data-popover-toggle="admin" aria-label="Mở menu Admin">
+              <span class="avatar account-brand-mark" aria-hidden="true"><svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="sidebar-account-copy"><strong>Admin</strong><span>Tài khoản</span></span>
+              <i data-lucide="chevron-up"></i>
+            </button>
+            <div class="popover sidebar-account-popover hidden" data-popover="admin">
+              <button class="popover-action" type="button" data-screen-target="login"><i data-lucide="log-in"></i> Xem giao diện đăng nhập</button>
+              <button class="popover-action" type="button" data-dialog-open="password-dialog"><i data-lucide="key-round"></i> Đổi mật khẩu</button>
+              <button class="popover-action" type="button"><i data-lucide="log-out"></i> Đăng xuất</button>
+            </div>
+          </footer>
+        </aside>
+
+        <main class="app-main">
+          <div class="mobilebar">
+            <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <strong>Ads Meta Master</strong>
+            <div class="mobile-nav"><button type="button" aria-label="Tìm kiếm"><i data-lucide="search"></i></button><button type="button" aria-label="Thông báo"><i data-lucide="bell"></i></button></div>
+          </div>
+          <header class="topbar">
+            <div class="page-identity">
+              <div class="breadcrumb"><i data-lucide="layout-dashboard"></i><span>Campaigns</span><i data-lucide="chevron-right"></i><span>Campaign drafts</span></div>
+              <h1>Campaign drafts</h1>
+            </div>
+            <label class="global-search">
+              <i data-lucide="search"></i>
+              <input type="search" data-global-search placeholder="Tìm campaign, ad account…" aria-label="Tìm kiếm toàn cục">
+            </label>
+            <div class="popover-wrap">
+              <button class="icon-button" type="button" data-popover-toggle="notifications" aria-label="Thông báo"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+              <div class="popover hidden" data-popover="notifications">
+                <div class="popover-title">Thông báo gần đây</div>
+                <div class="popover-row"><i data-lucide="circle-check-big"></i><div><strong>Preflight đã hoàn tất</strong><span>Campaign “Nhận biết thương hiệu” · 4 phút trước</span></div></div>
+                <div class="popover-row"><i data-lucide="clock-3"></i><div><strong>Đang chờ duyệt nội bộ</strong><span>1 campaign draft cần kiểm tra</span></div></div>
+              </div>
+            </div>
+            <button class="button primary-button" type="button" data-dialog-open="campaign-dialog"><i data-lucide="plus"></i>Tạo campaign draft</button>
+          </header>
+
+          <div class="content-pane">
+            <div class="content">
+              <section class="metrics" aria-label="Tổng quan Campaign drafts">
+                <article class="metric"><span class="metric-icon"><i data-lucide="credit-card"></i></span><div><div class="metric-label">Ad accounts</div><div class="metric-value">2</div><div class="metric-meta">1 account sẵn sàng</div></div></article>
+                <article class="metric"><span class="metric-icon"><i data-lucide="files"></i></span><div><div class="metric-label">Campaign drafts</div><div class="metric-value">6</div><div class="metric-meta">3 draft đang xử lý</div></div></article>
+                <article class="metric"><span class="metric-icon"><i data-lucide="clock-3"></i></span><div><div class="metric-label">Chờ duyệt</div><div class="metric-value">1</div><div class="metric-meta">Cần owner kiểm tra</div></div></article>
+                <article class="metric"><span class="metric-icon"><i data-lucide="badge-check"></i></span><div><div class="metric-label">Đã duyệt nội bộ</div><div class="metric-value">3</div><div class="metric-meta">Chưa publish lên Meta</div></div></article>
+              </section>
+
+              <section class="card card-accounts">
+                <div class="card-head">
+                  <span class="section-icon"><i data-lucide="credit-card"></i></span>
+                  <div class="section-copy"><h2>Ad accounts</h2><p>Liên kết ad account với tài khoản Facebook và đơn vị tiền tệ.</p></div>
+                  <div class="card-actions"><button class="button" type="button"><i data-lucide="plus"></i>Thêm ad account</button></div>
+                </div>
+                <div class="table-scroll">
+                  <table>
+                    <thead><tr><th>Ad account</th><th>Tài khoản Facebook</th><th>Tiền tệ</th><th>Múi giờ</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                    <tbody>
+                      <tr data-search-row><td><div class="item-title">Lush Ads Main</div><div class="item-meta">act_2321387601366948</div></td><td>Stable Diffusion Page</td><td>USD</td><td>Asia/Ho_Chi_Minh</td><td><span class="status status-online"><i data-lucide="circle-check"></i>Sẵn sàng</span></td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Sửa ad account"><i data-lucide="pencil"></i></button><button class="row-button" type="button" aria-label="Xem chi tiết"><i data-lucide="arrow-up-right"></i></button></div></td></tr>
+                      <tr data-search-row><td><div class="item-title">Campaign Lab</div><div class="item-meta">act_981240010348211</div></td><td>Tài khoản Facebook đầu tiên</td><td>VND</td><td>Asia/Ho_Chi_Minh</td><td><span class="status status-pending"><i data-lucide="clock-3"></i>Cần xác minh</span></td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Sửa ad account"><i data-lucide="pencil"></i></button><button class="row-button" type="button" aria-label="Xem chi tiết"><i data-lucide="arrow-up-right"></i></button></div></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="card card-campaigns">
+                <div class="card-head">
+                  <span class="section-icon"><i data-lucide="layout-dashboard"></i></span>
+                  <div class="section-copy"><h2>Campaign drafts</h2><p>Soạn, duyệt, preflight và theo dõi checkpoint trước khi thao tác trên Meta.</p></div>
+                  <div class="card-actions"><button class="button primary-button" type="button" data-dialog-open="campaign-dialog"><i data-lucide="plus"></i>Tạo draft</button></div>
+                </div>
+                <div class="toolbar" aria-label="Bộ lọc campaign">
+                  <span class="toolbar-label">Trạng thái</span>
+                  <button class="chip active" type="button" data-filter="all">Tất cả 6</button>
+                  <button class="chip" type="button" data-filter="draft">Bản nháp 2</button>
+                  <button class="chip" type="button" data-filter="pending">Chờ duyệt 1</button>
+                  <button class="chip" type="button" data-filter="approved">Đã duyệt 3</button>
+                  <span class="toolbar-spacer"></span>
+                  <button class="chip" type="button"><i data-lucide="arrow-up-down"></i> Mới cập nhật</button>
+                  <button class="chip" type="button"><i data-lucide="sliders-horizontal"></i> Bộ lọc</button>
+                </div>
+                <div class="table-scroll">
+                  <table>
+                    <thead><tr><th>Campaign</th><th>Objective</th><th>Tiến trình</th><th>Trạng thái</th><th>Cập nhật</th><th>Thao tác</th></tr></thead>
+                    <tbody>
+                      <tr data-search-row data-status="draft"><td><div class="item-title">E2E Nhận biết — Stable Diffusion</div><div class="item-meta">Ad account: Lush Ads Main</div></td><td>Awareness</td><td><div class="progress-track"><span class="progress-step done">Campaign</span><span class="progress-line"></span><span class="progress-step active">Ad Set</span><span class="progress-line"></span><span class="progress-step">Ad</span><span class="progress-line"></span><span class="progress-step">Review</span></div></td><td><span class="status status-draft"><i data-lucide="file-pen-line"></i>Bản nháp</span></td><td>12 phút trước</td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Mở draft"><i data-lucide="arrow-up-right"></i></button><button class="row-button danger" type="button" data-dialog-open="danger-dialog" aria-label="Xóa bản nháp"><i data-lucide="trash-2"></i></button></div></td></tr>
+                      <tr data-search-row data-status="pending"><td><div class="item-title">Campaign Mức độ nhận biết mới</div><div class="item-meta">Ad account: Lush Ads Main</div></td><td>Awareness</td><td><div class="progress-track"><span class="progress-step done">Campaign</span><span class="progress-line"></span><span class="progress-step done">Ad Set</span><span class="progress-line"></span><span class="progress-step active">Ad</span><span class="progress-line"></span><span class="progress-step">Review</span></div></td><td><span class="status status-pending"><i data-lucide="clock-3"></i>Chờ duyệt</span></td><td>38 phút trước</td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Mở draft"><i data-lucide="arrow-up-right"></i></button><button class="row-button danger" type="button" data-dialog-open="danger-dialog" aria-label="Xóa bản nháp"><i data-lucide="trash-2"></i></button></div></td></tr>
+                      <tr data-search-row data-status="approved"><td><div class="item-title">Traffic — Landing Page Summer</div><div class="item-meta">Ad account: Campaign Lab</div></td><td>Traffic</td><td><div class="progress-track"><span class="progress-step done">Campaign</span><span class="progress-line"></span><span class="progress-step done">Ad Set</span><span class="progress-line"></span><span class="progress-step done">Ad</span><span class="progress-line"></span><span class="progress-step done">Review</span></div></td><td><span class="status status-approved"><i data-lucide="badge-check"></i>Đã duyệt nội bộ</span></td><td>Hôm qua</td><td><div class="row-actions"><button class="row-button" type="button" aria-label="Mở draft"><i data-lucide="arrow-up-right"></i></button><button class="row-button danger" type="button" data-dialog-open="danger-dialog" aria-label="Xóa bản nháp"><i data-lucide="trash-2"></i></button></div></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="card card-resources">
+                <div class="card-head">
+                  <span class="section-icon"><i data-lucide="blocks"></i></span>
+                  <div class="section-copy"><h2>Meta resources</h2><p>Page, Instagram, Pixel/Dataset, Instant Form và App dùng exact-match trong Ads Manager.</p></div>
+                  <div class="card-actions"><button class="button" type="button"><i data-lucide="plus"></i>Thêm resource</button></div>
+                </div>
+                <div class="empty-state"><div class="empty-content"><div class="empty-icon"><i data-lucide="database-zap"></i></div><h3>Chưa có Meta resource</h3><p>Thêm resource sau khi bạn nhìn thấy đúng tên hoặc ID trong Ads Manager.</p><button class="button primary-button" type="button"><i data-lucide="plus"></i>Thêm resource</button></div></div>
+              </section>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="screen login-screen hidden" data-screen="login">
+      <div class="login-shell">
+        <aside class="brand-panel">
+          <div class="login-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 42 28" fill="none"><path d="M3 14C7 4 13 4 21 14C29 24 35 24 39 14C35 4 29 4 21 14C13 24 7 24 3 14Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><strong>Ads Meta Master</strong><span>Meta Ads Automation</span></div></div>
+          <div class="brand-message"><h2>Kiểm soát campaign draft trước khi chạm tới Meta.</h2><p>Quản lý tài khoản, kiểm tra preflight và theo dõi từng checkpoint trong một workspace vận hành rõ ràng.</p></div>
+          <div class="trust-list"><div class="trust-row"><i data-lucide="shield-check"></i>Không tự publish campaign</div><div class="trust-row"><i data-lucide="lock-keyhole"></i>Phiên đăng nhập được bảo vệ</div><div class="trust-row"><i data-lucide="history"></i>Mọi thay đổi đều có audit trail</div></div>
+        </aside>
+        <main class="login-card">
+          <h1>Đăng nhập workspace</h1>
+          <p>Tiếp tục vào Ads Meta Master bằng tài khoản được cấp.</p>
+          <form data-prototype-form="login">
+            <div class="field"><label for="login-username">Tài khoản</label><input id="login-username" name="username" autocomplete="username" value="admin" required></div>
+            <div class="field"><label for="login-password">Mật khẩu</label><div class="password-wrap"><input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required><button class="password-toggle" type="button" data-password-toggle="login-password" aria-label="Hiện mật khẩu"><i data-lucide="eye"></i></button></div></div>
+            <button class="button primary-button login-submit" type="submit"><i data-lucide="log-in"></i>Đăng nhập</button>
+          </form>
+          <div class="login-meta"><span>Không có đăng ký công khai</span><button type="button" data-screen-target="dashboard">Quay lại prototype</button></div>
+        </main>
+      </div>
+    </section>
+  </div>
+
+  <dialog id="campaign-dialog">
+    <form data-prototype-form="campaign">
+      <header class="dialog-head"><div class="dialog-title"><h2>Tạo campaign draft</h2><p>Chỉ lưu bản nháp trong Ads Meta Master.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <div class="dialog-body">
+        <div class="dialog-fields"><div class="field"><label for="campaign-account">Ad account<span class="required-mark" aria-hidden="true">*</span></label><div class="custom-select" data-custom-select><button class="custom-select-trigger" id="campaign-account" type="button" popovertarget="campaign-account-menu" aria-haspopup="listbox" aria-expanded="false" data-custom-select-trigger><span data-custom-select-label>Lush Ads Main · USD</span><i data-lucide="chevron-down"></i></button><input type="hidden" name="campaign_account" value="lush-main" data-custom-select-value><div class="custom-select-menu" id="campaign-account-menu" popover="auto" role="listbox" aria-labelledby="campaign-account" data-custom-select-menu><button class="custom-select-option" type="button" role="option" aria-selected="true" data-value="lush-main">Lush Ads Main · USD</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="campaign-lab">Campaign Lab · VND</button></div></div><div class="field-help">Resource và asset sẽ được lọc theo ad account này.</div></div><div class="field"><label for="campaign-name">Tên campaign<span class="required-mark" aria-hidden="true">*</span></label><input id="campaign-name" value="Awareness — August Launch" required></div><div class="field-row"><div class="field"><label for="campaign-objective">Objective<span class="required-mark" aria-hidden="true">*</span></label><div class="custom-select" data-custom-select><button class="custom-select-trigger" id="campaign-objective" type="button" popovertarget="campaign-objective-menu" aria-haspopup="listbox" aria-expanded="false" data-custom-select-trigger><span data-custom-select-label>Awareness</span><i data-lucide="chevron-down"></i></button><input type="hidden" name="campaign_objective" value="Awareness" data-custom-select-value><div class="custom-select-menu" id="campaign-objective-menu" popover="auto" role="listbox" aria-labelledby="campaign-objective" data-custom-select-menu><button class="custom-select-option" type="button" role="option" aria-selected="true" data-value="Awareness">Awareness</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="Traffic">Traffic</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="Engagement">Engagement</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="Leads">Leads</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="App promotion">App promotion</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="Sales">Sales</button></div></div></div><div class="field"><label for="campaign-budget">Ngân sách mỗi ngày (USD)<span class="required-mark" aria-hidden="true">*</span></label><input id="campaign-budget" inputmode="decimal" value="50.00" required></div></div><div class="dialog-inline-meta">Bản nháp sẽ dừng ở Review để bạn kiểm tra trước khi tiếp tục.</div><div class="field"><label for="campaign-note">Ghi chú (không bắt buộc)</label><textarea id="campaign-note" placeholder="Ví dụ: Kiểm tra nội dung và ngân sách trước khi tiếp tục."></textarea></div></div>
+      </div>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit">Tạo bản nháp</button></footer>
+    </form>
+  </dialog>
+
+  <dialog class="small-dialog" id="password-dialog">
+    <form data-prototype-form="password">
+      <header class="dialog-head"><div class="dialog-title"><h2>Đổi mật khẩu</h2><p>Các phiên khác sẽ được đăng xuất sau khi cập nhật.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <div class="dialog-body"><div class="field"><label for="current-password">Mật khẩu hiện tại</label><input id="current-password" type="password" autocomplete="current-password" required></div><div class="field"><label for="new-password">Mật khẩu mới</label><input id="new-password" type="password" autocomplete="new-password" minlength="4" required><div class="field-help">Tối thiểu 4 ký tự. Prototype không gửi hoặc lưu mật khẩu.</div></div><div class="field"><label for="confirm-password">Nhập lại mật khẩu mới</label><input id="confirm-password" type="password" autocomplete="new-password" minlength="4" required></div></div>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit">Cập nhật mật khẩu</button></footer>
+    </form>
+  </dialog>
+
+  <dialog class="small-dialog" id="danger-dialog">
+    <form data-prototype-form="danger">
+      <header class="dialog-head"><div class="dialog-title"><h2>Xóa bản nháp?</h2><p>Bạn không thể khôi phục thao tác này.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
+      <div class="dialog-body"><div class="danger-copy">Bản nháp sẽ bị xóa khỏi Ads Meta Master. Thao tác này <strong>không xóa campaign trên Meta</strong>, nhưng lịch sử chỉnh sửa chưa lưu sẽ không thể khôi phục.</div><div class="confirm-name">E2E Nhận biết — Stable Diffusion</div></div>
+      <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Giữ bản nháp</button><button class="button danger-button" type="submit">Xóa bản nháp</button></footer>
+    </form>
+  </dialog>
+
+  <nav class="prototype-switcher" aria-label="Điều khiển prototype">
+    <span>B · Cân bằng</span>
+    <button class="active" type="button" data-screen-target="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</button>
+    <button type="button" data-screen-target="login"><i data-lucide="log-in"></i>Đăng nhập</button>
+    <button type="button" data-dialog-open="campaign-dialog"><i data-lucide="gallery-horizontal-end"></i>Dialogs</button>
+    <a href="index.html"><i data-lucide="panel-top"></i>3 phương án</a>
+  </nav>
+  <div class="prototype-toast hidden" role="status" aria-live="polite"><i data-lucide="circle-check"></i><span></span></div>
+
+  <script>
+    (function () {
+      const screens = Array.from(document.querySelectorAll('[data-screen]'));
+      const screenButtons = Array.from(document.querySelectorAll('[data-screen-target]'));
+      const toast = document.querySelector('.prototype-toast');
+      const toastText = toast.querySelector('span');
+
+      function showToast(message) {
+        toastText.textContent = message;
+        toast.classList.remove('hidden');
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(function () { toast.classList.add('hidden'); }, 2400);
+      }
+
+      function setScreen(name) {
+        screens.forEach(function (screen) {
+          screen.classList.toggle('hidden', screen.getAttribute('data-screen') !== name);
+        });
+        document.querySelectorAll('.prototype-switcher [data-screen-target]').forEach(function (button) {
+          button.classList.toggle('active', button.getAttribute('data-screen-target') === name);
+        });
+        document.querySelectorAll('[data-popover]').forEach(function (popover) { popover.classList.add('hidden'); });
+      }
+
+      screenButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          setScreen(button.getAttribute('data-screen-target'));
+        });
+      });
+
+      function positionCustomSelect(trigger, menu) {
+        const rect = trigger.getBoundingClientRect();
+        const gap = 4;
+        const viewportPadding = 12;
+        const menuHeight = Math.min(menu.scrollHeight, 280);
+        const roomBelow = window.innerHeight - rect.bottom - gap - viewportPadding;
+        const roomAbove = rect.top - gap - viewportPadding;
+        const openAbove = roomBelow < Math.min(menuHeight, 168) && roomAbove > roomBelow;
+        const left = Math.min(Math.max(viewportPadding, rect.left), window.innerWidth - rect.width - viewportPadding);
+        const top = openAbove ? Math.max(viewportPadding, rect.top - gap - menuHeight) : rect.bottom + gap;
+        menu.style.width = Math.round(rect.width) + 'px';
+        menu.style.maxHeight = '280px';
+        menu.style.left = Math.round(left) + 'px';
+        menu.style.top = Math.round(top) + 'px';
+      }
+
+      document.querySelectorAll('[data-custom-select]').forEach(function (root) {
+        const trigger = root.querySelector('[data-custom-select-trigger]');
+        const label = root.querySelector('[data-custom-select-label]');
+        const value = root.querySelector('[data-custom-select-value]');
+        const menu = root.querySelector('[data-custom-select-menu]');
+        const options = Array.from(menu.querySelectorAll('[role="option"]'));
+
+        menu.addEventListener('toggle', function (event) {
+          const isOpen = event.newState === 'open';
+          trigger.setAttribute('aria-expanded', String(isOpen));
+          if (!isOpen) return;
+          positionCustomSelect(trigger, menu);
+          const selected = options.find(function (option) { return option.getAttribute('aria-selected') === 'true'; }) || options[0];
+          if (selected) selected.focus();
+        });
+
+        options.forEach(function (option, index) {
+          option.addEventListener('click', function () {
+            options.forEach(function (candidate) { candidate.setAttribute('aria-selected', String(candidate === option)); });
+            label.textContent = option.textContent.trim();
+            value.value = option.getAttribute('data-value') || option.textContent.trim();
+            menu.hidePopover();
+            trigger.focus();
+          });
+          option.addEventListener('keydown', function (event) {
+            let nextIndex = null;
+            if (event.key === 'ArrowDown') nextIndex = (index + 1) % options.length;
+            if (event.key === 'ArrowUp') nextIndex = (index - 1 + options.length) % options.length;
+            if (event.key === 'Home') nextIndex = 0;
+            if (event.key === 'End') nextIndex = options.length - 1;
+            if (nextIndex === null) return;
+            event.preventDefault();
+            options[nextIndex].focus();
+          });
+        });
+
+        trigger.addEventListener('keydown', function (event) {
+          if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+          event.preventDefault();
+          if (!menu.matches(':popover-open')) menu.showPopover();
+        });
+
+        window.addEventListener('resize', function () {
+          if (menu.matches(':popover-open')) positionCustomSelect(trigger, menu);
+        });
+      });
+
+      document.querySelectorAll('[data-dialog-open]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const dialog = document.getElementById(button.getAttribute('data-dialog-open'));
+          if (dialog && !dialog.open) {
+            dialog.showModal();
+            const preferredFocus = dialog.querySelector('[data-custom-select-trigger], input:not([readonly]), select:not([disabled]), textarea:not([readonly])')
+              || dialog.querySelector('.dialog-foot [data-dialog-close]');
+            if (preferredFocus) preferredFocus.focus();
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-dialog-close]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const dialog = button.closest('dialog');
+          if (dialog) dialog.close();
+        });
+      });
+
+      document.querySelectorAll('dialog').forEach(function (dialog) {
+        dialog.addEventListener('click', function (event) {
+          if (event.target === dialog) dialog.close();
+        });
+      });
+
+      document.querySelectorAll('[data-prototype-form]').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          const type = form.getAttribute('data-prototype-form');
+          const messages = {
+            login: 'Đăng nhập prototype thành công — không có dữ liệu được gửi.',
+            campaign: 'Đã mô phỏng tạo campaign draft.',
+            password: 'Đã mô phỏng cập nhật mật khẩu.',
+            danger: 'Đã mô phỏng xóa bản nháp.'
+          };
+          const dialog = form.closest('dialog');
+          if (dialog) dialog.close();
+          if (type === 'login') setScreen('dashboard');
+          showToast(messages[type]);
+        });
+      });
+
+      document.querySelectorAll('[data-popover-toggle]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const name = button.getAttribute('data-popover-toggle');
+          document.querySelectorAll('[data-popover]').forEach(function (popover) {
+            const isTarget = popover.getAttribute('data-popover') === name;
+            popover.classList.toggle('hidden', !isTarget || !popover.classList.contains('hidden'));
+          });
+        });
+      });
+
+      document.addEventListener('click', function (event) {
+        if (!event.target.closest('.popover-wrap')) {
+          document.querySelectorAll('[data-popover]').forEach(function (popover) { popover.classList.add('hidden'); });
+        }
+      });
+
+      document.querySelectorAll('[data-filter]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          const filter = chip.getAttribute('data-filter');
+          document.querySelectorAll('[data-filter]').forEach(function (item) { item.classList.toggle('active', item === chip); });
+          document.querySelectorAll('[data-status]').forEach(function (row) {
+            row.classList.toggle('hidden', filter !== 'all' && row.getAttribute('data-status') !== filter);
+          });
+        });
+      });
+
+      const globalSearch = document.querySelector('[data-global-search]');
+      globalSearch.addEventListener('input', function () {
+        const query = globalSearch.value.trim().toLocaleLowerCase('vi');
+        document.querySelectorAll('[data-search-row]').forEach(function (row) {
+          row.classList.toggle('hidden', query.length > 0 && !row.textContent.toLocaleLowerCase('vi').includes(query));
+        });
+      });
+
+      document.querySelectorAll('[data-password-toggle]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const input = document.getElementById(button.getAttribute('data-password-toggle'));
+          const visible = input.type === 'text';
+          input.type = visible ? 'password' : 'text';
+          button.setAttribute('aria-label', visible ? 'Hiện mật khẩu' : 'Ẩn mật khẩu');
+          button.innerHTML = visible ? '<i data-lucide="eye"></i>' : '<i data-lucide="eye-off"></i>';
+          lucide.createIcons();
+        });
+      });
+
+      lucide.createIcons();
+    }());
+  </script>
+</body>
+</html>
