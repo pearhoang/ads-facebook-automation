@@ -16,8 +16,10 @@
 - Remote access: device login/disconnect dùng SSH credential đã mã hóa theo worker; UI không hỏi lại password và API không trả secret.
 - Safety: search/vision read-only; vision chỉ đọc ảnh dưới allowed worker roots; Meta publish/budget boundary giữ nguyên.
 
-## Remaining production check
+## Production verification 2026-08-04
 
-- Deploy source/installer/service env lên worker hiện tại.
-- User hoàn tất device login bằng link/code.
-- Smoke `codex_search` với truy vấn có nguồn và `codex_vision` với một ảnh test; xác nhận DeepSeek gọi đúng tool từ Telegram/Hermes Dashboard.
+- Worker heartbeat báo Codex `configured=true`, nhận diện account và plan `plus`; MCP test khám phá đủ `codex_search`, `codex_vision`.
+- Search smoke dùng `deepseek-v4-flash`: DeepSeek tự gọi `mcp__codex_capabilities__codex_search` hai lần, trả lời có ba URL nguồn truy cập được. Session smoke source `tool` đã xóa sau kiểm thử.
+- Vision smoke đi đúng Telegram session `20260801_190044_4241613b`: ảnh được lưu vào Hermes cache, DeepSeek mô tả schema rồi gọi `mcp__codex_capabilities__codex_vision` một lần và trả đúng nội dung ảnh cùng marker `KIEMTHU-VISION-804`.
+- Hai follow-up Telegram không kèm ảnh vẫn nhớ vai trò Meta Ads, workspace, marker và cảnh ảnh; `vision` call count giữ nguyên một, chứng minh dùng context thay vì đọc lại ảnh.
+- Bốn service giữ `active`, Hermes PID/start timestamp không đổi và public health vẫn `ok`. DeepSeek có `503 Service is too busy` ngắn hạn nhưng Hermes retry thành công, không mất session/tool result.

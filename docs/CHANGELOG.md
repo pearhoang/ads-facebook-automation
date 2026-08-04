@@ -219,6 +219,8 @@
 
 ### 2026-08-04 - Codex Search & Vision fallback cho Hermes
 
+- Verified: E2E production đạt cho Search và Vision: DeepSeek tự gọi `codex_search` hai lần và trả URL nguồn; ảnh Telegram gọi `codex_vision` một lần, follow-up giữ đúng Meta Ads/image context mà không đọc lại ảnh. Hermes/Telegram session được giữ nguyên, bốn service active và health `ok`.
+- Observed: DeepSeek Flash có vài phản hồi `503 Service is too busy`; Hermes retry thành công. Đây là provider transient, không phải lỗi Codex OAuth/MCP hay gateway.
 - Changed: Lưu SSH password quản trị dưới dạng Fernet ciphertext theo worker để Add Bot chỉ nhập một lần; Edit Bot VPS có thể rotate, revoke xóa credential và mọi remote operation chỉ giải mã trong RAM.
 - Changed: Codex connect/disconnect, đổi mật khẩu Hermes Dashboard và decommission dùng SSH credential đã lưu; UI/API chỉ hiển thị cờ đã/chưa cấu hình và không trả secret.
 - Added: Alembic `20260804_0010` thêm `ssh_password_ciphertext` cho worker/enrollment.
