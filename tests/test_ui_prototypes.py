@@ -191,6 +191,24 @@ def test_dialogs_use_flat_field_first_visual_hierarchy() -> None:
     assert "if (preferredFocus) preferredFocus.focus()" in html
 
 
+def test_campaign_dialog_uses_detached_single_select_popovers() -> None:
+    """Custom dropdowns stay single-select, detached, and keyboard operable."""
+
+    html = render_variant("meta-dark-sidebar-glass")
+
+    assert html.count('class="custom-select" data-custom-select') == 2
+    assert 'id="campaign-account-menu" popover="auto" role="listbox"' in html
+    assert 'id="campaign-objective-menu" popover="auto" role="listbox"' in html
+    assert 'class="custom-select-option" type="button" role="option"' in html
+    assert 'type="checkbox"' not in html
+    assert "const gap = 8" in html
+    assert "border-radius: 12px" in html
+    assert "event.key === 'ArrowDown'" in html
+    assert "menu.hidePopover()" in html
+    assert ".dialog-body::-webkit-scrollbar-thumb" in html
+    assert "border-radius: 999px" in html
+
+
 def test_sidebar_account_stays_inside_the_viewport_shell() -> None:
     """Letting the desktop shell grow with content would push the account footer off-screen."""
 

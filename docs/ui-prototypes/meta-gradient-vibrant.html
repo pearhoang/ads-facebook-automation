@@ -329,7 +329,11 @@
     .dialog-close:hover { background: #e8ecf2; color: #172033; }
     .dialog-close:focus-visible { outline: 3px solid rgba(6,104,225,.2); outline-offset: 2px; }
     .dialog-close svg { width: 17px; height: 17px; }
-    .dialog-body { max-height: calc(100vh - 210px); overflow: auto; padding: 20px; }
+    .dialog-body { max-height: calc(100vh - 210px); overflow: auto; padding: 20px; scrollbar-width: thin; scrollbar-color: #98a2b3 transparent; scrollbar-gutter: stable; }
+    .dialog-body::-webkit-scrollbar, .custom-select-menu::-webkit-scrollbar { width: 10px; }
+    .dialog-body::-webkit-scrollbar-track, .custom-select-menu::-webkit-scrollbar-track { margin-block: 9px; background: transparent; }
+    .dialog-body::-webkit-scrollbar-thumb, .custom-select-menu::-webkit-scrollbar-thumb { border: 3px solid #fff; border-radius: 999px; background: #98a2b3; }
+    .dialog-body::-webkit-scrollbar-corner, .custom-select-menu::-webkit-scrollbar-corner { background: transparent; }
     .dialog-fields { display: grid; gap: 18px; }
     .dialog-fields .field { margin-bottom: 0; }
     dialog .field label { margin-bottom: 8px; font-size: 12px; }
@@ -338,6 +342,18 @@
     dialog .field-help { margin-top: 7px; font-size: 10.5px; line-height: 1.45; }
     .required-mark { margin-left: 2px; color: #b83a3a; }
     .dialog-inline-meta { margin-top: -5px; color: #667085; font-size: 10.5px; line-height: 1.5; }
+    .custom-select { position: relative; }
+    .custom-select-trigger { width: 100%; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px; border: 1px solid #b9c5d6; border-radius: 9px; background: #fff; color: #172033; font: inherit; text-align: left; cursor: pointer; }
+    .custom-select-trigger:hover { border-color: #93a4bb; }
+    .custom-select-trigger:focus-visible, .custom-select-trigger[aria-expanded="true"] { border-color: var(--primary); outline: 0; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 13%, transparent); }
+    .custom-select-trigger svg { width: 16px; height: 16px; flex: 0 0 auto; color: #667085; }
+    .custom-select-menu { position: fixed; inset: auto; z-index: 120; margin: 0; padding: 6px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; color: #172033; box-shadow: 0 12px 28px rgba(15,23,42,.16); scrollbar-width: thin; scrollbar-color: #98a2b3 transparent; }
+    .custom-select-menu:popover-open { display: grid; gap: 2px; }
+    .custom-select-menu::backdrop { background: transparent; }
+    .custom-select-option { width: 100%; min-height: 40px; display: flex; align-items: center; padding: 8px 11px; border: 0; border-radius: 8px; background: transparent; color: #344054; font: inherit; text-align: left; cursor: pointer; }
+    .custom-select-option:hover { background: #f3f5f8; color: #172033; }
+    .custom-select-option:focus-visible { outline: 0; background: #eef2ff; color: #3730a3; }
+    .custom-select-option[aria-selected="true"] { background: #eef2ff; color: #4338ca; font-weight: 650; }
     .dialog-foot { min-height: 64px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid #e1e6ee; background: #fff; }
     .danger-copy { padding: 4px 0 2px; color: #475467; font-size: 12px; line-height: 1.65; }
     .danger-copy strong { color: #172033; }
@@ -591,7 +607,7 @@ body[data-variant="meta-gradient-vibrant"] .active-nav {
     <form data-prototype-form="campaign">
       <header class="dialog-head"><div class="dialog-title"><h2>Tạo campaign draft</h2><p>Chỉ lưu bản nháp trong Ads Meta Master.</p></div><button class="dialog-close" type="button" data-dialog-close aria-label="Đóng"><i data-lucide="x"></i></button></header>
       <div class="dialog-body">
-        <div class="dialog-fields"><div class="field"><label for="campaign-account">Ad account<span class="required-mark" aria-hidden="true">*</span></label><select id="campaign-account" required><option>Lush Ads Main · USD</option><option>Campaign Lab · VND</option></select><div class="field-help">Resource và asset sẽ được lọc theo ad account này.</div></div><div class="field"><label for="campaign-name">Tên campaign<span class="required-mark" aria-hidden="true">*</span></label><input id="campaign-name" value="Awareness — August Launch" required></div><div class="field-row"><div class="field"><label for="campaign-objective">Objective<span class="required-mark" aria-hidden="true">*</span></label><select id="campaign-objective" required><option>Awareness</option><option>Traffic</option><option>Engagement</option><option>Leads</option><option>App promotion</option><option>Sales</option></select></div><div class="field"><label for="campaign-budget">Ngân sách mỗi ngày (USD)<span class="required-mark" aria-hidden="true">*</span></label><input id="campaign-budget" inputmode="decimal" value="50.00" required></div></div><div class="dialog-inline-meta">Bản nháp sẽ dừng ở Review để bạn kiểm tra trước khi tiếp tục.</div><div class="field"><label for="campaign-note">Ghi chú (không bắt buộc)</label><textarea id="campaign-note" placeholder="Ví dụ: Kiểm tra nội dung và ngân sách trước khi tiếp tục."></textarea></div></div>
+        <div class="dialog-fields"><div class="field"><label for="campaign-account">Ad account<span class="required-mark" aria-hidden="true">*</span></label><div class="custom-select" data-custom-select><button class="custom-select-trigger" id="campaign-account" type="button" popovertarget="campaign-account-menu" aria-haspopup="listbox" aria-expanded="false" data-custom-select-trigger><span data-custom-select-label>Lush Ads Main · USD</span><i data-lucide="chevron-down"></i></button><input type="hidden" name="campaign_account" value="lush-main" data-custom-select-value><div class="custom-select-menu" id="campaign-account-menu" popover="auto" role="listbox" aria-labelledby="campaign-account" data-custom-select-menu><button class="custom-select-option" type="button" role="option" aria-selected="true" data-value="lush-main">Lush Ads Main · USD</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="campaign-lab">Campaign Lab · VND</button></div></div><div class="field-help">Resource và asset sẽ được lọc theo ad account này.</div></div><div class="field"><label for="campaign-name">Tên campaign<span class="required-mark" aria-hidden="true">*</span></label><input id="campaign-name" value="Awareness — August Launch" required></div><div class="field-row"><div class="field"><label for="campaign-objective">Objective<span class="required-mark" aria-hidden="true">*</span></label><div class="custom-select" data-custom-select><button class="custom-select-trigger" id="campaign-objective" type="button" popovertarget="campaign-objective-menu" aria-haspopup="listbox" aria-expanded="false" data-custom-select-trigger><span data-custom-select-label>Awareness</span><i data-lucide="chevron-down"></i></button><input type="hidden" name="campaign_objective" value="Awareness" data-custom-select-value><div class="custom-select-menu" id="campaign-objective-menu" popover="auto" role="listbox" aria-labelledby="campaign-objective" data-custom-select-menu><button class="custom-select-option" type="button" role="option" aria-selected="true" data-value="Awareness">Awareness</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="Traffic">Traffic</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="Engagement">Engagement</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="Leads">Leads</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="App promotion">App promotion</button><button class="custom-select-option" type="button" role="option" aria-selected="false" data-value="Sales">Sales</button></div></div></div><div class="field"><label for="campaign-budget">Ngân sách mỗi ngày (USD)<span class="required-mark" aria-hidden="true">*</span></label><input id="campaign-budget" inputmode="decimal" value="50.00" required></div></div><div class="dialog-inline-meta">Bản nháp sẽ dừng ở Review để bạn kiểm tra trước khi tiếp tục.</div><div class="field"><label for="campaign-note">Ghi chú (không bắt buộc)</label><textarea id="campaign-note" placeholder="Ví dụ: Kiểm tra nội dung và ngân sách trước khi tiếp tục."></textarea></div></div>
       </div>
       <footer class="dialog-foot"><button class="button" type="button" data-dialog-close>Hủy</button><button class="button primary-button" type="submit">Tạo bản nháp</button></footer>
     </form>
@@ -653,12 +669,75 @@ body[data-variant="meta-gradient-vibrant"] .active-nav {
         });
       });
 
+      function positionCustomSelect(trigger, menu) {
+        const rect = trigger.getBoundingClientRect();
+        const gap = 8;
+        const viewportPadding = 12;
+        const menuHeight = Math.min(menu.scrollHeight, 240);
+        const roomBelow = window.innerHeight - rect.bottom - gap - viewportPadding;
+        const roomAbove = rect.top - gap - viewportPadding;
+        const openAbove = roomBelow < Math.min(menuHeight, 168) && roomAbove > roomBelow;
+        const left = Math.min(Math.max(viewportPadding, rect.left), window.innerWidth - rect.width - viewportPadding);
+        const top = openAbove ? Math.max(viewportPadding, rect.top - gap - menuHeight) : rect.bottom + gap;
+        menu.style.width = Math.round(rect.width) + 'px';
+        menu.style.maxHeight = '240px';
+        menu.style.left = Math.round(left) + 'px';
+        menu.style.top = Math.round(top) + 'px';
+      }
+
+      document.querySelectorAll('[data-custom-select]').forEach(function (root) {
+        const trigger = root.querySelector('[data-custom-select-trigger]');
+        const label = root.querySelector('[data-custom-select-label]');
+        const value = root.querySelector('[data-custom-select-value]');
+        const menu = root.querySelector('[data-custom-select-menu]');
+        const options = Array.from(menu.querySelectorAll('[role="option"]'));
+
+        menu.addEventListener('toggle', function (event) {
+          const isOpen = event.newState === 'open';
+          trigger.setAttribute('aria-expanded', String(isOpen));
+          if (!isOpen) return;
+          positionCustomSelect(trigger, menu);
+          const selected = options.find(function (option) { return option.getAttribute('aria-selected') === 'true'; }) || options[0];
+          if (selected) selected.focus();
+        });
+
+        options.forEach(function (option, index) {
+          option.addEventListener('click', function () {
+            options.forEach(function (candidate) { candidate.setAttribute('aria-selected', String(candidate === option)); });
+            label.textContent = option.textContent.trim();
+            value.value = option.getAttribute('data-value') || option.textContent.trim();
+            menu.hidePopover();
+            trigger.focus();
+          });
+          option.addEventListener('keydown', function (event) {
+            let nextIndex = null;
+            if (event.key === 'ArrowDown') nextIndex = (index + 1) % options.length;
+            if (event.key === 'ArrowUp') nextIndex = (index - 1 + options.length) % options.length;
+            if (event.key === 'Home') nextIndex = 0;
+            if (event.key === 'End') nextIndex = options.length - 1;
+            if (nextIndex === null) return;
+            event.preventDefault();
+            options[nextIndex].focus();
+          });
+        });
+
+        trigger.addEventListener('keydown', function (event) {
+          if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+          event.preventDefault();
+          if (!menu.matches(':popover-open')) menu.showPopover();
+        });
+
+        window.addEventListener('resize', function () {
+          if (menu.matches(':popover-open')) positionCustomSelect(trigger, menu);
+        });
+      });
+
       document.querySelectorAll('[data-dialog-open]').forEach(function (button) {
         button.addEventListener('click', function () {
           const dialog = document.getElementById(button.getAttribute('data-dialog-open'));
           if (dialog && !dialog.open) {
             dialog.showModal();
-            const preferredFocus = dialog.querySelector('input:not([readonly]), select:not([disabled]), textarea:not([readonly])')
+            const preferredFocus = dialog.querySelector('[data-custom-select-trigger], input:not([readonly]), select:not([disabled]), textarea:not([readonly])')
               || dialog.querySelector('.dialog-foot [data-dialog-close]');
             if (preferredFocus) preferredFocus.focus();
           }

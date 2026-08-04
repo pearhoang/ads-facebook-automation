@@ -341,3 +341,10 @@
 - Behavior: Khi mở dialog, focus chuyển thẳng tới field đầu tiên; dialog nguy hiểm ưu tiên focus action hủy an toàn khi không có field.
 - Verified: `14 passed`, Python compile và diff check sạch; browser local xác nhận field-first hierarchy, UTF-8 đúng và không có warning/error.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-04 - Nâng cấp dropdown và scrollbar trong dialog
+
+- Changed: Thay `Ad account` và `Objective` bằng single-select popover card cách trigger `8px`, bo `12px`, shadow nông và option dạng hàng chữ không checkbox.
+- Interaction: Hỗ trợ light-dismiss, Escape, Arrow Up/Down, Home/End; selected option đồng bộ label và hidden value. Dialog body cùng dropdown dài dùng scrollbar mảnh, thumb bo tròn và track trong suốt có khoảng đệm hai đầu.
+- Verified: `15 passed`, Python compile và diff check sạch; browser local xác nhận geometry `8px`/`12px`, đúng một selected option, không checkbox và console không có warning/error.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
