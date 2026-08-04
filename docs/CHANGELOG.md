@@ -224,7 +224,7 @@
 - Affected: Bot VPS remote operation, worker heartbeat/config, Hermes MCP/SOUL, installer, UI, tests và project memory.
 - Verified: `67 passed`, Python compile, JavaScript syntax, UTF-8/diff check và Alembic fresh-head check sạch.
 - Safety: Không tạo ChatGPT browser profile hoặc lưu cookie/token ở control-plane; OAuth chỉ ở worker mode `0600`, tools read-only và không thay Meta DRAFT/approval/publish boundary.
-- Deploy: Production đang chạy commit `69b3c8b`; backup tại `/var/backups/meta-ads-copilot/20260804T-codex-search-vision`, Codex CLI `0.146.0`, bốn service web/worker/Hermes active và `/health` trả `ok`. MCP đã liệt kê đúng `codex_search`/`codex_vision`; smoke thực tế chờ owner hoàn tất `device login` trên UI.
+- Deploy: Production đang chạy commit `be2057b`; backup nền tại `/var/backups/meta-ads-copilot/20260804T-codex-search-vision` và backup trước sửa popup tại `/var/backups/meta-ads-copilot/20260804T-codex-device-code-popup`. Codex CLI `0.146.0`, bốn service web/worker/Hermes active và `/health` trả `ok`; smoke thực tế chờ owner hoàn tất lại `device login` trên UI.
 
 ### 2026-08-03 - Đổi nhận diện control-plane sang Ads Meta Master
 
