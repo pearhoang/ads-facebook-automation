@@ -874,10 +874,10 @@ DOCUMENT = r'''<!DOCTYPE html>
     .custom-select-trigger:hover { border-color: #93a4bb; }
     .custom-select-trigger:focus-visible, .custom-select-trigger[aria-expanded="true"] { border-color: var(--primary); outline: 0; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 13%, transparent); }
     .custom-select-trigger svg { width: 16px; height: 16px; flex: 0 0 auto; color: #667085; }
-    .custom-select-menu { position: fixed; inset: auto; z-index: 120; margin: 0; padding: 6px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; color: #172033; box-shadow: 0 12px 28px rgba(15,23,42,.16); scrollbar-width: thin; scrollbar-color: #98a2b3 transparent; }
-    .custom-select-menu:popover-open { display: grid; gap: 2px; }
+    .custom-select-menu { position: fixed; inset: auto; z-index: 120; margin: 0; padding: 3px; overflow-y: auto; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; color: #172033; box-shadow: 0 6px 18px rgba(15,23,42,.13); scrollbar-width: thin; scrollbar-color: #98a2b3 transparent; }
+    .custom-select-menu:popover-open { display: grid; gap: 0; }
     .custom-select-menu::backdrop { background: transparent; }
-    .custom-select-option { width: 100%; min-height: 40px; display: flex; align-items: center; padding: 8px 11px; border: 0; border-radius: 8px; background: transparent; color: #344054; font: inherit; text-align: left; cursor: pointer; }
+    .custom-select-option { width: 100%; min-height: 31px; display: flex; align-items: center; padding: 5px 10px; border: 0; border-radius: 6px; background: transparent; color: #344054; font: inherit; text-align: left; cursor: pointer; }
     .custom-select-option:hover { background: #f3f5f8; color: #172033; }
     .custom-select-option:focus-visible { outline: 0; background: #eef2ff; color: #3730a3; }
     .custom-select-option[aria-selected="true"] { background: #eef2ff; color: #4338ca; font-weight: 650; }
@@ -1178,16 +1178,16 @@ DOCUMENT = r'''<!DOCTYPE html>
 
       function positionCustomSelect(trigger, menu) {
         const rect = trigger.getBoundingClientRect();
-        const gap = 8;
+        const gap = 4;
         const viewportPadding = 12;
-        const menuHeight = Math.min(menu.scrollHeight, 240);
+        const menuHeight = Math.min(menu.scrollHeight, 280);
         const roomBelow = window.innerHeight - rect.bottom - gap - viewportPadding;
         const roomAbove = rect.top - gap - viewportPadding;
         const openAbove = roomBelow < Math.min(menuHeight, 168) && roomAbove > roomBelow;
         const left = Math.min(Math.max(viewportPadding, rect.left), window.innerWidth - rect.width - viewportPadding);
         const top = openAbove ? Math.max(viewportPadding, rect.top - gap - menuHeight) : rect.bottom + gap;
         menu.style.width = Math.round(rect.width) + 'px';
-        menu.style.maxHeight = '240px';
+        menu.style.maxHeight = '280px';
         menu.style.left = Math.round(left) + 'px';
         menu.style.top = Math.round(top) + 'px';
       }

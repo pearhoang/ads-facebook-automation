@@ -201,8 +201,11 @@ def test_campaign_dialog_uses_detached_single_select_popovers() -> None:
     assert 'id="campaign-objective-menu" popover="auto" role="listbox"' in html
     assert 'class="custom-select-option" type="button" role="option"' in html
     assert 'type="checkbox"' not in html
-    assert "const gap = 8" in html
-    assert "border-radius: 12px" in html
+    assert "const gap = 4" in html
+    assert ".custom-select-menu {" in html
+    assert "border-radius: 10px" in html
+    assert "min-height: 31px" in html
+    assert "menu.style.maxHeight = '280px'" in html
     assert "event.key === 'ArrowDown'" in html
     assert "menu.hidePopover()" in html
     assert ".dialog-body::-webkit-scrollbar-thumb" in html

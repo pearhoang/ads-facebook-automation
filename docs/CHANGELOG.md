@@ -348,3 +348,9 @@
 - Interaction: Hỗ trợ light-dismiss, Escape, Arrow Up/Down, Home/End; selected option đồng bộ label và hidden value. Dialog body cùng dropdown dài dùng scrollbar mảnh, thumb bo tròn và track trong suốt có khoảng đệm hai đầu.
 - Verified: `15 passed`, Python compile và diff check sạch; browser local xác nhận geometry `8px`/`12px`, đúng một selected option, không checkbox và console không có warning/error.
 - Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
+
+### 2026-08-04 - Thu gọn dropdown về mật độ native
+
+- Changed: Giảm option từ `40px` xuống `31px`, menu padding còn `3px`, khoảng tách còn `4px` và radius `10px`; sáu objective hiển thị trọn không cần scrollbar nhưng vẫn giữ góc bo.
+- Verified: `15 passed`, Python compile và diff check sạch; browser local xác nhận menu compact không overflow/scroll, đúng một selected option và console không có warning/error.
+- Preview: `http://127.0.0.1:8020/meta-dark-sidebar-glass.html`; chưa áp dụng production, chưa push hoặc deploy.
