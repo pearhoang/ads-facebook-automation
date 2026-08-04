@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import shlex
+from math import ceil
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
@@ -17,6 +18,8 @@ from ..schemas import (
     BotNodeEditRequest,
     HermesDashboardPasswordRotateRequest,
     WorkerView,
+    WorkerOperationPage,
+    WorkerOperationPageDeletion,
     WorkerOperationView,
 )
 from ..services import auth, fleet, remote_ops, ssh_credentials
@@ -87,6 +90,50 @@ def list_operations(
     db: Session = Depends(get_db),
 ):
     return fleet.list_operations(db, tenant_id)
+
+
+@router.get("/operations/page", response_model=WorkerOperationPage)
+def list_operations_page(
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=5, le=50),
+    tenant_id: str = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    operations, total, deletable_count = fleet.list_operations_page(
+        db,
+        tenant_id,
+        page=page,
+        page_size=page_size,
+    )
+    return WorkerOperationPage(
+        items=operations,
+        page=page,
+        page_size=page_size,
+        total=total,
+        total_pages=ceil(total / page_size) if total else 0,
+        deletable_count=deletable_count,
+    )
+
+
+@router.delete("/operations/page", response_model=WorkerOperationPageDeletion)
+def delete_operations_page(
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=5, le=50),
+    principal: auth.AuthPrincipal = Depends(require_owner),
+    _csrf: None = Depends(verify_csrf),
+    db: Session = Depends(get_db),
+):
+    deleted_count, protected_count = fleet.delete_terminal_operations_page(
+        db,
+        tenant_id=principal.tenant_id,
+        user_id=principal.user_id,
+        page=page,
+        page_size=page_size,
+    )
+    return WorkerOperationPageDeletion(
+        deleted_count=deleted_count,
+        protected_count=protected_count,
+    )
 
 
 @router.get("/operations/{operation_id}", response_model=WorkerOperationView)

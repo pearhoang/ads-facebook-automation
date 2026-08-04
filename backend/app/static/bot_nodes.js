@@ -6,9 +6,18 @@ const enrollmentDialog = document.getElementById("enrollment-dialog");
 const editDialog = document.getElementById("edit-node-dialog");
 const decommissionDialog = document.getElementById("decommission-dialog");
 const confirmDialog = document.getElementById("confirm-node-dialog");
+const deleteOperationPageDialog = document.getElementById("delete-operation-page-dialog");
+const operationPagination = document.getElementById("operation-pagination");
+const operationPageNumbers = document.getElementById("operation-page-numbers");
+const operationPagePrevious = document.getElementById("operation-page-prev");
+const operationPageNext = document.getElementById("operation-page-next");
+const deleteOperationPageButton = document.getElementById("delete-operation-page");
+const OPERATION_PAGE_SIZE = 10;
 let nodesById = new Map();
 let pendingConfirm = null;
 let operationTimer = null;
+let operationPage = 1;
+let operationPageData = null;
 
 const providerPresets = {
   deepseek: { name: "deepseek", base: "https://api.deepseek.com", model: "deepseek-v4-flash" },
@@ -80,18 +89,58 @@ function renderNodes(nodes) {
   }).join("");
 }
 
-function renderOperations(operations) {
+function paginationTokens(currentPage, totalPages) {
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, index) => index + 1);
+  const tokens = [1];
+  if (currentPage > 3) tokens.push("ellipsis-start");
+  for (let page = Math.max(2, currentPage - 1); page <= Math.min(totalPages - 1, currentPage + 1); page += 1) tokens.push(page);
+  if (currentPage < totalPages - 2) tokens.push("ellipsis-end");
+  tokens.push(totalPages);
+  return tokens;
+}
+
+function renderOperationPagination(data) {
+  operationPageData = data;
+  operationPagination.hidden = data.total === 0;
+  operationPagePrevious.disabled = data.page <= 1;
+  operationPageNext.disabled = data.page >= data.total_pages;
+  deleteOperationPageButton.disabled = data.deletable_count === 0;
+  deleteOperationPageButton.title = data.deletable_count
+    ? `Xóa ${data.deletable_count} log đã hoàn tất trên trang này`
+    : "Trang này không có log đã hoàn tất để xóa";
+  operationPageNumbers.innerHTML = paginationTokens(data.page, data.total_pages).map((token) => (
+    typeof token === "number"
+      ? `<button class="pagination-page${token === data.page ? " is-active" : ""}" type="button" data-operation-page="${token}" aria-current="${token === data.page ? "page" : "false"}">${token}</button>`
+      : '<span class="pagination-ellipsis" aria-hidden="true">…</span>'
+  )).join("");
+}
+
+function renderOperations(data) {
+  const operations = data.items;
   document.getElementById("operation-empty").hidden = operations.length > 0;
   operationRows.innerHTML = operations.map((operation) => `<tr><td>${escapeHtml(operation.operation_type)}</td><td class="mono-text">${escapeHtml(operation.ssh_user)}@${escapeHtml(operation.host)}</td><td><span class="status ${statusClass(operation.status)}">${escapeHtml(operation.status)}</span></td><td>${escapeHtml(operation.message || "—")}</td><td>${escapeHtml(formatDate(operation.created_at))}</td></tr>`).join("");
+  renderOperationPagination(data);
   if (operations.some((item) => ["queued", "running"].includes(item.status))) {
     clearTimeout(operationTimer);
     operationTimer = setTimeout(loadAll, 3000);
   }
 }
 
-async function loadAll() {
+async function loadAll({ resetOperationPage = false } = {}) {
+  if (resetOperationPage) operationPage = 1;
   try {
-    const [nodes, operations] = await Promise.all([api("/api/bot-nodes"), api("/api/bot-nodes/operations")]);
+    const [nodes, operations] = await Promise.all([
+      api("/api/bot-nodes"),
+      api(`/api/bot-nodes/operations/page?page=${operationPage}&page_size=${OPERATION_PAGE_SIZE}`),
+    ]);
+    if (operations.total_pages && operationPage > operations.total_pages) {
+      operationPage = operations.total_pages;
+      return loadAll();
+    }
+    if (!operations.total_pages) {
+      operationPage = 1;
+      operations.page = 1;
+    }
     renderNodes(nodes);
     renderOperations(operations);
     notice.hidden = true;
@@ -124,7 +173,47 @@ document.querySelectorAll("[data-close-edit]").forEach((button) => button.addEve
 }));
 document.querySelectorAll("[data-close-decommission]").forEach((button) => button.addEventListener("click", () => decommissionDialog.close()));
 document.querySelectorAll("[data-close-confirm]").forEach((button) => button.addEventListener("click", () => confirmDialog.close()));
+document.querySelectorAll("[data-close-operation-delete]").forEach((button) => button.addEventListener("click", () => deleteOperationPageDialog.close()));
 document.getElementById("refresh-nodes").addEventListener("click", loadAll);
+operationPagePrevious.addEventListener("click", () => {
+  if (operationPage > 1) {
+    operationPage -= 1;
+    loadAll();
+  }
+});
+operationPageNext.addEventListener("click", () => {
+  if (operationPageData && operationPage < operationPageData.total_pages) {
+    operationPage += 1;
+    loadAll();
+  }
+});
+operationPageNumbers.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-operation-page]");
+  if (!button) return;
+  operationPage = Number(button.dataset.operationPage);
+  loadAll();
+});
+deleteOperationPageButton.addEventListener("click", () => {
+  if (!operationPageData?.deletable_count) return;
+  const protectedCopy = operationPageData.deletable_count === operationPageData.items.length
+    ? ""
+    : " Các thao tác đang chờ hoặc đang chạy sẽ được giữ lại.";
+  document.getElementById("delete-operation-page-message").textContent = `Xóa ${operationPageData.deletable_count} log đã hoàn tất trên trang ${operationPageData.page}?${protectedCopy}`;
+  deleteOperationPageDialog.showModal();
+});
+document.getElementById("confirm-delete-operation-page").addEventListener("click", async () => {
+  try {
+    const result = await api(`/api/bot-nodes/operations/page?page=${operationPage}&page_size=${OPERATION_PAGE_SIZE}`, { method: "DELETE" });
+    deleteOperationPageDialog.close();
+    showNotice(
+      result.deleted_count
+        ? `Đã xóa ${result.deleted_count} log đã hoàn tất.${result.protected_count ? ` Giữ lại ${result.protected_count} thao tác đang hoạt động.` : ""}`
+        : "Không có log đã hoàn tất để xóa trên trang này.",
+      result.deleted_count > 0,
+    );
+    await loadAll();
+  } catch (error) { showNotice(error.message); deleteOperationPageDialog.close(); }
+});
 
 document.getElementById("enrollment-form").addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -153,7 +242,7 @@ document.getElementById("enrollment-form").addEventListener("submit", async (eve
     document.getElementById("install-telegram-bot-token").value = "";
     enrollmentDialog.close();
     showNotice(`Đã bắt đầu cài ${operation.ssh_user}@${operation.host}. Theo dõi ở bảng thao tác.`, true);
-    await loadAll();
+    await loadAll({ resetOperationPage: true });
   } catch (error) { showNotice(error.message); }
   finally { submit.disabled = false; }
 });
@@ -176,7 +265,7 @@ document.getElementById("edit-node-form").addEventListener("submit", async (even
     document.getElementById("edit-node-ssh-password").value = "";
     editDialog.close();
     showNotice("Đã lưu thiết lập worker.", true);
-    await loadAll();
+    await loadAll({ resetOperationPage: true });
   } catch (error) { document.getElementById("edit-node-ssh-password").value = ""; showNotice(error.message); editDialog.close(); }
 });
 

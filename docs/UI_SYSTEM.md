@@ -42,6 +42,7 @@
 - Manual report dialog luôn yêu cầu `THU THẬP KPI`; schedule nói rõ timezone, lookback và Telegram token không được nhập trên UI.
 - Report job tách trạng thái thu thập khỏi trạng thái Telegram để lỗi gửi tin không làm mất snapshot.
 - Trang `Bot VPS` dùng một table duy nhất; mỗi worker có action `Sửa`, `Drain/Kích hoạt`, `Gỡ khỏi VPS`, `Xóa kết nối`, và action rủi ro luôn mở popup xác nhận.
+- Operation log của `Bot VPS` phân trang ở server theo 10 entry; `Xóa trang` có confirm, chỉ xóa entry terminal (`succeeded`/`failed`) và luôn giữ thao tác đang chờ/chạy.
 - Popup cài worker nhóm rõ `SSH`, `Source`, `Hermes Agent` và `Telegram`; password/API key/token dùng password input, không render lại sau submit và operation chỉ hiển thị tiến độ không chứa secret.
 - Add Bot yêu cầu Telegram Bot Token cùng allowlist user ID; copy phải nói rõ token chỉ truyền một lần, nhiều user ID phân tách bằng dấu phẩy và không có chế độ allow-all.
 - Trang `Hermes Agents` bắt buộc chọn worker trước khi sửa provider; API key luôn masked và để trống nghĩa là giữ key hiện tại.
@@ -84,6 +85,8 @@
 - Typography canonical dùng `Inter` cho body/navigation/data và `Be Vietnam Pro` cho display headings/values; topbar breadcrumb là `12px`, page title `20px/1.25`, search input `13px`, button label `12px/650`, còn section heading `15px/1.45`.
 - Brand và footer sidebar dùng nền trắng trung tính để navigation là vùng điều hướng chính. Custom loop mark đứng độc lập, không có tile; footer dùng cùng mark với màu indigo dịu, không tạo thêm mảng màu cạnh tranh với selected navigation.
 - Workspace của `Meta Light Focus` không giới hạn `max-width`; panel giãn theo toàn bộ main column với gutter `20px` ở desktop/tablet và `12px` ở mobile để dữ liệu lớn, rõ và sát mép hơn.
+- `Ad accounts` là section đầu của workspace `Campaigns`, không lặp lại thành một route/sidebar item riêng; sidebar chỉ có một điểm vào `Campaigns` cho toàn bộ luồng ad account và campaign draft.
+- Filter đầu trang nằm trong content gutter chuẩn và có khoảng cách đáy riêng trước KPI/panel; không dùng margin ngang hoặc margin-top lặp lại làm lệch nhịp topbar.
 - Main shell giữ `height: 100vh` với topbar cố định và `.content-pane` cuộn độc lập; nhờ vậy scrollbar không làm co sidebar/topbar và gutter/panel width giữ đúng prototype. Account table dùng layout cố định theo tỷ lệ canonical `19% / 25.3% / 8.45% / 17.41% / 17.12% / 12.72%` để empty state không làm trôi cột.
 - `Meta Light Focus` tách vai trò màu để tăng scanability: logo/ad-account dùng Meta blue `#0866FF`; primary CTA và selected navigation dùng indigo đậm `#4F46E5` với hover `#4338CA`; campaign draft dùng indigo; pending dùng amber; approved/resource dùng green. Inactive sidebar text dùng slate `#344054`; brand/footer trung tính để selected row là điểm neo duy nhất trong sidebar.
 - Canvas giữ base neutral gần trắng; một ellipse glow warm-peach rất nhạt có chung tâm tại góc viewport trên trái, nối liên tục qua sidebar và topbar rồi tan trước vùng content/KPI. Glow không nằm sau table/card. Panel dùng border và shadow nông; header bỏ accent line. Section helper copy trong header được ẩn ở density desktop canonical để title và action giữ một hàng gọn; icon Lucide `17px` đứng độc lập, không dùng tile nền. Table/KPI tăng cỡ chữ metadata, row height và spacing thay vì thêm panel trang trí.

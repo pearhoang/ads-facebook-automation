@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-5">
-  <link rel="stylesheet" href="/static/fleet.css?v=meta-light-focus">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-6">
+  <link rel="stylesheet" href="/static/fleet.css?v=meta-light-focus-2">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-default-repo-url="{{ default_repo_url }}" data-default-repo-branch="{{ default_repo_branch }}">
   {% set active_nav = "bot_nodes" %}
@@ -39,6 +39,17 @@
       <div class="section-toolbar"><div><h2>Thao tác cài đặt gần đây</h2><p>Password và API key không xuất hiện trong operation log.</p></div></div>
       <div class="table-wrap"><table><thead><tr><th>Loại</th><th>Host</th><th>Trạng thái</th><th>Kết quả</th><th>Thời gian</th></tr></thead><tbody id="operation-rows"></tbody></table></div>
       <div id="operation-empty" class="empty-state compact-empty" hidden><strong>Chưa có thao tác</strong></div>
+      <div id="operation-pagination" class="table-pagination" hidden>
+        <div class="pagination-controls" aria-label="Phân trang thao tác cài đặt">
+          <button id="operation-page-prev" class="pagination-button" type="button" aria-label="Trang trước">‹</button>
+          <div id="operation-page-numbers" class="pagination-pages"></div>
+          <button id="operation-page-next" class="pagination-button" type="button" aria-label="Trang sau">›</button>
+        </div>
+        <button id="delete-operation-page" class="button button-small button-danger" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+          Xóa trang
+        </button>
+      </div>
     </section>
       </div>
     </div>
@@ -85,9 +96,13 @@
     <div class="dialog-header"><div><h2 id="confirm-title">Xác nhận thao tác</h2><p id="confirm-message"></p></div><button class="icon-button" type="button" data-close-confirm aria-label="Đóng">×</button></div>
     <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-confirm>Hủy</button><button id="confirm-node-action" class="button button-danger" type="button">Xác nhận</button></div>
   </dialog>
+  <dialog id="delete-operation-page-dialog">
+    <div class="dialog-header"><div><h2>Xóa log trên trang này</h2><p id="delete-operation-page-message"></p></div><button class="icon-button" type="button" data-close-operation-delete aria-label="Đóng">×</button></div>
+    <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-operation-delete>Hủy</button><button id="confirm-delete-operation-page" class="button button-danger" type="button">Xóa trang</button></div>
+  </dialog>
   {% include "_password_dialog.html" %}
   <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
-  <script src="/static/bot_nodes.js?v=20260804-stored-ssh" defer></script>
+  <script src="/static/bot_nodes.js?v=20260804-operation-pagination" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

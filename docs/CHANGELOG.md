@@ -426,3 +426,9 @@
 - Deploy: Push `main` tại commit `6aeba67`; VPS pull fast-forward từ `379a77c`, chỉ restart `meta-ads-copilot-web.service`.
 - Verified: Preflight có `0` browser session, `0` job active và `0` Chromium; source backup, PostgreSQL dump và worker env backup đã tạo trước deploy. Alembic `20260804_0010 (head)`, web/worker `active`, health `ok`, public Login `200` và Reports `303` khi chưa đăng nhập.
 - Live UI: Browser xác nhận shell Meta Light Focus hiển thị tại Account sessions và `/reports`, không có console warning/error.
+
+### 2026-08-04 - Cân lại layout báo cáo và operation log
+
+- Changed: Bỏ item sidebar `Ad accounts` trùng route; account trở thành section đầu của `Campaigns`. Cân lại filter Reports theo gutter chuẩn và thu gọn panel settings để không tạo double margin trong content pane.
+- Added: Operation log Bot VPS phân trang server-side (10 entry/trang), có điều hướng và confirm `Xóa trang`; chỉ xóa operation đã hoàn tất, giữ nguyên job queued/running.
+- Verified: `tests/test_bot_fleet_ai_settings.py` (19 passed), bao gồm pagination và protection cho active operation.
