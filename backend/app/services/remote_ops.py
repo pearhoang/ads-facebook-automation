@@ -6,6 +6,7 @@ import json
 import shlex
 import secrets
 import time
+import re
 from collections.abc import Callable
 
 import paramiko
@@ -187,6 +188,114 @@ def _operator_command(ssh_user: str, password: str, script_command: str) -> tupl
     if ssh_user == "root":
         return script_command, None
     return f"sudo -S -p '' {script_command}", f"{password}\n"
+
+
+_ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+_DEVICE_URL = re.compile(r"https://[^\s]+", re.IGNORECASE)
+_DEVICE_CODE = re.compile(r"\b[A-Z0-9]{4}(?:-[A-Z0-9]{4})+\b")
+
+
+def _codex_device_prompt(output: str) -> str | None:
+    clean = _ANSI_ESCAPE.sub("", output)
+    urls = [item.rstrip(".,);]") for item in _DEVICE_URL.findall(clean)]
+    url = next((item for item in urls if "openai.com" in item or "chatgpt.com" in item), None)
+    code_match = _DEVICE_CODE.search(clean.upper())
+    if not url and not code_match:
+        return None
+    parts = ["Xác thực Codex trên trình duyệt của bạn."]
+    if url:
+        parts.append(f"Mở: {url}")
+    if code_match:
+        parts.append(f"Mã: {code_match.group(0)}")
+    parts.append("Đang chờ bạn hoàn tất đăng nhập…")
+    return "\n".join(parts)
+
+
+def run_codex_device_login(
+    session_factory: Callable[[], Session],
+    operation_id: str,
+    ssh_password: str,
+) -> None:
+    operation = _set_operation(session_factory, operation_id, status="running", started=True)
+    client: paramiko.SSHClient | None = None
+    try:
+        with session_factory() as db:
+            expected_worker = db.get(Worker, operation.worker_id) if operation.worker_id else None
+            expected_fingerprint = expected_worker.ssh_host_fingerprint if expected_worker else None
+        client, fingerprint = _connect(
+            operation.host,
+            operation.ssh_user,
+            ssh_password,
+            expected_fingerprint,
+        )
+        codex_home = "/opt/meta-ads-copilot-runtime/worker-data/codex"
+        script = " && ".join(
+            [
+                f"install -d -m 700 {shlex.quote(codex_home)}",
+                "(command -v npm >/dev/null 2>&1 || (apt-get update && apt-get install -y nodejs npm))",
+                "(command -v codex >/dev/null 2>&1 || npm install -g @openai/codex@latest)",
+                f"CODEX_HOME={shlex.quote(codex_home)} codex login --device-auth",
+                f"test -s {shlex.quote(codex_home + '/auth.json')}",
+                f"chmod 600 {shlex.quote(codex_home + '/auth.json')}",
+                f"CODEX_HOME={shlex.quote(codex_home)} codex login status",
+            ]
+        )
+        operator_script, sudo_stdin = _operator_command(operation.ssh_user, ssh_password, script)
+        stdin, stdout, _stderr = client.exec_command(operator_script, get_pty=True)
+        if sudo_stdin:
+            stdin.write(sudo_stdin)
+            stdin.flush()
+        channel = stdout.channel
+        deadline = time.monotonic() + 900
+        captured = ""
+        last_prompt: str | None = None
+        while not channel.exit_status_ready():
+            if time.monotonic() >= deadline:
+                channel.close()
+                raise RuntimeError("Codex device login hết hạn sau 15 phút. Hãy thử kết nối lại.")
+            if channel.recv_ready():
+                captured += channel.recv(4096).decode("utf-8", errors="replace")
+                captured = captured[-12000:]
+                prompt = _codex_device_prompt(captured)
+                if prompt and prompt != last_prompt:
+                    _set_operation(
+                        session_factory,
+                        operation_id,
+                        status="waiting_user",
+                        message=prompt,
+                    )
+                    last_prompt = prompt
+            time.sleep(0.2)
+        while channel.recv_ready():
+            captured += channel.recv(4096).decode("utf-8", errors="replace")
+        exit_code = channel.recv_exit_status()
+        if exit_code != 0:
+            clean = _ANSI_ESCAPE.sub("", captured)
+            raise RuntimeError("\n".join(clean.strip().splitlines()[-20:])[-2400:] or "Codex login thất bại.")
+        with session_factory() as db:
+            current = db.get(WorkerOperation, operation_id)
+            worker = db.get(Worker, current.worker_id) if current and current.worker_id else None
+            if worker is not None:
+                worker.ssh_host_fingerprint = fingerprint
+                db.commit()
+        _set_operation(
+            session_factory,
+            operation_id,
+            status="succeeded",
+            message="Đã kết nối Codex Search & Vision. Worker sẽ báo trạng thái mới trong tối đa 15 giây.",
+            completed=True,
+        )
+    except Exception as exc:
+        _set_operation(
+            session_factory,
+            operation_id,
+            status="failed",
+            message=str(exc)[:2400],
+            completed=True,
+        )
+    finally:
+        if client is not None:
+            client.close()
 
 
 def run_install(

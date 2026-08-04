@@ -217,6 +217,13 @@
 - Deploy: Commit `aadd2b1`; password rotation operation thành công, chỉ restart Hermes Dashboard. Source/database backup tại `/var/backups/meta-ads-copilot/20260801T184243Z-hermes-password-1234`.
 - Safety: Password at rest vẫn là scrypt hash; khi đổi vẫn xoay signing secret để thu hồi phiên Dashboard cũ và không restart gateway/Telegram/browser worker.
 
+### 2026-08-04 - Codex Search & Vision fallback cho Hermes
+
+- Changed: Thêm per-worker Codex device login tại `Hermes Agents`, heartbeat status và MCP tools `codex_search`/`codex_vision` để DeepSeek gọi khi cần web/ảnh.
+- Affected: Bot VPS remote operation, worker heartbeat/config, Hermes MCP/SOUL, installer, UI, tests và project memory.
+- Verified: `66 passed`, Python compile, JavaScript syntax, UTF-8/diff check và Alembic fresh-head check sạch.
+- Safety: Không tạo ChatGPT browser profile hoặc lưu cookie/token ở control-plane; OAuth chỉ ở worker mode `0600`, tools read-only và không thay Meta DRAFT/approval/publish boundary.
+
 ### 2026-08-03 - Đổi nhận diện control-plane sang Ads Meta Master
 
 - Changed: Đổi visible brand thành `Ads Meta Master`, subtitle `Meta Ads Automation`, thêm custom SVG monogram `M` dùng chung cho sidebar/login/favicon và rút gọn footer còn `Admin` với action `Đổi mật khẩu`.

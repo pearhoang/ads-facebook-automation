@@ -27,4 +27,5 @@
 - Canonical public repo là `https://github.com/pearhoang/ads-facebook-automation.git`, branch `main`; popup điền sẵn và cho phép thay bằng fork khác.
 - Popup Add Bot là one-shot setup: SSH, Git checkout, initial Hermes provider, Telegram Bot Token và allowlist user ID; worker tự cài browser/noVNC/Hermes rồi kết nối control-plane.
 - Installer cài sẵn unit native Hermes Dashboard nhưng không tự public hoặc start khi chưa có dashboard env/auth và reverse proxy riêng của node.
+- Installer cài Codex CLI và tạo `CODEX_HOME` riêng; kết nối ChatGPT/Codex thực hiện sau bằng device login, không tạo browser profile loại ChatGPT.
 - Production source là Git checkout sạch tracking `origin/main`.

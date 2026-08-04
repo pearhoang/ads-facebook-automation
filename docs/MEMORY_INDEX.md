@@ -59,6 +59,7 @@
 - `docs/modules/ai-provider-settings.md`
 - `docs/modules/agent-copilot.md`
 - `docs/tasks/active/phase-09-telegram-hermes-tools.md`
+- `docs/tasks/active/phase-11-codex-search-vision.md`
 - `docs/DECISIONS_INDEX.md`
 
 ### Bot VPS, SSH install, drain hoặc decommission

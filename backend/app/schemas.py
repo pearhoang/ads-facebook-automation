@@ -118,6 +118,10 @@ class HermesDashboardPasswordRotateRequest(BaseModel):
         return self
 
 
+class CodexDeviceLoginRequest(BaseModel):
+    ssh_password: SecretStr = Field(min_length=1, max_length=1024)
+
+
 class WorkerOperationView(ORMModel):
     id: str
     tenant_id: str

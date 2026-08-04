@@ -39,6 +39,14 @@
         <div class="dialog-actions"><button id="test-provider" class="button button-secondary" type="button">Kiểm tra kết nối</button><button class="button button-primary" type="submit">Lưu và đồng bộ Hermes</button></div>
       </form>
       <aside class="settings-panel provider-summary"><h2>Trạng thái hiện tại</h2><dl class="session-facts"><div><dt>Provider</dt><dd id="summary-provider">—</dd></div><div><dt>Model</dt><dd id="summary-model">—</dd></div><div><dt>Thinking</dt><dd id="summary-thinking">—</dd></div><div><dt>Reasoning</dt><dd id="summary-reasoning">—</dd></div><div><dt>Quyền Agent</dt><dd id="summary-permission">—</dd></div><div><dt>Endpoint</dt><dd id="summary-endpoint">—</dd></div><div><dt>API key</dt><dd id="summary-key">—</dd></div><div><dt>Execution</dt><dd id="summary-scope">—</dd></div><div><dt>Kiểm tra</dt><dd id="summary-test">—</dd></div></dl><p class="settings-note">Worker đồng bộ cấu hình mỗi phút. Nếu control-plane tắt, Hermes tiếp tục dùng bản local gần nhất. Session mới hoặc `/reset` sẽ nhận bộ quyền mới.</p></aside>
+      <section class="settings-panel codex-panel" aria-labelledby="codex-capability-title">
+        <div class="settings-heading">
+          <div><h2 id="codex-capability-title">Codex Search &amp; Vision</h2><p>Giữ DeepSeek làm model chính, chỉ gọi Codex khi cần tìm kiếm web hoặc đọc ảnh.</p></div>
+          <button id="connect-codex-button" class="button button-secondary" type="button">Kết nối Codex</button>
+        </div>
+        <dl class="codex-facts"><div><dt>Trạng thái</dt><dd id="codex-status">Chưa kết nối</dd></div><div><dt>Tài khoản</dt><dd id="codex-account">—</dd></div><div><dt>Gói</dt><dd id="codex-plan">—</dd></div><div><dt>Tools</dt><dd><code>codex_search</code>, <code>codex_vision</code></dd></div></dl>
+        <p class="settings-note">Kết nối dùng <code>codex login --device-auth</code>. Bạn mở link và nhập mã trên trình duyệt của mình; không cần noVNC và không dùng cookie ChatGPT làm credential. OAuth token chỉ lưu trên Bot VPS đã chọn.</p>
+      </section>
     </section>
   </main>
   <dialog id="dashboard-password-dialog" class="wide-dialog" aria-labelledby="dashboard-password-title">
@@ -53,6 +61,18 @@
       <p class="inline-help">Mật khẩu mới cần ít nhất 4 ký tự. SSH password chỉ dùng một lần và không lưu. Dashboard password được đổi thành scrypt hash; signing secret cũng được xoay để đăng xuất mọi phiên Dashboard cũ. Hermes gateway, Telegram và browser worker không bị restart.</p>
       <div id="dashboard-password-notice" class="notice" role="status" aria-live="polite" hidden></div>
       <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dashboard-password>Hủy</button><button id="dashboard-password-submit" class="button button-primary" type="submit">Đổi mật khẩu</button></div>
+    </form>
+  </dialog>
+  <dialog id="codex-login-dialog" class="wide-dialog" aria-labelledby="codex-login-title">
+    <form id="codex-login-form" method="dialog">
+      <div class="dialog-header">
+        <div><h2 id="codex-login-title">Kết nối Codex Search &amp; Vision</h2><p id="codex-login-target">Áp dụng cho Bot VPS đang chọn.</p></div>
+        <button class="icon-button" type="button" data-close-codex-login aria-label="Đóng">×</button>
+      </div>
+      <label>SSH password của Bot VPS<input id="codex-ssh-password" type="password" required maxlength="1024" autocomplete="current-password"></label>
+      <p class="inline-help">SSH password chỉ dùng một lần để khởi chạy device login và không được lưu. Sau khi có mã, hãy mở link trên trình duyệt của bạn và xác nhận tài khoản ChatGPT/Codex.</p>
+      <div id="codex-login-notice" class="notice codex-login-notice" role="status" aria-live="polite" hidden></div>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-codex-login>Hủy</button><button id="codex-login-submit" class="button button-primary" type="submit">Lấy link đăng nhập</button></div>
     </form>
   </dialog>
   {% include "_password_dialog.html" %}

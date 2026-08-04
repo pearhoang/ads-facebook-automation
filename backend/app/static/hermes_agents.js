@@ -40,6 +40,17 @@ function renderSummary(config) {
   setText("summary-test", config.last_test_status ? `${config.last_test_status}${config.last_test_error ? ` · ${config.last_test_error}` : ""}` : null);
 }
 
+function renderCodexStatus(worker) {
+  const codex = worker?.capabilities_json?.codex || { configured: false };
+  const connected = codex.configured === true;
+  const status = document.getElementById("codex-status");
+  status.textContent = connected ? "Đã kết nối" : "Chưa kết nối";
+  status.className = connected ? "text-success" : "";
+  setText("codex-account", codex.email || codex.account_id);
+  setText("codex-plan", codex.plan_type);
+  document.getElementById("connect-codex-button").textContent = connected ? "Kết nối lại" : "Kết nối Codex";
+}
+
 async function load() {
   const workers = await api("/api/bot-nodes");
   workersById = new Map(workers.map((item) => [item.id, item]));
@@ -57,6 +68,7 @@ async function load() {
     if (config.worker_id) workerSelect.value = config.worker_id;
   }
   renderSummary(config);
+  renderCodexStatus(workersById.get(workerSelect.value));
 }
 
 async function loadSelectedWorkerConfig() {
@@ -74,6 +86,7 @@ async function loadSelectedWorkerConfig() {
   }
   document.getElementById("provider-api-key").value = "";
   renderSummary(config);
+  renderCodexStatus(workersById.get(workerId));
 }
 
 function toggleReasoning() {
@@ -145,6 +158,20 @@ async function waitForWorkerOperation(operationId) {
   throw new Error("Thao tác đang mất nhiều thời gian. Có thể theo dõi tiếp tại trang Bot VPS.");
 }
 
+async function waitForCodexOperation(operationId, onProgress) {
+  let lastMessage = "";
+  for (let attempt = 0; attempt < 900; attempt += 1) {
+    const operation = await api(`/api/bot-nodes/operations/${encodeURIComponent(operationId)}`);
+    if (operation.message && operation.message !== lastMessage) {
+      lastMessage = operation.message;
+      onProgress(operation);
+    }
+    if (operation.status === "succeeded" || operation.status === "failed") return operation;
+    await new Promise((resolve) => window.setTimeout(resolve, 1000));
+  }
+  throw new Error("Codex device login đã quá 15 phút. Hãy thử kết nối lại.");
+}
+
 document.getElementById("rotate-dashboard-password-button").addEventListener("click", () => {
   const workerId = document.getElementById("provider-worker").value;
   const worker = workersById.get(workerId);
@@ -196,6 +223,78 @@ dashboardPasswordForm.addEventListener("submit", async (event) => {
     showDashboardPasswordNotice(error.message);
   } finally {
     dashboardPasswordSubmit.disabled = false;
+  }
+});
+
+const codexLoginDialog = document.getElementById("codex-login-dialog");
+const codexLoginForm = document.getElementById("codex-login-form");
+const codexSshPassword = document.getElementById("codex-ssh-password");
+const codexLoginNotice = document.getElementById("codex-login-notice");
+const codexLoginSubmit = document.getElementById("codex-login-submit");
+
+function showCodexLoginNotice(message, success = false) {
+  codexLoginNotice.replaceChildren();
+  const text = document.createElement("span");
+  text.textContent = message;
+  codexLoginNotice.append(text);
+  const url = message.match(/https:\/\/[^\s]+/)?.[0]?.replace(/[.,);\]]+$/, "");
+  if (url) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = "Mở trang xác thực Codex";
+    codexLoginNotice.append(document.createElement("br"), link);
+  }
+  codexLoginNotice.classList.toggle("notice-success", success);
+  codexLoginNotice.hidden = false;
+}
+
+document.getElementById("connect-codex-button").addEventListener("click", () => {
+  const workerId = document.getElementById("provider-worker").value;
+  const worker = workersById.get(workerId);
+  if (!workerId || !worker) {
+    showNotice("Hãy chọn một Bot VPS trước khi kết nối Codex.");
+    return;
+  }
+  codexSshPassword.value = "";
+  codexLoginNotice.hidden = true;
+  document.getElementById("codex-login-target").textContent = `Bot VPS: ${worker.display_name} · ${worker.host || "chưa có host"}`;
+  codexLoginDialog.showModal();
+  codexSshPassword.focus();
+});
+
+document.querySelectorAll("[data-close-codex-login]").forEach((button) => {
+  button.addEventListener("click", () => {
+    codexSshPassword.value = "";
+    codexLoginDialog.close();
+  });
+});
+codexLoginDialog.addEventListener("cancel", () => { codexSshPassword.value = ""; });
+
+codexLoginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const workerId = document.getElementById("provider-worker").value;
+  codexLoginSubmit.disabled = true;
+  try {
+    const operation = await api(`/api/bot-nodes/${encodeURIComponent(workerId)}/codex/device-login`, {
+      method: "POST",
+      body: JSON.stringify({ ssh_password: codexSshPassword.value }),
+    });
+    codexSshPassword.value = "";
+    showCodexLoginNotice("Đang chuẩn bị Codex CLI và tạo mã xác thực…");
+    const completed = await waitForCodexOperation(operation.id, (progress) => showCodexLoginNotice(progress.message || "Đang chờ xác thực…"));
+    if (completed.status !== "succeeded") throw new Error(completed.message || "Không thể kết nối Codex.");
+    showCodexLoginNotice(completed.message || "Đã kết nối Codex.", true);
+    await new Promise((resolve) => window.setTimeout(resolve, 16000));
+    const workers = await api("/api/bot-nodes");
+    workersById = new Map(workers.map((item) => [item.id, item]));
+    renderCodexStatus(workersById.get(workerId));
+  } catch (error) {
+    codexSshPassword.value = "";
+    showCodexLoginNotice(error.message);
+  } finally {
+    codexLoginSubmit.disabled = false;
   }
 });
 

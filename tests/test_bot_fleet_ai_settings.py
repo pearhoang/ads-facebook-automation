@@ -52,6 +52,9 @@ def test_default_worker_repo_and_deepseek_flash_preset():
     assert "Đổi mật khẩu Dashboard" in template
     assert "SSH password chỉ dùng một lần" in template
     assert 'id="dashboard-new-password" type="password" required minlength="4"' in template
+    assert "Codex Search &amp; Vision" in template
+    assert "Kết nối Codex" in template
+    assert "codex login --device-auth" in template
 
 
 def provision_and_login(client: TestClient) -> dict[str, str]:
@@ -351,6 +354,44 @@ def test_rotate_dashboard_password_is_transient_and_scoped_to_worker(tmp_path: P
             assert new_password not in persisted
 
 
+def test_codex_device_login_is_transient_and_scoped_to_worker(tmp_path: Path, monkeypatch):
+    captured: dict[str, object] = {}
+
+    def fake_connect(*args):
+        captured["args"] = args
+
+    monkeypatch.setattr(remote_ops, "run_codex_device_login", fake_connect)
+    with build_client(tmp_path) as client:
+        headers = provision_and_login(client)
+        _, enrolled = enroll_node(client, headers)
+        worker = enrolled["worker"]
+        assert client.patch(
+            f"/api/bot-nodes/{worker['id']}",
+            headers=headers,
+            json={
+                "display_name": "Codex worker",
+                "host": "203.0.113.31",
+                "ssh_user": "root",
+            },
+        ).status_code == 200
+
+        ssh_password = "one-use-codex-ssh-password"
+        response = client.post(
+            f"/api/bot-nodes/{worker['id']}/codex/device-login",
+            headers=headers,
+            json={"ssh_password": ssh_password},
+        )
+        assert response.status_code == 202, response.text
+        assert response.json()["operation_type"] == "codex_device_login"
+        assert ssh_password not in response.text
+        assert captured["args"][-1] == ssh_password
+
+        with client.app.state.database.session_factory() as db:
+            operation = db.query(WorkerOperation).one()
+            persisted = " ".join(str(value) for value in vars(operation).values())
+            assert ssh_password not in persisted
+
+
 def test_dashboard_password_hash_matches_hermes_scrypt_contract():
     password = "Hash-contract-dashboard-password-2026"
     encoded = remote_ops.hash_dashboard_password(password)
@@ -384,6 +425,18 @@ def test_dashboard_rotation_rejects_changed_host_key_before_credentials():
         )
 
 
+def test_codex_device_prompt_keeps_only_public_url_and_one_time_code():
+    prompt = remote_ops._codex_device_prompt(
+        "Open https://auth.openai.com/codex/device and enter ABCD-EFGH to continue"
+    )
+    assert prompt == (
+        "Xác thực Codex trên trình duyệt của bạn.\n"
+        "Mở: https://auth.openai.com/codex/device\n"
+        "Mã: ABCD-EFGH\n"
+        "Đang chờ bạn hoàn tất đăng nhập…"
+    )
+
+
 def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal_by_default(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("workers.agent.hermes_config.subprocess.run", lambda *args, **kwargs: None)
     manager = HermesConfigManager(tmp_path / "hermes")
@@ -410,6 +463,13 @@ def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal_by_default(
         "WORKER_DATA_DIR": "${WORKER_DATA_DIR}",
         "WORKER_CREDENTIAL_FILE": "${WORKER_CREDENTIAL_FILE}",
     }
+    codex_mcp = config["mcp_servers"]["codex_capabilities"]
+    assert codex_mcp["args"] == ["-m", "workers.agent.codex_capabilities_mcp"]
+    assert codex_mcp["env"] == {
+        "CODEX_HOME": "${CODEX_HOME}",
+        "WORKER_DATA_DIR": "${WORKER_DATA_DIR}",
+    }
+    assert codex_mcp["tools"]["include"] == ["codex_search", "codex_vision"]
     assert "sk-test-only" not in manager.config_path.read_text(encoding="utf-8")
     assert "sk-test-only" in manager.env_path.read_text(encoding="utf-8")
     assert "không publish" in manager.soul_path.read_text(encoding="utf-8")

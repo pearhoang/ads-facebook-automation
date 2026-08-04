@@ -40,7 +40,7 @@ trap 'rm -f "$SECRETS_FILE" /tmp/hermes-agent-install.sh; [[ -z "${ENROLL_RESPON
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends \
-  ca-certificates curl git jq xz-utils python3 python3-venv python3-pip \
+  ca-certificates curl git jq xz-utils python3 python3-venv python3-pip nodejs npm \
   xvfb openbox x11vnc novnc websockify ffmpeg snapd sqlite3
 
 TELEGRAM_BOT_TOKEN="$(jq -er '.telegram_bot_token' "$SECRETS_FILE")"
@@ -78,7 +78,8 @@ WORKER_KEY="$(jq -er '.worker.worker_key' "$ENROLL_RESPONSE")"
 WORKER_NAME="$(jq -er '.worker.display_name' "$ENROLL_RESPONSE")"
 WORKER_CREDENTIAL="$(jq -er '.worker_credential' "$ENROLL_RESPONSE")"
 WORKER_DATA_DIR="$RUNTIME_DIR/worker-data"
-mkdir -p "$WORKER_DATA_DIR/hermes"
+mkdir -p "$WORKER_DATA_DIR/hermes" "$WORKER_DATA_DIR/codex"
+chmod 700 "$WORKER_DATA_DIR/codex"
 printf '%s' "$WORKER_CREDENTIAL" > "$WORKER_DATA_DIR/worker.credential"
 chmod 600 "$WORKER_DATA_DIR/worker.credential"
 
@@ -91,6 +92,7 @@ WORKER_DATA_DIR=$WORKER_DATA_DIR
 WORKER_RUNTIME_VERSION=0.2.0
 HERMES_AGENT_VERSION=managed
 HERMES_HOME=$WORKER_DATA_DIR/hermes
+CODEX_HOME=$WORKER_DATA_DIR/codex
 WORKER_POLL_SECONDS=3
 WORKER_HEARTBEAT_SECONDS=15
 BROWSER_SESSION_ENABLED=true
@@ -118,6 +120,10 @@ chmod 600 "$ENV_DIR/worker.env"
 
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh -o /tmp/hermes-agent-install.sh
 bash /tmp/hermes-agent-install.sh --skip-setup --skip-browser --hermes-home "$WORKER_DATA_DIR/hermes"
+
+if ! command -v codex >/dev/null 2>&1; then
+  npm install -g @openai/codex@latest
+fi
 
 install -m 0644 "$APP_DIR/infra/systemd/meta-ads-copilot-worker.service" /etc/systemd/system/meta-ads-copilot-worker.service
 install -m 0644 "$APP_DIR/infra/systemd/meta-ads-copilot-hermes.service" /etc/systemd/system/meta-ads-copilot-hermes.service

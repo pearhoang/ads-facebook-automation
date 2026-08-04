@@ -177,3 +177,11 @@
 - Dashboard chạy service riêng từ cùng `HERMES_HOME`, bind interface nội bộ, dùng password provider chính chủ với scrypt hash + signing secret và được Caddy expose qua HTTPS subdomain.
 - `Hermes Agents` tiếp tục là canonical control-plane UI cho provider/model/thinking/permission; nó không nhúng hoặc tái tạo chat.
 - Owner xoay mật khẩu Dashboard theo worker bằng SSH credential dùng một lần; control-plane không lưu plaintext, worker thay scrypt hash và signing secret rồi chỉ restart dashboard service để thu hồi mọi phiên Dashboard cũ.
+
+## DEC-026 — Search/vision fallback dùng per-worker Codex OAuth và Hermes MCP
+
+- DeepSeek tiếp tục là inference provider chính; `codex_search` và `codex_vision` chỉ là fallback read-only khi cần dữ liệu web mới hoặc phân tích ảnh.
+- Hai extension tham khảo trong `pearhoang/pi-setup` là Pi SDK extension và đọc `~/.codex/auth.json`; hệ thống không cài thêm Pi agent mà reimplement search/OAuth contract thành Python MCP cho Hermes.
+- Kết nối dùng official `codex login --device-auth` theo từng worker. User mở public verification URL và nhập one-time code trên trình duyệt riêng, không cần noVNC.
+- Credential ở `<WORKER_DATA_DIR>/codex/auth.json` mode `0600`; control-plane chỉ thấy trạng thái không nhạy cảm qua heartbeat và không lưu cookie, access token hoặc refresh token.
+- `codex_vision` chỉ đọc ảnh trong các worker/Hermes data root cho phép; tool không cấp thêm Meta mutation, publish hoặc budget permission.

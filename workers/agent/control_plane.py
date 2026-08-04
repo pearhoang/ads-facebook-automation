@@ -7,6 +7,7 @@ from pathlib import Path
 import httpx
 
 from .config import WorkerConfig
+from .codex_capabilities import capability_status
 from .contracts import AgentJobAssignment, BrowserSessionAssignment, ExecutionJobAssignment, ReportJobAssignment
 from .local_state import LocalStateStore, TERMINAL_STATUSES
 
@@ -45,6 +46,8 @@ class ControlPlaneClient:
 
     def heartbeat(self) -> None:
         worker_id = self._worker_id()
+        codex_home = self.config.codex_home or (self.config.data_dir / "codex")
+        codex_status = capability_status(codex_home / "auth.json")
         response = self.http.post(
             f"/api/workers/{worker_id}/heartbeat",
             json={
@@ -55,6 +58,7 @@ class ControlPlaneClient:
                     "execution": self.config.execution_enabled,
                     "novnc": self.config.browser_enabled,
                     "hermes": True,
+                    "codex": codex_status,
                     "durable_outbox": True,
                     "outbox_depth": self.state.outbox_count(),
                 },

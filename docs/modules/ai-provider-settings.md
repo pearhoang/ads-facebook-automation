@@ -5,6 +5,7 @@
 - Lưu OpenAI-compatible provider, thinking/reasoning và permission mode cho từng worker rồi đồng bộ sang Hermes.
 - Hỗ trợ provider trực tiếp, 9router, OpenRouter hoặc CLIProxyAPI thông qua `base_url`, `model`, `api_key`.
 - Nạp Telegram conversational gateway, localhost Hermes API Server và MCP bridge tới typed tools của control-plane.
+- Nạp MCP read-only `codex_search`/`codex_vision` khi worker đã có official Codex OAuth.
 
 ## Entry Points
 
@@ -14,6 +15,7 @@
 - MCP bridge: `workers/agent/control_plane_mcp.py`; typed facade: `backend/app/services/agent_tools.py`.
 - Native dashboard: `infra/systemd/meta-ads-copilot-hermes-dashboard.service`, bind nội bộ và reverse proxy HTTPS riêng.
 - Dashboard credential rotation: `POST /api/bot-nodes/{worker_id}/hermes-dashboard/password` và `backend/app/services/remote_ops.py`.
+- Codex capability: `workers/agent/codex_capabilities.py`, `workers/agent/codex_capabilities_mcp.py` và `POST /api/bot-nodes/{worker_id}/codex/device-login`.
 
 ## Invariants
 
@@ -32,6 +34,9 @@
 - Đổi Dashboard password yêu cầu owner session + CSRF + SSH password dùng một lần; thao tác xoay cả signing secret để revoke phiên cũ và không restart gateway/worker.
 - Dashboard password chấp nhận từ 4 ký tự theo cấu hình single-customer; credential at rest vẫn chỉ là scrypt hash.
 - Port dashboard không bind public interface. Caddy chỉ truy cập qua Docker host interface và HTTPS subdomain.
+- Codex OAuth nằm tại `<WORKER_DATA_DIR>/codex/auth.json` mode `0600`; SSH password, access token và refresh token không persist ở control-plane/audit.
+- Device login chỉ đưa public verification URL và one-time code vào operation message; không đưa OAuth token qua browser/noVNC.
+- `codex_search` và `codex_vision` là fallback read-only, không mở thêm Meta publish/budget action và không thay DeepSeek provider chính.
 
 ## Current State
 
@@ -44,3 +49,4 @@
 - Worker production `Ads Browser VPS 82` hiện được owner bật `experimental_full`; smoke chỉ đọc đã chứng minh Hermes gọi được `terminal` và `read_file`. Các worker mới vẫn bắt đầu ở `ads_safe`.
 - Chat Web chính chuyển sang native Hermes Dashboard; `Hermes Agents` chỉ giữ provider/model/permission settings và action mở dashboard.
 - `Hermes Agents` có dialog đổi mật khẩu Dashboard theo worker; SSH password và password mới không persist trong database/audit/operation response.
+- `Hermes Agents` hiển thị trạng thái Codex theo heartbeat từng worker và cho chạy `codex login --device-auth` không cần noVNC.
