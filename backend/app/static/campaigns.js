@@ -96,7 +96,7 @@ function renderTable() {
       <td><strong>${escapeHtml(stageLabels[item.stage] || item.stage)}</strong><span class="cell-subtext">${escapeHtml(item.progress_message)}</span></td>
       <td><span class="status-pill status-${statusClass(item.status)}">${escapeHtml(statusLabels[item.status] || item.status)}</span></td>
       <td>${escapeHtml(formatDate(item.updated_at))}</td>
-      <td class="actions-cell"><button class="icon-button" type="button" data-view-work="${escapeHtml(item.id)}" aria-label="Xem tiến độ"><svg aria-hidden="true"><use href="/static/ui-icons.svg#arrow-up-right"></use></svg></button></td>
+      <td class="actions-cell"><button class="row-button" type="button" data-view-work="${escapeHtml(item.id)}" aria-label="Xem tiến độ"><svg aria-hidden="true"><use href="/static/ui-icons.svg#arrow-up-right"></use></svg></button></td>
     </tr>`).join("");
 }
 

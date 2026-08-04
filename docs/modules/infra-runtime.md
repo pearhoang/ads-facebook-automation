@@ -71,6 +71,8 @@
 - Native dashboard backup: `/var/backups/meta-ads-copilot/20260801T171727Z-native-hermes-dashboard`; Caddy WebSocket fix backup: `/opt/spoticheck/app/deploy/Caddyfile.pre-hermes-ws-20260801T173809Z`.
 - Stored worker SSH credential đã deploy từ commit `c29761e`; Alembic `20260804_0010` ở `head`, worker hiện hữu có Fernet ciphertext hợp lệ và API chỉ trả `ssh_password_configured=true`.
 - Backup trước stored-SSH deploy: `/var/backups/meta-ads-copilot/20260804T032514Z-stored-worker-ssh` gồm source, verified PostgreSQL custom dump và app env.
+- Agent-first work orchestration và Meta Light Focus đã deploy từ commit `8e62792`; Alembic `20260804_0011 (head)`, web/worker/Hermes/dashboard đều active và public health trả `ok`.
+- Backup trước Phase 12: `/var/backups/meta-ads-copilot/20260804T112158Z-agent-first-ui` gồm source, verified PostgreSQL custom dump, checksum và app env.
 
 ## Services
 

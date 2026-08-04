@@ -33,7 +33,7 @@
 
 ## Verification
 
-- `alembic current` phải khớp revision mới nhất; Phase 10 dùng `20260801_0008 (head)`.
+- `alembic current` phải khớp revision mới nhất; Phase 12 dùng `20260804_0011 (head)`.
 - `alembic check` phải trả `No new upgrade operations detected.`
 - Auth/account counts phải khớp snapshot; active browser session bằng `0` sau smoke test.
 - noVNC phải tải HTML và WebSocket nhận `RFB 003.008`.
