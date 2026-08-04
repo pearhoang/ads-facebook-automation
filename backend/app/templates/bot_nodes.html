@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Bot VPS</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-2">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-3">
   <link rel="stylesheet" href="/static/fleet.css?v=meta-light-focus">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-default-repo-url="{{ default_repo_url }}" data-default-repo-branch="{{ default_repo_branch }}">
@@ -20,10 +20,10 @@
       <div class="topbar-actions">{% set global_search_placeholder = "Tìm node, host…" %}{% include "_topbar_tools.html" %}<button id="add-node-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thêm Bot VPS</button></div>
     </header>
     <section class="summary" aria-label="Tổng quan fleet">
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg>Tổng node</span><strong id="node-total">0</strong><small>Worker đã đăng ký</small></div>
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg>Online</span><strong id="node-online">0</strong><small>Đang kết nối</small></div>
-      <div data-notification-label="node đang drain" data-notification-tone="warning"><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#pause"></use></svg>Đang drain</span><strong id="node-draining">0</strong><small>Không nhận việc mới</small></div>
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#database"></use></svg>Outbox hỗ trợ</span><strong id="node-durable">0</strong><small>Có durable outbox</small></div>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg></span><div><div class="metric-label">Tổng node</div><div class="metric-value" id="node-total">0</div><div class="metric-meta">Worker đã đăng ký</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg></span><div><div class="metric-label">Online</div><div class="metric-value" id="node-online">0</div><div class="metric-meta">Đang kết nối</div></div></article>
+      <article class="metric" data-notification-label="node đang drain" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#pause"></use></svg></span><div><div class="metric-label">Đang drain</div><div class="metric-value" id="node-draining">0</div><div class="metric-meta">Không nhận việc mới</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#database"></use></svg></span><div><div class="metric-label">Outbox hỗ trợ</div><div class="metric-value" id="node-durable">0</div><div class="metric-meta">Có durable outbox</div></div></article>
     </section>
     <div class="safety-banner"><strong>Ranh giới an toàn:</strong> Drain dừng cấp việc mới. Revoke vô hiệu hóa credential nhưng giữ audit và dữ liệu profile. Chỉ gỡ service từ popup sau khi worker đã Drain; browser profile vẫn được giữ.</div>
     <section class="content-section">
@@ -80,7 +80,7 @@
     <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-confirm>Hủy</button><button id="confirm-node-action" class="button button-danger" type="button">Xác nhận</button></div>
   </dialog>
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-2" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
   <script src="/static/bot_nodes.js" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>

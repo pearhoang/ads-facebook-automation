@@ -368,3 +368,16 @@
 - Interaction: Search lọc table row hiện tại và hỗ trợ phím `/`; notification đọc KPI/page state thật, không dùng nội dung demo giả.
 - Verified: full suite `77 passed`, JavaScript syntax và diff check sạch; browser audit 5 màn không horizontal overflow, search/notification hoạt động và Campaigns khớp visual reference.
 - Preview: `http://127.0.0.1:8040/`; chưa push hoặc deploy.
+
+### 2026-08-04 - Khớp chính xác logo, sidebar và KPI với prototype
+
+- Changed: Thay custom loop mark bằng đúng `viewBox/path/stroke` của prototype; thay bảy icon sidebar bằng đúng Lucide path; chuyển KPI sang cùng DOM grid `label + icon / value / meta` và bỏ tile nền ở section header.
+- Fidelity: Bỏ border ẩn gây lệch sidebar `1px`, ẩn helper copy ở section header canonical và dùng đúng icon `credit-card`, `layout-dashboard`, `blocks` cho các panel tương ứng.
+- Verification: Đối chiếu browser tại `1212×910` xác nhận geometry brand, nav, KPI và section header khớp reference; full suite `77 passed`, JavaScript syntax và diff check sạch.
+- Preview: `http://127.0.0.1:8040/campaigns`; chưa push hoặc deploy.
+
+### 2026-08-04 - Chốt typography và tỷ lệ control theo prototype
+
+- Changed: Đồng bộ `Inter` cho body/navigation, màu và stroke icon sidebar, loop mark footer, breadcrumb/page title, search input, button line-height và section heading với bản demo; giữ typography display `Be Vietnam Pro` cho title/value.
+- Affected: `backend/app/static/workspace.css`, `docs/UI_SYSTEM.md`.
+- Verified: Browser comparison ở cùng geometry cho breadcrumb, title, search, button, KPI và sidebar; account sessions route có đủ search, notification và 4 KPI icon.

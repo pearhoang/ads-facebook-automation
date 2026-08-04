@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Báo cáo</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-2">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-3">
   <link rel="stylesheet" href="/static/reports.css?v=meta-light-focus">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
@@ -38,10 +38,10 @@
     <div id="notice" class="notice page-notice" hidden></div>
 
     <section class="summary" aria-label="KPI gần nhất">
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#wallet"></use></svg>Chi tiêu</span><strong id="kpi-spend">—</strong><small>Theo khoảng ngày đã chọn</small></div>
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#target"></use></svg>Kết quả</span><strong id="kpi-results">—</strong><small>Tổng kết quả ghi nhận</small></div>
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#calculator"></use></svg>Chi phí/kết quả</span><strong id="kpi-cost">—</strong><small>Giá trị trung bình</small></div>
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg>Thu thập gần nhất</span><strong id="kpi-collected" class="summary-time">Chưa có</strong><small>Snapshot read-only</small></div>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#wallet"></use></svg></span><div><div class="metric-label">Chi tiêu</div><div class="metric-value" id="kpi-spend">—</div><div class="metric-meta">Theo khoảng ngày đã chọn</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#target"></use></svg></span><div><div class="metric-label">Kết quả</div><div class="metric-value" id="kpi-results">—</div><div class="metric-meta">Tổng kết quả ghi nhận</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#calculator"></use></svg></span><div><div class="metric-label">Chi phí/kết quả</div><div class="metric-value" id="kpi-cost">—</div><div class="metric-meta">Giá trị trung bình</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg></span><div><div class="metric-label">Thu thập gần nhất</div><div class="metric-value summary-time" id="kpi-collected">Chưa có</div><div class="metric-meta">Snapshot read-only</div></div></article>
     </section>
 
     <section class="content-section">
@@ -109,7 +109,7 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-2" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
   <script src="/static/reports.js?v=meta-light-focus" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>

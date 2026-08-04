@@ -48,7 +48,7 @@ def test_ads_meta_master_branding_is_consistent_across_rendered_pages():
         assert "Ads Meta Master" in login_page.text
         assert "Meta Ads Automation" in login_page.text
         assert (
-            'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2"'
+            'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3"'
             in login_page.text
         )
         assert "Ads Lush" not in login_page.text
@@ -68,7 +68,7 @@ def test_ads_meta_master_branding_is_consistent_across_rendered_pages():
             assert "Meta Ads Automation" in page.text, path
             assert "<strong>Admin</strong>" in page.text, path
             assert (
-                'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2"'
+                'rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3"'
                 in page.text
             ), path
             assert "Ads Lush" not in page.text, path
@@ -78,7 +78,8 @@ def test_ads_meta_master_branding_is_consistent_across_rendered_pages():
         asset = client.get("/static/ads-meta-master.svg")
         assert asset.status_code == 200
         assert asset.headers["content-type"].startswith("image/svg+xml")
-        assert 'viewBox="0 0 32 32"' in asset.text
+        assert 'viewBox="0 0 42 28"' in asset.text
+        assert 'stroke-width="2.8"' in asset.text
         assert "<script" not in asset.text
         assert "xlink:href" not in asset.text
         assert "data:" not in asset.text
@@ -121,7 +122,11 @@ def test_meta_light_focus_theme_css_contract_is_served():
         assert "radial-gradient(ellipse 820px 390px at 0 0" in css
         assert ".nav-item.is-active," in css
         assert "background: var(--accent);" in css
-        assert ".summary > div::after" in css
+        assert ".summary > .metric::after" in css
+        assert '--font-body: "inter", sans-serif;' in css
+        assert ".page-identity h1" in css
+        assert ".global-search input" in css
+        assert "line-height: 1.45;" in css
         assert ".ui-select-menu" in css
         assert "border-radius: 10px" in css
         assert ".button-danger" in css

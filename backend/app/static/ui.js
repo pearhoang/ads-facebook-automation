@@ -61,10 +61,12 @@
     let iconName = "layout";
     let tone = "";
     if (normalized.includes("account") || normalized.includes("tai khoan")) iconName = "credit-card";
-    else if (normalized.includes("resource") || normalized.includes("asset")) { iconName = "database"; tone = "green"; }
+    else if (normalized.includes("resource")) { iconName = "blocks"; tone = "green"; }
+    else if (normalized.includes("asset")) { iconName = "image"; tone = "green"; }
     else if (normalized.includes("duyet") || normalized.includes("lich")) { iconName = "clock"; tone = "amber"; }
     else if (normalized.includes("job") || normalized.includes("audit") || normalized.includes("kpi") || normalized.includes("thao tac")) { iconName = "activity"; tone = "purple"; }
-    else if (normalized.includes("bot") || normalized.includes("node") || normalized.includes("provider") || normalized.includes("hermes")) iconName = "server";
+    else if (normalized.includes("provider") || normalized.includes("hermes")) iconName = "bot";
+    else if (normalized.includes("bot") || normalized.includes("node")) iconName = "server";
     else if (normalized.includes("campaign")) { iconName = "layout"; tone = "purple"; }
 
     const cluster = document.createElement("div");
@@ -93,7 +95,7 @@
   function renderNotifications() {
     if (!notificationList || !notificationSummary || !notificationDot) return;
     const items = notificationSources.map((source) => {
-      const value = Number.parseInt((source.querySelector("strong")?.textContent || "0").replace(/[^0-9-]/g, ""), 10) || 0;
+      const value = Number.parseInt((source.querySelector(".metric-value")?.textContent || "0").replace(/[^0-9-]/g, ""), 10) || 0;
       return { value, label: source.dataset.notificationLabel || "mục cần xử lý", tone: source.dataset.notificationTone || "warning" };
     }).filter((item) => item.value > 0);
 
@@ -137,7 +139,7 @@
     });
     notificationPopover.addEventListener("click", (event) => event.stopPropagation());
     notificationSources.forEach((source) => {
-      const value = source.querySelector("strong");
+      const value = source.querySelector(".metric-value");
       if (value) new MutationObserver(renderNotifications).observe(value, { childList: true, characterData: true, subtree: true });
     });
     renderNotifications();

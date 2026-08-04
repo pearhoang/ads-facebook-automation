@@ -98,7 +98,7 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
 
     for path in active_templates[:4]:
         text = path.read_text(encoding="utf-8")
-        assert 'class="summary-label"' in text
+        assert 'class="metric-icon"' in text
 
     tools = Path("backend/app/templates/_topbar_tools.html").read_text(encoding="utf-8")
     script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
@@ -109,7 +109,7 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
     assert "renderNotifications" in script
     assert ".global-search" in styles
     assert ".notification-popover" in styles
-    assert ".summary-label svg" in styles
+    assert ".metric-icon svg" in styles
 
 
 def test_canonical_selects_are_progressively_enhanced_without_changing_form_contracts():

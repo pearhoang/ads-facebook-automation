@@ -25,7 +25,7 @@
 ## Current State
 
 - Prototype `meta-dark-sidebar-glass.html` đã được user chốt.
-- Shared sidebar, token, app shell, breadcrumb, search, notification popover, KPI semantic icon, panel, dialog, dropdown và login đã được chuyển sang production templates/static assets.
+- Shared sidebar, token, app shell, breadcrumb, search, notification popover, KPI semantic icon, panel, dialog, dropdown và login đã được chuyển sang production templates/static assets; logo, Lucide path, KPI anatomy và section header geometry đã được đối chiếu trực tiếp với prototype ở cùng viewport.
 - Các route nghiệp vụ và form/API contract được giữ nguyên; đang chạy regression test và browser audit trước khi bàn giao local preview.
 
 ## Next Steps
@@ -35,11 +35,16 @@
 
 ## Verification
 
-- `77 passed` với full pytest suite; `node --check` cho shared UI script và `git diff --check` đều sạch.
+- `77 passed` với full pytest suite; `node --check` cho shared UI script và `git diff --check` đều sạch sau vòng fidelity logo/sidebar/KPI/section header.
 - Browser audit xác nhận Workspace, Campaigns, Reports, Bot VPS, Hermes Agents và Login không overflow viewport ngoài table scroller có chủ đích.
 - Search cập nhật số kết quả theo input; notification popover render trạng thái KPI thật và hiển thị empty state khi không có cảnh báo.
 - Custom select đạt gap `4px`, radius `10px`, option `31px`; long dialog có radius `12px`, sticky header/footer và scrollbar nằm trong surface.
 - Responsive audit ở `390×844` xác nhận login không horizontal overflow và KPI chuyển đúng lưới `2×2`.
+- Desktop parity ở `1212×910` xác nhận sidebar `248px`, brand `40×30`, nav icon `17px`, KPI strip `126px`, metric cell `124px`, KPI icon `14px` và section icon container `22px` khớp geometry prototype.
+
+## Typography parity follow-up
+
+- Browser comparison confirms `Inter` for body/navigation, breadcrumb `12px`, page title `20px/1.25`, search input `13px`, button label `12px/650`, section heading `15px/1.45`, and matching sidebar icon stroke/footer loop mark colors.
 
 ## Risks
 

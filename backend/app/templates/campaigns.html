@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ads Meta Master — Campaigns</title>
-  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-2">
+  <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-2">
+  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-3">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
   {% set active_nav = "campaigns" %}
@@ -30,10 +30,10 @@
     <div class="safety-banner"><strong>Không tự publish.</strong> Preflight chỉ đọc; Meta draft builder được click và điền Campaign/Ad Set/Ad nhưng luôn dừng trước nút <span class="mono-text">Đăng</span>.</div>
 
     <section class="summary" aria-label="Tổng quan campaign">
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#credit-card"></use></svg>Ad accounts</span><strong id="ad-account-count">0</strong><small>Account đã liên kết</small></div>
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#files"></use></svg>Campaign drafts</span><strong id="draft-count">0</strong><small>Bản nháp đang quản lý</small></div>
-      <div data-notification-label="campaign chờ duyệt" data-notification-tone="warning"><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg>Chờ duyệt</span><strong id="pending-count">0</strong><small>Cần owner kiểm tra</small></div>
-      <div><span class="summary-label"><svg aria-hidden="true"><use href="/static/ui-icons.svg#badge-check"></use></svg>Đã duyệt nội bộ</span><strong id="approved-count">0</strong><small>Chưa publish lên Meta</small></div>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#credit-card"></use></svg></span><div><div class="metric-label">Ad accounts</div><div class="metric-value" id="ad-account-count">0</div><div class="metric-meta">Account đã liên kết</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#files"></use></svg></span><div><div class="metric-label">Campaign drafts</div><div class="metric-value" id="draft-count">0</div><div class="metric-meta">Bản nháp đang quản lý</div></div></article>
+      <article class="metric" data-notification-label="campaign chờ duyệt" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg></span><div><div class="metric-label">Chờ duyệt</div><div class="metric-value" id="pending-count">0</div><div class="metric-meta">Cần owner kiểm tra</div></div></article>
+      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#badge-check"></use></svg></span><div><div class="metric-label">Đã duyệt nội bộ</div><div class="metric-value" id="approved-count">0</div><div class="metric-meta">Chưa publish lên Meta</div></div></article>
     </section>
 
     <div id="notice" class="notice page-notice" hidden></div>
@@ -263,7 +263,7 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-2" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
   <script src="/static/campaigns.js?v=meta-light-focus" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
