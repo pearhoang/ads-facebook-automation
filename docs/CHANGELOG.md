@@ -219,6 +219,7 @@
 
 ### 2026-08-04 - Codex Search & Vision fallback cho Hermes
 
+- Fixed: Device login parser nhận đúng mã Codex CLI 9 ký tự dạng `XXXX-XXXXX`; popup tách mã xác thực thành khối dễ đọc với action `Sao chép mã`, vẫn hỗ trợ format legacy 8 ký tự.
 - Changed: Thêm per-worker Codex device login tại `Hermes Agents`, heartbeat status và MCP tools `codex_search`/`codex_vision`; bump managed Hermes config schema để worker hiện hữu nhận tool dù provider không đổi.
 - Affected: Bot VPS remote operation, worker heartbeat/config, Hermes MCP/SOUL, installer, UI, tests và project memory.
 - Verified: `67 passed`, Python compile, JavaScript syntax, UTF-8/diff check và Alembic fresh-head check sạch.

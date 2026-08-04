@@ -234,17 +234,45 @@ const codexLoginSubmit = document.getElementById("codex-login-submit");
 
 function showCodexLoginNotice(message, success = false) {
   codexLoginNotice.replaceChildren();
-  const text = document.createElement("span");
-  text.textContent = message;
-  codexLoginNotice.append(text);
   const url = message.match(/https:\/\/[^\s]+/)?.[0]?.replace(/[.,);\]]+$/, "");
+  const code = message.match(/(?:Mã|Code):\s*([A-Z0-9]{4}-[A-Z0-9]{4,5})/i)?.[1]?.toUpperCase();
+  const summary = message
+    .split("\n")
+    .filter((line) => !/^Mở:\s*/i.test(line) && !/^(?:Mã|Code):\s*/i.test(line))
+    .join("\n");
+  const text = document.createElement("span");
+  text.textContent = summary;
+  codexLoginNotice.append(text);
+  if (code) {
+    const codeBlock = document.createElement("div");
+    codeBlock.className = "codex-device-code";
+    const codeLabel = document.createElement("span");
+    codeLabel.textContent = "Mã xác thực";
+    const codeValue = document.createElement("code");
+    codeValue.textContent = code;
+    const copyButton = document.createElement("button");
+    copyButton.type = "button";
+    copyButton.className = "button button-secondary codex-copy-code";
+    copyButton.textContent = "Sao chép mã";
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(code);
+        copyButton.textContent = "Đã sao chép";
+      } catch (_) {
+        window.getSelection()?.selectAllChildren(codeValue);
+        copyButton.textContent = "Hãy sao chép mã đã chọn";
+      }
+    });
+    codeBlock.append(codeLabel, codeValue, copyButton);
+    codexLoginNotice.append(codeBlock);
+  }
   if (url) {
     const link = document.createElement("a");
     link.href = url;
     link.target = "_blank";
     link.rel = "noopener";
     link.textContent = "Mở trang xác thực Codex";
-    codexLoginNotice.append(document.createElement("br"), link);
+    codexLoginNotice.append(link);
   }
   codexLoginNotice.classList.toggle("notice-success", success);
   codexLoginNotice.hidden = false;

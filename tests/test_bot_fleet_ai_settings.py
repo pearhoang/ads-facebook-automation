@@ -428,14 +428,21 @@ def test_dashboard_rotation_rejects_changed_host_key_before_credentials():
 
 def test_codex_device_prompt_keeps_only_public_url_and_one_time_code():
     prompt = remote_ops._codex_device_prompt(
-        "Open https://auth.openai.com/codex/device and enter ABCD-EFGH to continue"
+        "Open https://auth.openai.com/codex/device and enter ABCD-EFGHJ to continue"
     )
     assert prompt == (
         "Xác thực Codex trên trình duyệt của bạn.\n"
         "Mở: https://auth.openai.com/codex/device\n"
-        "Mã: ABCD-EFGH\n"
+        "Mã: ABCD-EFGHJ\n"
         "Đang chờ bạn hoàn tất đăng nhập…"
     )
+
+
+def test_codex_device_prompt_still_accepts_legacy_eight_character_code():
+    prompt = remote_ops._codex_device_prompt(
+        "Open https://auth.openai.com/codex/device and enter WXYZ-1234 to continue"
+    )
+    assert "Mã: WXYZ-1234" in prompt
 
 
 def test_hermes_config_adds_reasoning_and_typed_mcp_without_terminal_by_default(tmp_path: Path, monkeypatch):

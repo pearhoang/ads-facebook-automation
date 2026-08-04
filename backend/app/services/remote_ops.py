@@ -192,7 +192,7 @@ def _operator_command(ssh_user: str, password: str, script_command: str) -> tupl
 
 _ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 _DEVICE_URL = re.compile(r"https://[^\s]+", re.IGNORECASE)
-_DEVICE_CODE = re.compile(r"\b[A-Z0-9]{4}(?:-[A-Z0-9]{4})+\b")
+_DEVICE_CODE = re.compile(r"\b[A-Z0-9]{4}-[A-Z0-9]{4,5}\b")
 
 
 def _codex_device_prompt(output: str) -> str | None:
