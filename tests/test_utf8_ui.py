@@ -188,12 +188,26 @@ def test_agent_work_detail_keeps_canonical_dialog_and_timeline_anatomy():
     assert 'id="artifact-lightbox" class="artifact-lightbox"' in template
     assert 'data-artifact-prev aria-label="Ảnh trước"' in template
     assert 'data-artifact-next aria-label="Ảnh tiếp theo"' in template
+    assert 'data-close-work-detail' in template
     assert 'id="work-handoff-link"' in template
     assert ".work-detail-grid" in styles
     assert ".work-detail-body" in styles
     assert "dialog.artifact-lightbox::backdrop" in styles
     assert ".work-timeline" in styles
     assert ".timeline-marker" in styles
+
+
+def test_campaign_work_detail_close_and_operation_pagination_alignment():
+    template = Path("backend/app/templates/campaigns.html").read_text(encoding="utf-8")
+    script = Path("backend/app/static/campaigns.js").read_text(encoding="utf-8")
+    styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
+
+    assert 'function closeWorkDetailDialog()' in script
+    assert 'event.target.closest("[data-close-work-detail]")' in script
+    assert 'event.stopPropagation();' in script
+    assert ".table-pagination" in styles
+    pagination_block = styles.split(".table-pagination {", 1)[1].split("}\n", 1)[0]
+    assert "justify-content: flex-end" in pagination_block
 
 
 def test_canonical_selects_are_progressively_enhanced_without_changing_form_contracts():

@@ -481,7 +481,7 @@ tbody tr:hover { background: color-mix(in srgb, var(--meta-blue) 3.5%, var(--sur
 .table-pagination {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   min-height: 64px;
   padding: 12px 16px;

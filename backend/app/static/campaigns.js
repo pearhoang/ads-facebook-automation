@@ -200,6 +200,14 @@ function closeArtifactLightbox() {
   state.artifactReturnFocus = null;
 }
 
+function closeWorkDetailDialog() {
+  const dialog = byId("work-detail-dialog");
+  if (!dialog) return;
+  closeArtifactLightbox();
+  if (dialog.open) dialog.close();
+  state.selectedId = null;
+}
+
 function moveArtifact(step) {
   const nextIndex = state.artifactIndex + step;
   if (nextIndex < 0 || nextIndex >= state.artifacts.length) return;
@@ -249,6 +257,13 @@ async function loadPage(successMessage = "") {
 }
 
 document.addEventListener("click", (event) => {
+  const closeWorkDetail = event.target.closest("[data-close-work-detail]");
+  if (closeWorkDetail) {
+    event.preventDefault();
+    event.stopPropagation();
+    closeWorkDetailDialog();
+    return;
+  }
   const view = event.target.closest("[data-view-work]");
   if (view) openDetail(view.dataset.viewWork);
   const filter = event.target.closest("[data-work-filter]");
@@ -261,8 +276,6 @@ document.addEventListener("click", (event) => {
   if (event.target.closest("[data-artifact-close]")) closeArtifactLightbox();
   if (event.target.closest("[data-artifact-prev]")) moveArtifact(-1);
   if (event.target.closest("[data-artifact-next]")) moveArtifact(1);
-  const close = event.target.closest("[data-close]");
-  if (close) byId(close.dataset.close).close();
 });
 
 document.addEventListener("keydown", (event) => {

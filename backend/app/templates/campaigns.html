@@ -74,7 +74,7 @@
   <dialog id="work-detail-dialog" class="wide-dialog work-detail-dialog">
     <div class="dialog-header">
       <div><p id="work-detail-eyebrow" class="dialog-eyebrow">Công việc quảng cáo</p><h2 id="work-detail-title">Chi tiết công việc</h2><p id="work-detail-progress"></p></div>
-      <button class="icon-button" type="button" data-close="work-detail-dialog" aria-label="Đóng">×</button>
+      <button class="icon-button" type="button" data-close-work-detail aria-label="Đóng">×</button>
     </div>
     <div class="work-detail-body">
       <div id="work-detail-status" class="work-detail-status"></div>
@@ -97,7 +97,7 @@
     </div>
     <div class="dialog-actions">
       <a id="work-handoff-link" class="button button-secondary" href="/" hidden>Mở tài khoản để xử lý login/2FA</a>
-      <button class="button button-primary" type="button" data-close="work-detail-dialog">Đóng</button>
+      <button class="button button-primary" type="button" data-close-work-detail>Đóng</button>
     </div>
   </dialog>
 
@@ -116,7 +116,7 @@
 
   {% include "_password_dialog.html" %}
   <script src="/static/ui.js?v=toast-3" defer></script>
-  <script src="/static/campaigns.js?v=work-detail-1" defer></script>
+  <script src="/static/campaigns.js?v=work-detail-2" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>
