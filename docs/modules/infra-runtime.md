@@ -73,6 +73,7 @@
 - Backup trước stored-SSH deploy: `/var/backups/meta-ads-copilot/20260804T032514Z-stored-worker-ssh` gồm source, verified PostgreSQL custom dump và app env.
 - Agent-first work orchestration và Meta Light Focus đã deploy từ commit `8e62792`; Alembic `20260804_0011 (head)`, web/worker/Hermes/dashboard đều active và public health trả `ok`.
 - Backup trước Phase 12: `/var/backups/meta-ads-copilot/20260804T112158Z-agent-first-ui` gồm source, verified PostgreSQL custom dump, checksum và app env.
+- Shared toast Meta Light Focus đã deploy tại commit `194253a`; chỉ restart web service. Backup source: `/var/backups/meta-ads-copilot/20260805T021920Z-toast-ui-v2`.
 
 ## Services
 

@@ -452,3 +452,5 @@
 - Kept: Cảnh báo Full Access, trạng thái device login Codex và lỗi trong dialog vẫn hiển thị inline để không mất thông tin đang thao tác.
 - Visual: Toast dùng token Meta Light Focus, border semantic và surface trắng; responsive không tạo horizontal overflow.
 - Refined: Bỏ vạch trạng thái dày; toast dùng border/shadow trung tính như panel và chỉ giữ icon semantic nhỏ để không cạnh tranh với selected navigation indigo.
+- Deploy: Production tại commit `194253a`; source backup `/var/backups/meta-ads-copilot/20260805T021920Z-toast-ui-v2`.
+- Verified: `96 passed`, browser desktop/mobile, nút đóng, auto-hide 4,8 giây và production console không có error.
