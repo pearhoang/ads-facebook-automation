@@ -1,7 +1,7 @@
 (function accountRoutingModule() {
 const csrfToken = document.body.dataset.csrfToken;
 const byId = (id) => document.getElementById(id);
-const state = { facebookAccounts: [], adAccounts: [], resources: [], editingId: null, verifyingId: null };
+const state = { facebookAccounts: [], adAccounts: [], resources: [], editingId: null, verifyingId: null, removal: null };
 
 const resourceLabels = { page: "Facebook Page", instagram_account: "Instagram", dataset: "Pixel/Dataset", instant_form: "Instant Form", app: "Ứng dụng" };
 
@@ -27,9 +27,9 @@ function render() {
   byId("ad-accounts-empty").hidden = state.adAccounts.length > 0;
   byId("resources-empty").hidden = state.resources.length > 0;
   byId("ad-accounts-body").innerHTML = state.adAccounts.map((item) => `
-    <tr><td><strong>${escapeHtml(item.label)}</strong></td><td>${escapeHtml(facebookLabel(item.facebook_account_id))}</td><td class="mono-text">${escapeHtml(item.meta_ad_account_id)}</td><td>${escapeHtml(item.currency)}</td><td>${escapeHtml(item.timezone_name)}</td><td><span class="status-pill status-${item.status === "active" ? "success" : "neutral"}">${escapeHtml(item.status)}</span></td><td class="actions-cell"><button class="row-button" type="button" data-edit-ad-account="${escapeHtml(item.id)}" aria-label="Sửa ad account"><svg aria-hidden="true"><use href="/static/ui-icons.svg#pencil"></use></svg></button></td></tr>`).join("");
+    <tr><td><strong>${escapeHtml(item.label)}</strong></td><td>${escapeHtml(facebookLabel(item.facebook_account_id))}</td><td class="mono-text">${escapeHtml(item.meta_ad_account_id)}</td><td>${escapeHtml(item.currency)}</td><td>${escapeHtml(item.timezone_name)}</td><td><span class="status-pill status-${item.status === "active" ? "success" : "neutral"}">${escapeHtml(item.status)}</span></td><td class="actions-cell"><div class="row-actions"><button class="row-button" type="button" data-edit-ad-account="${escapeHtml(item.id)}" aria-label="Sửa ad account" title="Sửa ad account"><svg aria-hidden="true"><use href="/static/ui-icons.svg#pencil"></use></svg></button><button class="row-button" type="button" data-remove-ad-account="${escapeHtml(item.id)}" aria-label="Gỡ ad account" title="Gỡ ad account"><svg aria-hidden="true"><use href="/static/ui-icons.svg#trash"></use></svg></button></div></td></tr>`).join("");
   byId("resources-body").innerHTML = state.resources.map((item) => `
-    <tr><td><strong>${escapeHtml(item.label)}</strong></td><td>${escapeHtml(resourceLabels[item.kind] || item.kind)}</td><td>${escapeHtml(accountLabel(item.ad_account_id))}</td><td class="mono-text">${escapeHtml(item.external_id || "—")}</td><td><span class="status-pill status-${item.status === "verified" ? "success" : "warning"}">${item.status === "verified" ? "Đã xác minh" : "Chưa xác minh"}</span></td><td class="actions-cell">${item.status === "verified" ? "—" : `<button class="button button-secondary button-small" type="button" data-verify-resource="${escapeHtml(item.id)}">Xác minh</button>`}</td></tr>`).join("");
+    <tr><td><strong>${escapeHtml(item.label)}</strong></td><td>${escapeHtml(resourceLabels[item.kind] || item.kind)}</td><td>${escapeHtml(accountLabel(item.ad_account_id))}</td><td class="mono-text">${escapeHtml(item.external_id || "—")}</td><td><span class="status-pill status-${item.status === "verified" ? "success" : "warning"}">${item.status === "verified" ? "Đã xác minh" : "Chưa xác minh"}</span></td><td class="actions-cell"><div class="row-actions">${item.status === "verified" ? "" : `<button class="button button-secondary button-small" type="button" data-verify-resource="${escapeHtml(item.id)}">Xác minh</button>`}<button class="row-button" type="button" data-remove-resource="${escapeHtml(item.id)}" aria-label="Xóa resource" title="Xóa resource"><svg aria-hidden="true"><use href="/static/ui-icons.svg#trash"></use></svg></button></div></td></tr>`).join("");
   const accountOptions = state.adAccounts.map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.label)}</option>`).join("");
   byId("resource-ad-account").innerHTML = accountOptions;
 }
@@ -100,17 +100,72 @@ async function verifyResource() {
   } catch (error) { showNotice(error.message); }
 }
 
+function openRemoval(kind, id) {
+  const catalog = {
+    facebook_profile: {
+      item: state.facebookAccounts.find((entry) => entry.id === id),
+      title: "Gỡ Facebook profile",
+      confirm: "Gỡ profile",
+      message: (item) => `Profile “${item.label}” sẽ bị gỡ khỏi workspace và Chrome cookie/profile trên Bot VPS sẽ được xóa. Hãy gỡ các ad account liên quan và đóng browser session trước.`,
+      path: `/api/accounts/${id}`,
+      success: "Đã gỡ Facebook profile và xóa browser profile trên Bot VPS.",
+    },
+    ad_account: {
+      item: state.adAccounts.find((entry) => entry.id === id),
+      title: "Gỡ ad account",
+      confirm: "Gỡ ad account",
+      message: (item) => `Ad account “${item.label}” sẽ không còn được Hermes chọn để chạy hoặc báo cáo. Snapshot và audit cũ vẫn được giữ lại. Lịch báo cáo đang bật sẽ được dừng.`,
+      path: `/api/ad-accounts/${id}`,
+      success: "Đã gỡ ad account khỏi định tuyến của Hermes.",
+    },
+    resource: {
+      item: state.resources.find((entry) => entry.id === id),
+      title: "Xóa Meta resource",
+      confirm: "Xóa resource",
+      message: (item) => `Resource “${item.label}” sẽ bị xóa khỏi registry. Hermes sẽ không thể chọn resource này cho yêu cầu mới.`,
+      path: `/api/meta-resources/${id}`,
+      success: "Đã xóa Meta resource.",
+    },
+  };
+  const target = catalog[kind];
+  if (!target?.item) return;
+  state.removal = target;
+  byId("setup-remove-title").textContent = target.title;
+  byId("setup-remove-message").textContent = target.message(target.item);
+  byId("confirm-setup-remove").textContent = target.confirm;
+  byId("setup-remove-dialog").showModal();
+}
+
+async function confirmRemoval() {
+  const target = state.removal;
+  if (!target) return;
+  const submit = byId("confirm-setup-remove");
+  submit.disabled = true;
+  try {
+    await api(target.path, { method: "DELETE" });
+    byId("setup-remove-dialog").close();
+    state.removal = null;
+    await loadPage(target.success);
+    window.dispatchEvent(new Event("account-routing:changed"));
+  } catch (error) { showNotice(error.message); }
+  finally { submit.disabled = false; }
+}
+
 document.addEventListener("click", (event) => {
   if (event.target.closest("#add-ad-account-button, [data-open-ad-account]")) openAdAccount();
   if (event.target.closest("#add-resource-button, [data-open-resource]")) openResource();
   const edit = event.target.closest("[data-edit-ad-account]"); if (edit) openAdAccount(edit.dataset.editAdAccount);
   const verify = event.target.closest("[data-verify-resource]"); if (verify) openVerify(verify.dataset.verifyResource);
+  const facebookProfile = event.target.closest("[data-remove-facebook-profile]"); if (facebookProfile) openRemoval("facebook_profile", facebookProfile.dataset.removeFacebookProfile);
+  const adAccount = event.target.closest("[data-remove-ad-account]"); if (adAccount) openRemoval("ad_account", adAccount.dataset.removeAdAccount);
+  const resource = event.target.closest("[data-remove-resource]"); if (resource) openRemoval("resource", resource.dataset.removeResource);
   const close = event.target.closest("[data-close]"); if (close) byId(close.dataset.close).close();
 });
 
 byId("ad-account-form").addEventListener("submit", saveAdAccount);
 byId("resource-form").addEventListener("submit", saveResource);
 byId("confirm-resource-verify-button").addEventListener("click", verifyResource);
+byId("confirm-setup-remove").addEventListener("click", confirmRemoval);
 byId("ad-account-refresh-button").addEventListener("click", () => loadPage("Đã làm mới account và resource."));
 loadPage();
 })();

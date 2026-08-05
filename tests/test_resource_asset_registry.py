@@ -148,6 +148,7 @@ def test_resource_asset_snapshot_and_manual_verification(tmp_path):
         campaign = campaign_response.json()
         assert campaign["targeting_json"]["page_name"] == "Lush Test Page"
         assert campaign["targeting_json"]["page_external_id"] == "page-123"
+
         assert campaign["creative_json"]["asset_snapshot"]["sha256"] == asset["sha256"]
 
         approval = client.post(
@@ -186,6 +187,29 @@ def test_resource_asset_snapshot_and_manual_verification(tmp_path):
             "Lush Test Page" in item and "chưa được xác minh" in item
             for item in refreshed_preview["draft_blockers"]
         )
+
+
+def test_resource_can_be_deleted_from_active_registry(tmp_path):
+    with build_client(tmp_path) as client:
+        headers = provision(client)
+        _facebook_account, ad_account = create_account_graph(client, headers)
+        resource = client.post(
+            "/api/meta-resources",
+            headers=headers,
+            json={
+                "ad_account_id": ad_account["id"],
+                "kind": "page",
+                "label": "Page sẽ xóa",
+                "external_id": "page-delete-123",
+                "metadata_json": {},
+            },
+        ).json()
+
+        deleted = client.delete(f"/api/meta-resources/{resource['id']}", headers=headers)
+
+        assert deleted.status_code == 200
+        assert deleted.json()["id"] == resource["id"]
+        assert client.get("/api/meta-resources").json() == []
 
 
 def test_asset_rejects_mime_spoof_and_worker_cannot_download_unreferenced_file(tmp_path):

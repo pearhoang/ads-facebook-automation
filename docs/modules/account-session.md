@@ -36,6 +36,7 @@
 - URL noVNC có TTL và bị thu hồi khi session đóng.
 - Production TTL hiện là `120` phút để đủ thời gian login/2FA và khảo sát UI; user/backend vẫn có thể đóng sớm và worker phải giải phóng profile lock.
 - Worker/profile ownership được kiểm tra ở mọi poll/sync/action.
+- Gỡ profile yêu cầu không có browser session/ad account active; control-plane cleanup exact profile directory qua SSH credential mã hóa rồi mới chuyển record sang `removed`.
 - Human handoff chỉ nhận `launch_url` HTTPS thuộc `*.facebook.com` với Ads Manager path; URL được truyền qua backend assignment tới browser runtime, không mở CDP/noVNC trực tiếp.
 - Snap Chromium phải được unwrap sang direct binary; main/child process và cookie database phải nằm dưới exact `<profile_root>/<profile_key>`.
 

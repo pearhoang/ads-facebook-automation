@@ -224,3 +224,10 @@
 - KPI chỉ xuất hiện trong khối reporting; các màn thiết lập và quản trị không thêm KPI strip chỉ để lấp khoảng trắng.
 - Lịch sử report job phân trang server 10 dòng. Owner/admin được xóa job terminal trên trang hiện tại; job active và snapshot mới nhất của từng ad account luôn được giữ lại.
 - Telegram/Hermes vẫn là nơi ra lệnh, phân tích và xử lý chính; web chỉ setup định tuyến, theo dõi tiến độ, KPI và ngoại lệ cần người dùng.
+
+## DEC-031 — Gỡ setup dùng deactivation có kiểm soát và cleanup profile từ xa
+
+- Gỡ Facebook profile không hard-delete history: record chuyển `removed` và bị loại khỏi setup/agent routing. Trước đó phải không còn browser session hoặc ad account `active`.
+- Control-plane dùng SSH password mã hóa theo worker để dọn đúng `<BROWSER_SESSION_PROFILE_ROOT>/<profile_key>`; key và resolved path đều được kiểm tra trước khi `rmtree`. Nếu không dọn được remote profile thì không gỡ record local.
+- Gỡ ad account chuyển trạng thái `removed`, dừng report schedule enabled và giữ campaign/report/audit snapshot để xem lịch sử. Ad account có work runtime active không thể gỡ.
+- Meta resource xóa trực tiếp khỏi registry sau khi kiểm tra không thuộc execution/automation active; history snapshot vẫn độc lập với registry hiện hành.

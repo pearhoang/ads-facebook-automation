@@ -25,6 +25,7 @@
 
 ## Invariants
 - Resource/asset không thể được dùng chéo tenant hoặc ad account.
+- Resource có thể xóa khỏi registry khi không có execution/automation active cùng ad account; snapshot lịch sử không phụ thuộc registry hiện hành.
 - File lưu bằng generated path, không dùng trực tiếp user filename; download phải kiểm tra job payload tham chiếu đúng asset.
 - Snapshot giữ exact label/external ID/digest; worker xác minh digest sau download.
 - Không có endpoint publish hoặc payment mutation.

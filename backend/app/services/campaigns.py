@@ -8,18 +8,23 @@ from sqlalchemy.orm import Session
 
 from ..models import (
     AdAccount,
+    AdAutomationRequest,
     ApprovalRequest,
     AuditEvent,
     CampaignDraft,
     CreativeAsset,
+    ExecutionJob,
     FacebookAccount,
     MetaResource,
+    ReportJob,
+    ReportSchedule,
     utc_now,
 )
 from . import resources
 
 
 APPROVER_ROLES = {"owner", "admin"}
+ACTIVE_RUNTIME_STATUSES = {"queued", "claimed", "running", "planning", "awaiting_approval", "awaiting_user", "recovering"}
 
 
 def _audit(
@@ -127,10 +132,84 @@ def list_ad_accounts(db: Session, tenant_id: str) -> list[AdAccount]:
     return list(
         db.scalars(
             select(AdAccount)
-            .where(AdAccount.tenant_id == tenant_id)
+            .where(
+                AdAccount.tenant_id == tenant_id,
+                AdAccount.status == "active",
+            )
             .order_by(AdAccount.created_at.desc())
         )
     )
+
+
+def remove_ad_account(
+    db: Session,
+    *,
+    tenant_id: str,
+    user_id: str,
+    ad_account_id: str,
+) -> AdAccount:
+    """Remove an account from active routing without deleting immutable history."""
+    account = get_ad_account(db, tenant_id, ad_account_id)
+    if account.status == "removed":
+        return account
+
+    active_execution = db.scalar(
+        select(ExecutionJob.id)
+        .where(
+            ExecutionJob.ad_account_id == account.id,
+            ExecutionJob.status.in_(ACTIVE_RUNTIME_STATUSES),
+        )
+        .limit(1)
+    )
+    active_report = db.scalar(
+        select(ReportJob.id)
+        .where(
+            ReportJob.ad_account_id == account.id,
+            ReportJob.status.in_(ACTIVE_RUNTIME_STATUSES),
+        )
+        .limit(1)
+    )
+    active_request = db.scalar(
+        select(AdAutomationRequest.id)
+        .where(
+            AdAutomationRequest.ad_account_id == account.id,
+            AdAutomationRequest.status.in_(ACTIVE_RUNTIME_STATUSES),
+        )
+        .limit(1)
+    )
+    if active_execution or active_report or active_request:
+        raise HTTPException(
+            status_code=409,
+            detail="Ad account đang có công việc chạy. Hãy chờ hoàn tất hoặc dừng công việc trước khi gỡ.",
+        )
+
+    disabled_schedules = list(
+        db.scalars(
+            select(ReportSchedule).where(
+                ReportSchedule.ad_account_id == account.id,
+                ReportSchedule.status == "enabled",
+            )
+        )
+    )
+    for schedule in disabled_schedules:
+        schedule.status = "disabled"
+    account.status = "removed"
+    _audit(
+        db,
+        tenant_id=tenant_id,
+        user_id=user_id,
+        action="ad_account.removed",
+        entity_type="ad_account",
+        entity_id=account.id,
+        payload={
+            "label": account.label,
+            "meta_ad_account_id": account.meta_ad_account_id,
+            "disabled_schedule_count": len(disabled_schedules),
+        },
+    )
+    db.commit()
+    db.refresh(account)
+    return account
 
 
 def update_ad_account(
@@ -237,6 +316,8 @@ def create_campaign(
     actor_type: str = "user",
 ) -> CampaignDraft:
     ad_account = get_ad_account(db, tenant_id, ad_account_id)
+    if ad_account.status != "active":
+        raise HTTPException(status_code=409, detail="Ad account đã được gỡ khỏi định tuyến.")
     _validate_schedule(start_at, end_at)
     targeting_json, creative_json = resources.resolve_campaign_inputs(
         db,

@@ -84,6 +84,8 @@ def _campaign_graph(
         .where(
             CampaignDraft.id == campaign_id,
             CampaignDraft.tenant_id == tenant_id,
+            AdAccount.status == "active",
+            FacebookAccount.status != "removed",
         )
         .order_by(ApprovalRequest.decided_at.desc())
         .limit(1)

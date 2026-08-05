@@ -79,7 +79,7 @@ function render() {
       <td>${escapeHtml(worker?.display_name || "Chưa gán")}</td>
       <td>${badge(account.status)}</td>
       <td>${session ? badge(session.status) : '<span class="status">Chưa có phiên</span>'}</td>
-      <td><div class="row-actions">${primaryAction}</div></td>
+      <td><div class="row-actions">${primaryAction}<button class="row-button" type="button" data-remove-facebook-profile="${escapeHtml(account.id)}" aria-label="Gỡ Facebook profile" title="Gỡ Facebook profile"><svg aria-hidden="true"><use href="/static/ui-icons.svg#trash"></use></svg></button></div></td>
     </tr>`;
   }).join("");
 }
@@ -99,6 +99,7 @@ async function createAccount(event) {
     byId("account-dialog").close();
     event.target.reset();
     await loadWorkspace();
+    window.dispatchEvent(new Event("account-routing:changed"));
   } catch (error) { showNotice(error.message); }
   finally { submit.disabled = false; }
 }
@@ -177,6 +178,8 @@ byId("open-novnc-button").addEventListener("click", () => {
 setInterval(() => {
   if (byId("session-dialog").open && state.selectedSessionId) refreshSelectedSession();
 }, 3000);
+
+window.addEventListener("account-routing:changed", loadWorkspace);
 
 loadWorkspace();
 })();

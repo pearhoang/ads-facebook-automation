@@ -467,3 +467,10 @@
 - Affected: `backend/app/{web.py,api/reports.py,services/reporting.py,schemas.py,templates,static}`, `tests`, `docs`.
 - Verified: `98 passed`, JavaScript syntax, browser local desktop/mobile; production web/worker active, health `ok`, dữ liệu thật render đúng và không có console error.
 - Risk: Xóa lịch sử là destructive nhưng bị giới hạn role, CSRF, terminal state và bảo vệ latest snapshot.
+
+### 2026-08-05 - Lifecycle gỡ cấu hình tài khoản
+
+- Added: Setup surface có action xác nhận để gỡ Facebook profile, gỡ ad account và xóa Meta resource.
+- Safety: Profile chỉ được gỡ khi không có browser session/ad account active; control-plane dùng SSH credential mã hóa của worker để xóa đúng profile directory trước khi loại record khỏi routing.
+- Safety: Ad account được soft-remove để giữ snapshot/audit, dừng lịch report enabled và bị chặn khi có work đang chạy; resource bị chặn khi execution/automation đang active.
+- Verified: Full test suite pass; có coverage cho profile cleanup callback, ad-account removal và resource deletion.

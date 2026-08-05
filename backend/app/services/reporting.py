@@ -85,6 +85,7 @@ def _account_context(
         select(AdAccount).where(
             AdAccount.id == ad_account_id,
             AdAccount.tenant_id == tenant_id,
+            AdAccount.status == "active",
         )
     )
     if account is None:
@@ -97,6 +98,8 @@ def _account_context(
     )
     if facebook is None:
         raise HTTPException(status_code=409, detail="Ad account chưa có Facebook profile hợp lệ.")
+    if facebook.status == "removed":
+        raise HTTPException(status_code=409, detail="Facebook profile đã được gỡ khỏi workspace.")
     worker = db.get(Worker, facebook.assigned_worker_id)
     if worker is None:
         raise HTTPException(status_code=409, detail="Facebook profile chưa được gán worker.")

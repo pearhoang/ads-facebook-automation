@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from ..models import (
     AdAccount,
+    AdAutomationRequest,
     AuditEvent,
     CreativeAsset,
     ExecutionJob,
@@ -61,6 +62,7 @@ RESOURCE_SELECTIONS = (
         "lead_form_external_id",
     ),
 )
+ACTIVE_RUNTIME_STATUSES = {"queued", "claimed", "running", "planning", "awaiting_approval", "awaiting_user", "recovering"}
 
 
 def _audit(
@@ -95,6 +97,8 @@ def _get_ad_account(db: Session, tenant_id: str, ad_account_id: str) -> AdAccoun
     )
     if account is None:
         raise HTTPException(status_code=404, detail="Không tìm thấy ad account.")
+    if account.status != "active":
+        raise HTTPException(status_code=409, detail="Ad account đã được gỡ khỏi định tuyến.")
     return account
 
 
@@ -174,7 +178,14 @@ def list_resources(
     tenant_id: str,
     ad_account_id: str | None = None,
 ) -> list[MetaResource]:
-    query = select(MetaResource).where(MetaResource.tenant_id == tenant_id)
+    query = (
+        select(MetaResource)
+        .join(AdAccount, AdAccount.id == MetaResource.ad_account_id)
+        .where(
+            MetaResource.tenant_id == tenant_id,
+            AdAccount.status == "active",
+        )
+    )
     if ad_account_id:
         _get_ad_account(db, tenant_id, ad_account_id)
         query = query.where(MetaResource.ad_account_id == ad_account_id)
@@ -213,6 +224,53 @@ def verify_resource(
     )
     db.commit()
     db.refresh(resource)
+    return resource
+
+
+def delete_resource(
+    db: Session,
+    *,
+    tenant_id: str,
+    user_id: str,
+    resource_id: str,
+) -> MetaResource:
+    resource = get_resource(db, tenant_id, resource_id)
+    active_execution = db.scalar(
+        select(ExecutionJob.id)
+        .where(
+            ExecutionJob.ad_account_id == resource.ad_account_id,
+            ExecutionJob.status.in_(ACTIVE_RUNTIME_STATUSES),
+        )
+        .limit(1)
+    )
+    active_request = db.scalar(
+        select(AdAutomationRequest.id)
+        .where(
+            AdAutomationRequest.ad_account_id == resource.ad_account_id,
+            AdAutomationRequest.status.in_(ACTIVE_RUNTIME_STATUSES),
+        )
+        .limit(1)
+    )
+    if active_execution or active_request:
+        raise HTTPException(
+            status_code=409,
+            detail="Resource đang thuộc công việc chạy. Hãy chờ hoàn tất hoặc dừng công việc trước khi xóa.",
+        )
+    _audit(
+        db,
+        tenant_id=tenant_id,
+        user_id=user_id,
+        action="meta_resource.deleted",
+        entity_type="meta_resource",
+        entity_id=resource.id,
+        payload={
+            "kind": resource.kind,
+            "label": resource.label,
+            "ad_account_id": resource.ad_account_id,
+        },
+    )
+    db.delete(resource)
+    db.commit()
     return resource
 
 

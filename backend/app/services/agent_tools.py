@@ -40,7 +40,9 @@ def _owned_accounts(db: Session, worker_id: str, tenant_id: str) -> list[AdAccou
             .join(FacebookAccount, FacebookAccount.id == AdAccount.facebook_account_id)
             .where(
                 AdAccount.tenant_id == tenant_id,
+                AdAccount.status == "active",
                 FacebookAccount.assigned_worker_id == worker_id,
+                FacebookAccount.status != "removed",
             )
             .order_by(AdAccount.created_at.desc())
         )

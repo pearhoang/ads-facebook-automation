@@ -274,3 +274,30 @@ def test_ad_account_can_be_renamed_but_linkage_is_locked_after_dependencies_exis
         update_events = [event for event in events if event["action"] == "ad_account.updated"]
         assert len(update_events) == 2
         assert update_events[0]["payload_json"]["changes"]["label"]["to"] == "Lê Hoàng Ads"
+
+
+def test_owner_can_remove_ad_account_from_active_routing():
+    with build_client() as client:
+        provision(client, TENANT_A, "owner-a@example.test")
+        headers = login(client, "owner-a@example.test")
+        facebook_account = create_facebook_account(client, headers)
+        ad_account = create_ad_account(client, headers, facebook_account["id"])
+
+        removed = client.delete(f"/api/ad-accounts/{ad_account['id']}", headers=headers)
+
+        assert removed.status_code == 200
+        assert removed.json()["status"] == "removed"
+        assert client.get("/api/ad-accounts").json() == []
+        blocked = client.post(
+            "/api/campaign-drafts",
+            headers=headers,
+            json={
+                "ad_account_id": ad_account["id"],
+                "name": "Không được tạo",
+                "objective": "awareness",
+                "daily_budget_minor": 50000,
+                "targeting_json": {},
+                "creative_json": {},
+            },
+        )
+        assert blocked.status_code == 409

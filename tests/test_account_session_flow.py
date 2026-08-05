@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 
 from backend.app.config import Settings
 from backend.app.main import create_app
+from backend.app.models import Worker
 from backend.app.services import account_sessions, auth
 
 
@@ -204,3 +205,42 @@ def test_worker_rejects_invalid_transition_and_secret():
             json={"status": "ready"},
         )
         assert invalid.status_code == 409
+
+
+def test_owner_can_remove_inactive_profile_after_worker_cookie_cleanup(monkeypatch):
+    with build_client() as client:
+        provision_user(client, TENANT_A, "owner-a@example.test")
+        csrf_headers = login(client, "owner-a@example.test")
+        worker = client.post(
+            "/api/workers/register",
+            headers=worker_headers(),
+            json={"worker_key": "worker-delete-profile", "display_name": "Delete Profile Worker"},
+        ).json()
+        with client.app.state.database.session_factory() as db:
+            account_sessions.assign_worker_to_tenant(db, worker["id"], TENANT_A)
+            stored_worker = db.get(Worker, worker["id"])
+            stored_worker.host = "127.0.0.1"
+            stored_worker.ssh_user = "root"
+            stored_worker.ssh_password_ciphertext = "encrypted"
+            db.commit()
+        account = client.post(
+            "/api/accounts",
+            headers=csrf_headers,
+            json={"label": "Profile cần gỡ", "assigned_worker_id": worker["id"]},
+        ).json()
+        cleaned: list[tuple[str, str]] = []
+        monkeypatch.setattr(
+            "backend.app.api.user.ssh_credentials.decrypt_password",
+            lambda *_args: "ssh-password",
+        )
+        monkeypatch.setattr(
+            "backend.app.api.user.remote_ops.cleanup_browser_profile",
+            lambda target_worker, _password, profile_key: cleaned.append((target_worker.id, profile_key)),
+        )
+
+        removed = client.delete(f"/api/accounts/{account['id']}", headers=csrf_headers)
+
+        assert removed.status_code == 200
+        assert removed.json()["status"] == "removed"
+        assert cleaned == [(worker["id"], account["profile_key"])]
+        assert client.get("/api/accounts").json() == []

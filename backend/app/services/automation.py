@@ -88,7 +88,9 @@ def _owned_account(
         .where(
             AdAccount.id == ad_account_id,
             AdAccount.tenant_id == tenant_id,
+            AdAccount.status == "active",
             FacebookAccount.assigned_worker_id == worker_id,
+            FacebookAccount.status != "removed",
         )
     ).one_or_none()
     if row is None:
@@ -105,7 +107,9 @@ def resource_context(db: Session, worker_id: str) -> dict:
             .join(Worker, Worker.id == FacebookAccount.assigned_worker_id)
             .where(
                 AdAccount.tenant_id == config.tenant_id,
+                AdAccount.status == "active",
                 FacebookAccount.assigned_worker_id == worker_id,
+                FacebookAccount.status != "removed",
             )
             .order_by(AdAccount.label)
         )

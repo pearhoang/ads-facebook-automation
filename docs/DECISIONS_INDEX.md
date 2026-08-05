@@ -32,3 +32,4 @@
 | DEC-028 | Chọn Meta Light Focus làm visual canonical cho toàn bộ app chính | Active | UI/templates/static | Medium |
 | DEC-029 | Agent-orchestrated ad work; control-plane chỉ setup và theo dõi | Active | backend/UI/worker/agent | High |
 | DEC-030 | Gộp UI theo hai vai trò: thiết lập tài khoản và vận hành quảng cáo | Active | backend/UI/reporting | Medium |
+| DEC-031 | Gỡ setup dùng deactivation có kiểm soát và cleanup profile từ xa | Active | backend/UI/worker | High |

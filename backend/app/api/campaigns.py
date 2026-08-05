@@ -9,6 +9,7 @@ from ..dependencies import (
     get_current_tenant_id,
     get_db,
     get_settings,
+    require_owner,
     verify_csrf,
 )
 from ..schemas import (
@@ -82,6 +83,21 @@ def update_ad_account(
     )
 
 
+@router.delete("/ad-accounts/{ad_account_id}", response_model=AdAccountView)
+def remove_ad_account(
+    ad_account_id: str,
+    principal: auth.AuthPrincipal = Depends(require_owner),
+    _csrf: None = Depends(verify_csrf),
+    db: Session = Depends(get_db),
+):
+    return campaigns.remove_ad_account(
+        db,
+        tenant_id=principal.tenant_id,
+        user_id=principal.user_id,
+        ad_account_id=ad_account_id,
+    )
+
+
 @router.get("/meta-resources", response_model=list[MetaResourceView])
 def list_meta_resources(
     ad_account_id: str | None = Query(default=None, max_length=36),
@@ -127,6 +143,21 @@ def verify_meta_resource(
         user_id=principal.user_id,
         resource_id=resource_id,
         confirmation=payload.confirmation,
+    )
+
+
+@router.delete("/meta-resources/{resource_id}", response_model=MetaResourceView)
+def delete_meta_resource(
+    resource_id: str,
+    principal: auth.AuthPrincipal = Depends(require_owner),
+    _csrf: None = Depends(verify_csrf),
+    db: Session = Depends(get_db),
+):
+    return resources.delete_resource(
+        db,
+        tenant_id=principal.tenant_id,
+        user_id=principal.user_id,
+        resource_id=resource_id,
     )
 
 

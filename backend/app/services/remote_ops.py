@@ -190,10 +190,60 @@ def _operator_command(ssh_user: str, password: str, script_command: str) -> tupl
     return f"sudo -S -p '' {script_command}", f"{password}\n"
 
 
+def cleanup_browser_profile(worker: Worker, ssh_password: str, profile_key: str) -> None:
+    """Remove exactly one inactive Chromium profile through the worker's private SSH path."""
+    cleaned_key = str(profile_key or "").strip()
+    if not _PROFILE_KEY.fullmatch(cleaned_key):
+        raise ValueError("Profile key không hợp lệ cho thao tác dọn dẹp.")
+    if not worker.host or not worker.ssh_user:
+        raise RuntimeError("Bot VPS chưa có host/SSH user để xóa browser profile.")
+    client: paramiko.SSHClient | None = None
+    try:
+        client, _fingerprint = _connect(
+            worker.host,
+            worker.ssh_user,
+            ssh_password,
+            worker.ssh_host_fingerprint,
+        )
+        script = " && ".join(
+            [
+                "test -f /etc/meta-ads-copilot/worker.env",
+                "set -a",
+                ". /etc/meta-ads-copilot/worker.env",
+                "set +a",
+                f"python3 -c {shlex.quote(_PROFILE_CLEANUP_CODE)} {shlex.quote(cleaned_key)}",
+            ]
+        )
+        operator_script, sudo_stdin = _operator_command(worker.ssh_user, ssh_password, script)
+        _run_command(client, operator_script, stdin_text=sudo_stdin, timeout_seconds=120)
+    finally:
+        if client is not None:
+            client.close()
+
+
 _ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 _DEVICE_URL = re.compile(r"https://[^\s]+", re.IGNORECASE)
 _DEVICE_CODE = re.compile(r"\b[A-Z0-9]{4}-[A-Z0-9]{4,5}\b")
 _CODEX_HOME = "/opt/meta-ads-copilot-runtime/worker-data/codex"
+_PROFILE_KEY = re.compile(r"^[A-Za-z0-9_-]{1,120}$")
+_PROFILE_CLEANUP_CODE = r'''
+import os
+import re
+import shutil
+import sys
+from pathlib import Path
+
+profile_key = sys.argv[1]
+if not re.fullmatch(r"[A-Za-z0-9_-]{1,120}", profile_key):
+    raise SystemExit("Profile key không hợp lệ")
+data_dir = Path(os.environ.get("WORKER_DATA_DIR", "/opt/meta-ads-copilot-runtime/worker-data")).resolve()
+profile_root = Path(os.environ.get("BROWSER_SESSION_PROFILE_ROOT", str(data_dir / "browser-profiles"))).resolve()
+target = (profile_root / profile_key).resolve()
+if target.parent != profile_root:
+    raise SystemExit("Profile path nằm ngoài browser profile root")
+shutil.rmtree(target, ignore_errors=True)
+print("Browser profile đã được xóa")
+'''.strip()
 
 
 def _codex_device_prompt(output: str) -> str | None:

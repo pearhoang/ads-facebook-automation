@@ -33,6 +33,7 @@
 - Draft builder detail hiển thị phase dừng, số lần chạy, current URL, blockers và checkpoint `Campaign`, `Ad Set`, `Ad`, `Review`.
 - Phase 6 hiển thị `field_results` bằng bảng nhỏ trong job detail: stage, field path, trạng thái áp dụng/xác minh và chi tiết lỗi; không giấu field chưa có control.
 - Khối Meta resource trên `/` hiển thị registry; resource mới phải có trạng thái `Chưa xác minh` và chỉ được dùng khi exact ownership đã rõ.
+- Setup row action có `Gỡ/Xóa` qua dialog xác nhận: ad account gỡ khỏi routing và giữ history, Facebook profile dọn cookie trên worker trước khi gỡ, resource xóa khỏi registry khi không có job active.
 - Creative asset không có thư viện nhập tay trong primary UI. Worker ingest media từ Telegram/Hermes, lưu digest và gắn asset ID vào internal snapshot.
 - Job `Cần người dùng` có action `Mở noVNC xử lý` tại exact Ads Manager URL do worker trả về; action này không retry hoặc publish job.
 - Không dùng persistent safety banner trên page hoặc form dialog. Ý nghĩa an toàn phải nằm trong tên action và workflow cụ thể như `Tạo bản nháp`, `Dừng ở Review`; confirm publish/budget thật vẫn phải hiển thị account, campaign và số tiền trước khi thực thi.

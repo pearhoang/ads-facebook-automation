@@ -7,6 +7,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..models import (
+    AdAccount,
+    AuditEvent,
     BrowserSession,
     FacebookAccount,
     Tenant,
@@ -142,10 +144,79 @@ def list_accounts(db: Session, tenant_id: str) -> list[FacebookAccount]:
     return list(
         db.scalars(
             select(FacebookAccount)
-            .where(FacebookAccount.tenant_id == tenant_id)
+            .where(
+                FacebookAccount.tenant_id == tenant_id,
+                FacebookAccount.status != "removed",
+            )
             .order_by(FacebookAccount.created_at.desc())
         )
     )
+
+
+def prepare_account_removal(
+    db: Session,
+    *,
+    tenant_id: str,
+    account_id: str,
+) -> FacebookAccount:
+    account = get_account(db, tenant_id, account_id)
+    if account.status == "removed":
+        return account
+    active_session = db.scalar(
+        select(BrowserSession.id)
+        .where(
+            BrowserSession.account_id == account.id,
+            BrowserSession.status.in_(ACTIVE_SESSION_STATES),
+        )
+        .limit(1)
+    )
+    if active_session:
+        raise HTTPException(
+            status_code=409,
+            detail="Facebook profile đang có browser session. Hãy đóng phiên trước khi gỡ.",
+        )
+    active_ad_account = db.scalar(
+        select(AdAccount.id)
+        .where(
+            AdAccount.facebook_account_id == account.id,
+            AdAccount.status == "active",
+        )
+        .limit(1)
+    )
+    if active_ad_account:
+        raise HTTPException(
+            status_code=409,
+            detail="Hãy gỡ các ad account đang dùng Facebook profile này trước.",
+        )
+    return account
+
+
+def mark_account_removed(
+    db: Session,
+    *,
+    tenant_id: str,
+    user_id: str,
+    account_id: str,
+) -> FacebookAccount:
+    account = prepare_account_removal(db, tenant_id=tenant_id, account_id=account_id)
+    if account.status == "removed":
+        return account
+    account.status = "removed"
+    account.last_error = None
+    db.add(
+        AuditEvent(
+            tenant_id=tenant_id,
+            actor_user_id=user_id,
+            actor_type="user",
+            action="facebook_account.removed",
+            entity_type="facebook_account",
+            entity_id=account.id,
+            payload_json={"label": account.label, "profile_key": account.profile_key},
+        )
+    )
+    db.commit()
+    db.refresh(account)
+    return account
 
 
 def create_browser_session(
@@ -156,6 +227,8 @@ def create_browser_session(
     launch_url: str | None = None,
 ) -> BrowserSession:
     account = get_account(db, tenant_id, account_id)
+    if account.status == "removed":
+        raise HTTPException(status_code=409, detail="Facebook profile đã được gỡ khỏi workspace.")
     active = db.scalar(
         select(BrowserSession).where(
             BrowserSession.account_id == account.id,
