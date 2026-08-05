@@ -140,7 +140,7 @@ def test_page_feedback_uses_transient_non_layout_toasts():
         text = path.read_text(encoding="utf-8")
         assert "data-toast" in text
         assert "/static/ui.js?v=toast-3" in text
-        assert "/static/workspace.css?v=toast-4" in text
+        assert "/static/workspace.css?v=toast-5" in text
 
     script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
     styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
@@ -186,6 +186,8 @@ def test_agent_work_detail_keeps_canonical_dialog_and_timeline_anatomy():
     assert 'class="work-detail-body"' in template
     assert 'id="work-detail-timeline" class="work-timeline"' in template
     assert 'id="artifact-lightbox" class="artifact-lightbox"' in template
+    assert 'data-artifact-prev aria-label="Ảnh trước"' in template
+    assert 'data-artifact-next aria-label="Ảnh tiếp theo"' in template
     assert 'id="work-handoff-link"' in template
     assert ".work-detail-grid" in styles
     assert ".work-detail-body" in styles

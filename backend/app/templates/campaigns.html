@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=toast-4">
+  <link rel="stylesheet" href="/static/workspace.css?v=toast-5">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
   {% set active_nav = "campaigns" %}
@@ -104,12 +104,12 @@
   <dialog id="artifact-lightbox" class="artifact-lightbox" aria-labelledby="artifact-lightbox-caption">
     <div class="artifact-lightbox-backdrop" data-artifact-close></div>
     <div class="artifact-lightbox-panel">
-      <button id="artifact-lightbox-prev" class="artifact-lightbox-nav" type="button" data-artifact-prev aria-label="Ảnh trước">‹</button>
       <figure class="artifact-lightbox-figure">
         <img id="artifact-lightbox-image" class="artifact-lightbox-image" alt="">
         <figcaption id="artifact-lightbox-caption" class="artifact-lightbox-caption"></figcaption>
+        <button id="artifact-lightbox-prev" class="artifact-lightbox-nav" type="button" data-artifact-prev aria-label="Ảnh trước">‹</button>
+        <button id="artifact-lightbox-next" class="artifact-lightbox-nav" type="button" data-artifact-next aria-label="Ảnh tiếp theo">›</button>
       </figure>
-      <button id="artifact-lightbox-next" class="artifact-lightbox-nav" type="button" data-artifact-next aria-label="Ảnh tiếp theo">›</button>
       <button id="artifact-lightbox-close" class="artifact-lightbox-close" type="button" data-artifact-close aria-label="Đóng ảnh">×</button>
     </div>
   </dialog>

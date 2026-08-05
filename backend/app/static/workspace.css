@@ -698,15 +698,18 @@ dialog.artifact-lightbox { width: 100vw; height: 100dvh; max-width: none; max-he
 dialog.artifact-lightbox[open] { display: grid; place-items: center; }
 dialog.artifact-lightbox::backdrop { background: rgba(15, 23, 42, .68); }
 .artifact-lightbox-backdrop { position: absolute; inset: 0; background: transparent; }
-.artifact-lightbox-panel { position: relative; z-index: 1; width: min(1100px, calc(100vw - 48px)); height: min(760px, calc(100dvh - 48px)); display: grid; grid-template-columns: 42px minmax(0, 1fr) 42px; align-items: center; gap: 10px; padding: 14px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; box-shadow: 0 18px 50px rgba(15, 23, 42, .28); }
-.artifact-lightbox-figure { position: relative; min-width: 0; min-height: 0; width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden; border-radius: 8px; background: #f7f9fc; }
+.artifact-lightbox-panel { position: relative; z-index: 1; width: min(1280px, calc(100vw - 48px)); height: min(820px, calc(100dvh - 48px)); }
+.artifact-lightbox-figure { position: relative; min-width: 0; min-height: 0; width: 100%; height: 100%; display: grid; place-items: center; overflow: hidden; }
 .artifact-lightbox-image { display: block; min-width: 0; min-height: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .artifact-lightbox-caption { position: absolute; left: 12px; bottom: 12px; max-width: calc(100% - 24px); padding: 6px 9px; border-radius: 6px; background: rgba(15, 23, 42, .78); color: #fff; font-size: 11px; line-height: 1.3; }
-.artifact-lightbox-nav, .artifact-lightbox-close { display: grid; place-items: center; border: 1px solid var(--border); background: #fff; color: var(--text); cursor: pointer; }
-.artifact-lightbox-nav { width: 36px; height: 42px; border-radius: 8px; font-size: 28px; line-height: 1; }
+.artifact-lightbox-nav, .artifact-lightbox-close { display: grid; place-items: center; border: 0; background: rgba(15, 23, 42, .42); color: #fff; cursor: pointer; }
+.artifact-lightbox-nav { position: absolute; top: 50%; z-index: 2; width: 42px; height: 58px; border-radius: 4px; font-size: 34px; line-height: 1; transform: translateY(-50%); text-shadow: 0 1px 3px rgba(0, 0, 0, .5); }
+.artifact-lightbox-nav[data-artifact-prev] { left: 14px; }
+.artifact-lightbox-nav[data-artifact-next] { right: 14px; }
 .artifact-lightbox-nav:disabled { opacity: .35; cursor: default; }
-.artifact-lightbox-nav:not(:disabled):hover, .artifact-lightbox-close:hover { border-color: #a5b4fc; color: var(--accent); }
-.artifact-lightbox-close { position: absolute; top: 10px; right: 10px; z-index: 2; width: 30px; height: 30px; border-radius: 8px; font-size: 20px; line-height: 1; }
+.artifact-lightbox-nav:not(:disabled):hover { background: rgba(15, 23, 42, .66); }
+.artifact-lightbox-close { position: absolute; top: 4px; right: 4px; z-index: 3; width: 38px; height: 38px; border-radius: 4px; font-size: 28px; line-height: 1; }
+.artifact-lightbox-close:hover { background: rgba(15, 23, 42, .66); }
 .artifact-lightbox-open { overflow: hidden; }
 
 @media (max-width: 1120px) and (min-width: 721px) {
@@ -774,8 +777,10 @@ dialog.artifact-lightbox::backdrop { background: rgba(15, 23, 42, .68); }
   .dialog-actions { flex-wrap: wrap; }
   .dialog-actions .button { flex: 1; }
   dialog.artifact-lightbox { padding: 10px; }
-  .artifact-lightbox-panel { width: calc(100vw - 20px); height: calc(100dvh - 20px); grid-template-columns: 34px minmax(0, 1fr) 34px; gap: 6px; padding: 8px; }
-  .artifact-lightbox-nav { width: 30px; height: 38px; font-size: 24px; }
+  .artifact-lightbox-panel { width: calc(100vw - 20px); height: calc(100dvh - 20px); }
+  .artifact-lightbox-nav { width: 34px; height: 48px; font-size: 28px; }
+  .artifact-lightbox-nav[data-artifact-prev] { left: 8px; }
+  .artifact-lightbox-nav[data-artifact-next] { right: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
