@@ -459,3 +459,4 @@
 - Deploy: Production tại commit `194253a`; source backup `/var/backups/meta-ads-copilot/20260805T021920Z-toast-ui-v2`.
 - Verified: `96 passed`, browser desktop/mobile, nút đóng, auto-hide 4,8 giây và production console không có error.
 - Fixed: Nút đóng work detail dialog dùng handler riêng, đóng native dialog và dọn trạng thái lightbox/focus; pagination operation log căn phải sát nút `Xóa trang`.
+- Fixed: Dialog work detail đã đóng không còn bị CSS `display:flex` giữ lại trên màn hình.
