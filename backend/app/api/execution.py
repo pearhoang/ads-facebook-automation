@@ -107,5 +107,6 @@ def download_execution_artifact(
         artifact.storage_path,
         media_type=artifact.content_type,
         filename=f"{artifact.kind}.png",
+        content_disposition_type="inline",
         headers={"Cache-Control": "private, no-store"},
     )

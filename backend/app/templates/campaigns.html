@@ -76,22 +76,24 @@
       <div><p id="work-detail-eyebrow" class="dialog-eyebrow">Công việc quảng cáo</p><h2 id="work-detail-title">Chi tiết công việc</h2><p id="work-detail-progress"></p></div>
       <button class="icon-button" type="button" data-close="work-detail-dialog" aria-label="Đóng">×</button>
     </div>
-    <div id="work-detail-status" class="work-detail-status"></div>
-    <div class="work-detail-grid">
-      <section>
-        <h3>Yêu cầu gốc</h3>
-        <p id="work-detail-request" class="request-quote"></p>
-        <h3>Account đã phân giải</h3>
-        <dl id="work-detail-resolution" class="session-facts"></dl>
-        <h3>Kế hoạch</h3>
-        <dl id="work-detail-plan" class="session-facts"></dl>
-      </section>
-      <section>
-        <h3>Timeline</h3>
-        <ol id="work-detail-timeline" class="work-timeline"></ol>
-        <div id="work-detail-error" class="execution-blockers" hidden></div>
-        <div id="work-detail-artifacts" class="artifact-links"></div>
-      </section>
+    <div class="work-detail-body">
+      <div id="work-detail-status" class="work-detail-status"></div>
+      <div class="work-detail-grid">
+        <section>
+          <h3>Yêu cầu gốc</h3>
+          <p id="work-detail-request" class="request-quote"></p>
+          <h3>Account đã phân giải</h3>
+          <dl id="work-detail-resolution" class="session-facts"></dl>
+          <h3>Kế hoạch</h3>
+          <dl id="work-detail-plan" class="session-facts"></dl>
+        </section>
+        <section>
+          <h3>Timeline</h3>
+          <ol id="work-detail-timeline" class="work-timeline"></ol>
+          <div id="work-detail-error" class="execution-blockers" hidden></div>
+          <div id="work-detail-artifacts" class="artifact-links"></div>
+        </section>
+      </div>
     </div>
     <div class="dialog-actions">
       <a id="work-handoff-link" class="button button-secondary" href="/" hidden>Mở tài khoản để xử lý login/2FA</a>
@@ -99,9 +101,22 @@
     </div>
   </dialog>
 
+  <div id="artifact-lightbox" class="artifact-lightbox" hidden>
+    <div class="artifact-lightbox-backdrop" data-artifact-close></div>
+    <div class="artifact-lightbox-panel" role="dialog" aria-modal="true" aria-labelledby="artifact-lightbox-caption">
+      <button id="artifact-lightbox-prev" class="artifact-lightbox-nav" type="button" data-artifact-prev aria-label="Ảnh trước">‹</button>
+      <figure class="artifact-lightbox-figure">
+        <img id="artifact-lightbox-image" class="artifact-lightbox-image" alt="">
+        <figcaption id="artifact-lightbox-caption" class="artifact-lightbox-caption"></figcaption>
+      </figure>
+      <button id="artifact-lightbox-next" class="artifact-lightbox-nav" type="button" data-artifact-next aria-label="Ảnh tiếp theo">›</button>
+      <button id="artifact-lightbox-close" class="artifact-lightbox-close" type="button" data-artifact-close aria-label="Đóng ảnh">×</button>
+    </div>
+  </div>
+
   {% include "_password_dialog.html" %}
   <script src="/static/ui.js?v=toast-3" defer></script>
-  <script src="/static/campaigns.js?v=toast-1" defer></script>
+  <script src="/static/campaigns.js?v=work-detail-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

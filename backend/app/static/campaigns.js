@@ -1,7 +1,7 @@
 const csrfToken = document.body.dataset.csrfToken;
 const byId = (id) => document.getElementById(id);
 
-const state = { requests: [], adAccounts: [], selectedId: null, statusFilter: "" };
+const state = { requests: [], adAccounts: [], selectedId: null, statusFilter: "", artifacts: [], artifactIndex: 0, artifactReturnFocus: null };
 const activeStatuses = new Set(["planning", "awaiting_approval", "queued", "running"]);
 
 const statusLabels = {
@@ -25,6 +25,14 @@ const stageLabels = {
   handoff: "Login / 2FA / challenge",
   review: "Dừng tại Review",
   cancelled: "Đã hủy",
+};
+
+const artifactKindLabels = {
+  campaign_step: "Campaign",
+  adset_step: "Ad Set",
+  ad_step: "Ad",
+  review_step: "Review",
+  screenshot: "Screenshot",
 };
 
 function escapeHtml(value) {
@@ -155,6 +163,50 @@ function factsHtml(items) {
   return items.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("");
 }
 
+function artifactLabel(kind) {
+  return artifactKindLabels[kind] || String(kind || "Artifact").replaceAll("_", " ");
+}
+
+function renderArtifactLightbox() {
+  const artifact = state.artifacts[state.artifactIndex];
+  const lightbox = byId("artifact-lightbox");
+  const image = byId("artifact-lightbox-image");
+  const caption = byId("artifact-lightbox-caption");
+  if (!artifact) return;
+  image.alt = `${artifactLabel(artifact.kind)} checkpoint`;
+  image.src = `/api/execution-artifacts/${encodeURIComponent(artifact.id)}`;
+  caption.textContent = artifactLabel(artifact.kind);
+  byId("artifact-lightbox-prev").disabled = state.artifactIndex <= 0;
+  byId("artifact-lightbox-next").disabled = state.artifactIndex >= state.artifacts.length - 1;
+  lightbox.hidden = false;
+  document.body.classList.add("artifact-lightbox-open");
+}
+
+function openArtifact(index) {
+  if (!state.artifacts[index]) return;
+  state.artifactIndex = index;
+  state.artifactReturnFocus = document.activeElement;
+  renderArtifactLightbox();
+  byId("artifact-lightbox-close")?.focus();
+}
+
+function closeArtifactLightbox() {
+  const lightbox = byId("artifact-lightbox");
+  if (!lightbox || lightbox.hidden) return;
+  lightbox.hidden = true;
+  byId("artifact-lightbox-image").removeAttribute("src");
+  document.body.classList.remove("artifact-lightbox-open");
+  if (state.artifactReturnFocus instanceof HTMLElement) state.artifactReturnFocus.focus();
+  state.artifactReturnFocus = null;
+}
+
+function moveArtifact(step) {
+  const nextIndex = state.artifactIndex + step;
+  if (nextIndex < 0 || nextIndex >= state.artifacts.length) return;
+  state.artifactIndex = nextIndex;
+  renderArtifactLightbox();
+}
+
 async function openDetail(requestId) {
   try {
     const item = await api(`/api/ad-automation-requests/${requestId}`);
@@ -177,7 +229,8 @@ async function openDetail(requestId) {
     const error = byId("work-detail-error");
     error.hidden = !item.last_error;
     error.textContent = item.last_error || "";
-    byId("work-detail-artifacts").innerHTML = (item.artifacts || []).map((artifact) => `<a class="button button-secondary button-small" href="/api/execution-artifacts/${escapeHtml(artifact.id)}" target="_blank" rel="noopener">Xem ${escapeHtml(artifact.kind)}</a>`).join("");
+    state.artifacts = item.artifacts || [];
+    byId("work-detail-artifacts").innerHTML = state.artifacts.map((artifact, index) => `<button class="button button-secondary button-small" type="button" data-artifact-index="${index}">Xem ${escapeHtml(artifactLabel(artifact.kind))}</button>`).join("");
     byId("work-handoff-link").hidden = item.status !== "awaiting_user";
     byId("work-detail-dialog").showModal();
   } catch (error) { showNotice(error.message); }
@@ -203,8 +256,21 @@ document.addEventListener("click", (event) => {
     state.statusFilter = filter.dataset.workFilter;
     renderTable();
   }
+  const artifact = event.target.closest("[data-artifact-index]");
+  if (artifact) openArtifact(Number(artifact.dataset.artifactIndex));
+  if (event.target.closest("[data-artifact-close]")) closeArtifactLightbox();
+  if (event.target.closest("[data-artifact-prev]")) moveArtifact(-1);
+  if (event.target.closest("[data-artifact-next]")) moveArtifact(1);
   const close = event.target.closest("[data-close]");
   if (close) byId(close.dataset.close).close();
+});
+
+document.addEventListener("keydown", (event) => {
+  const lightbox = byId("artifact-lightbox");
+  if (!lightbox || lightbox.hidden) return;
+  if (event.key === "Escape") closeArtifactLightbox();
+  if (event.key === "ArrowLeft") moveArtifact(-1);
+  if (event.key === "ArrowRight") moveArtifact(1);
 });
 
 byId("refresh-button").addEventListener("click", () => loadPage("Đã đồng bộ tiến độ mới nhất."));

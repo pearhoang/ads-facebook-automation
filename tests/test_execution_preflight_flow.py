@@ -206,6 +206,7 @@ def test_preflight_job_worker_flow_artifact_and_tenant_isolation(tmp_path: Path)
         downloaded = client.get(f"/api/execution-artifacts/{artifact['id']}")
         assert downloaded.status_code == 200
         assert downloaded.content == png
+        assert downloaded.headers["content-disposition"].startswith("inline;")
 
         login(client, "owner-b@example.test")
         assert client.get(f"/api/execution-jobs/{job['id']}").status_code == 404

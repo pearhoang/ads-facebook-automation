@@ -182,9 +182,12 @@ def test_agent_work_detail_keeps_canonical_dialog_and_timeline_anatomy():
     styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
 
     assert 'id="work-detail-dialog" class="wide-dialog work-detail-dialog"' in template
+    assert 'class="work-detail-body"' in template
     assert 'id="work-detail-timeline" class="work-timeline"' in template
+    assert 'id="artifact-lightbox" class="artifact-lightbox"' in template
     assert 'id="work-handoff-link"' in template
     assert ".work-detail-grid" in styles
+    assert ".work-detail-body" in styles
     assert ".work-timeline" in styles
     assert ".timeline-marker" in styles
 
