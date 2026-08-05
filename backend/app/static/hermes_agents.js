@@ -22,7 +22,7 @@ const presets = {
   custom: { name: "custom", base: "" },
 };
 
-function showNotice(message, success = false) { notice.textContent = message; notice.classList.toggle("notice-success", success); notice.hidden = false; }
+function showNotice(message, success = false) { window.AppToast.show(notice, message, { kind: success ? "success" : "error" }); }
 function setText(id, value) { document.getElementById(id).textContent = value || "—"; }
 function renderSummary(config) {
   currentConfig = config;

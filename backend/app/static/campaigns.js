@@ -67,10 +67,7 @@ async function api(path, options = {}) {
 }
 
 function showNotice(message, kind = "error") {
-  const notice = byId("notice");
-  notice.textContent = message;
-  notice.className = `notice page-notice notice-${kind}`;
-  notice.hidden = false;
+  window.AppToast.show(byId("notice"), message, { kind });
 }
 
 function accountLabel(id) {
@@ -193,8 +190,8 @@ async function loadPage(successMessage = "") {
     state.adAccounts = accounts;
     renderSummary();
     renderTable();
-    byId("notice").hidden = !successMessage;
     if (successMessage) showNotice(successMessage, "success");
+    else window.AppToast.hide(byId("notice"), true);
   } catch (error) { showNotice(error.message); }
 }
 

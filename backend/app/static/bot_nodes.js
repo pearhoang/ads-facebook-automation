@@ -50,9 +50,7 @@ async function api(path, options = {}) {
 }
 
 function showNotice(message, success = false) {
-  notice.textContent = message;
-  notice.classList.toggle("notice-success", success);
-  notice.hidden = false;
+  window.AppToast.show(notice, message, { kind: success ? "success" : "error" });
 }
 
 function statusClass(value) {
@@ -143,7 +141,7 @@ async function loadAll({ resetOperationPage = false } = {}) {
     }
     renderNodes(nodes);
     renderOperations(operations);
-    notice.hidden = true;
+    window.AppToast.hide(notice, true);
   } catch (error) { showNotice(error.message); }
 }
 

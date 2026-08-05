@@ -21,6 +21,7 @@
 - Action có rủi ro dùng review drawer/modal trước khi confirm.
 - Browser session có state panel riêng; không nhúng URL noVNC vào DOM trước khi được cấp quyền.
 - Loading, empty, error và waiting-for-user là các trạng thái bắt buộc.
+- Feedback cấp trang dùng toast cố định ở góc phải, không chiếm layout; có nút đóng và tự ẩn sau khoảng 5 giây. Cảnh báo cần đọc hoặc thao tác lâu bên trong form/dialog vẫn giữ inline.
 - Auth dùng một form gọn, error inline và recovery path rõ; không biến login thành dashboard.
 - Workspace header hiển thị user/tenant hiện tại và action đăng xuất.
 - `/ad-accounts` là setup surface cho ad account và Meta resource; `/campaigns` là work queue/timeline do Telegram/Hermes tạo, không phải trình dựng campaign thay Ads Manager.

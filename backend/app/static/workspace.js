@@ -31,8 +31,8 @@ async function api(path, options = {}) {
 
 function showNotice(message = "") {
   const notice = byId("notice");
-  notice.hidden = !message;
-  notice.textContent = message;
+  if (message) window.AppToast.show(notice, message, { kind: "error" });
+  else window.AppToast.hide(notice, true);
 }
 
 function badge(status) {

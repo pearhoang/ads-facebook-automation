@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=agent-work-1">
+  <link rel="stylesheet" href="/static/workspace.css?v=toast-1">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
   {% set active_nav = "ad_accounts" %}
@@ -38,7 +38,7 @@
           <article class="metric" data-notification-label="resource cần kiểm tra" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#clock"></use></svg></span><div><div class="metric-label">Cần kiểm tra</div><div class="metric-value" id="unverified-count">0</div><div class="metric-meta">Chưa exact-match</div></div></article>
         </section>
 
-        <div id="notice" class="notice page-notice" hidden></div>
+        <div id="notice" class="notice page-notice app-toast" data-toast hidden></div>
 
         <section class="content-section">
           <div class="section-toolbar"><div><h2>Ad accounts</h2><p>Liên kết Meta ad account với đúng Facebook profile và worker sở hữu cookie.</p></div><button id="refresh-button" class="button button-secondary" type="button">Làm mới</button></div>
@@ -92,8 +92,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
-  <script src="/static/ad_accounts.js?v=agent-work-1" defer></script>
+  <script src="/static/ui.js?v=toast-1" defer></script>
+  <script src="/static/ad_accounts.js?v=toast-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

@@ -445,3 +445,9 @@
 - Changed: Tách Hàng công việc khỏi KPI strip bằng gutter `18px`; thay select đơn bằng filter chips có số lượng theo trạng thái và action làm mới ngay trong toolbar.
 - Visual: Giữ table-first anatomy của Campaign drafts với header/filter row riêng, cột cố định, badge trạng thái có icon semantic và stepper `Yêu cầu → Kế hoạch → Thực thi → Review` trong cột tiến trình.
 - Safety: Chỉ thay presentation và client-side filtering; không đổi API, job state machine hoặc worker contract.
+
+### 2026-08-05 - Chuyển page notice sang toast
+
+- Changed: Thông báo thành công/lỗi trên các trang chính dùng toast cố định góc phải, không đẩy giãn KPI hoặc panel; có nút đóng, `aria-live` theo mức độ và tự ẩn sau 4,8 giây.
+- Kept: Cảnh báo Full Access, trạng thái device login Codex và lỗi trong dialog vẫn hiển thị inline để không mất thông tin đang thao tác.
+- Visual: Toast dùng token Meta Light Focus, border semantic và surface trắng; responsive không tạo horizontal overflow.

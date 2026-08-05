@@ -14,7 +14,7 @@ async function api(path, options = {}) {
   return payload;
 }
 
-function showNotice(message, kind = "error") { const notice = byId("notice"); notice.textContent = message; notice.className = `notice page-notice notice-${kind}`; notice.hidden = false; }
+function showNotice(message, kind = "error") { window.AppToast.show(byId("notice"), message, { kind }); }
 function facebookLabel(id) { return state.facebookAccounts.find((item) => item.id === id)?.label || "—"; }
 function accountLabel(id) { return state.adAccounts.find((item) => item.id === id)?.label || "—"; }
 
@@ -37,7 +37,7 @@ async function loadPage(successMessage = "") {
   try {
     const [facebookAccounts, adAccounts, resources] = await Promise.all([api("/api/accounts"), api("/api/ad-accounts"), api("/api/meta-resources")]);
     state.facebookAccounts = facebookAccounts; state.adAccounts = adAccounts; state.resources = resources; render();
-    if (successMessage) showNotice(successMessage, "success"); else byId("notice").hidden = true;
+    if (successMessage) showNotice(successMessage, "success"); else window.AppToast.hide(byId("notice"), true);
   } catch (error) { showNotice(error.message); }
 }
 

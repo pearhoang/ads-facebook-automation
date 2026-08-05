@@ -127,6 +127,31 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
     assert ".section-icon svg" in styles
 
 
+def test_page_feedback_uses_transient_non_layout_toasts():
+    templates = (
+        Path("backend/app/templates/workspace.html"),
+        Path("backend/app/templates/ad_accounts.html"),
+        Path("backend/app/templates/campaigns.html"),
+        Path("backend/app/templates/reports.html"),
+        Path("backend/app/templates/bot_nodes.html"),
+        Path("backend/app/templates/hermes_agents.html"),
+    )
+    for path in templates:
+        text = path.read_text(encoding="utf-8")
+        assert "data-toast" in text
+        assert "/static/ui.js?v=toast-1" in text
+
+    script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
+    styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
+    assert "window.AppToast" in script
+    assert 'close.setAttribute("aria-label", "Đóng thông báo")' in script
+    assert "options.duration || toast.dataset.toastDuration || 4800" in script
+    assert ".app-toast {" in styles
+    assert "position: fixed" in styles
+    assert ".app-toast[hidden] { display: none; }" in styles
+    assert ".toast-close" in styles
+
+
 def test_ad_account_setup_is_separate_from_agent_work_monitoring():
     setup_template = Path("backend/app/templates/ad_accounts.html").read_text(encoding="utf-8")
     setup_script = Path("backend/app/static/ad_accounts.js").read_text(encoding="utf-8")

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-7">
+  <link rel="stylesheet" href="/static/workspace.css?v=toast-1">
 </head>
 <body data-csrf-token="{{ csrf_token }}">
   {% set active_nav = "accounts" %}
@@ -46,7 +46,7 @@
         <button id="refresh-button" class="button button-secondary" type="button">Làm mới</button>
       </div>
 
-      <div id="notice" class="notice" hidden></div>
+      <div id="notice" class="notice page-notice app-toast" data-toast hidden></div>
       <div class="table-wrap">
         <table>
           <thead>
@@ -107,8 +107,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
-  <script src="/static/workspace.js?v=meta-light-focus" defer></script>
+  <script src="/static/ui.js?v=toast-1" defer></script>
+  <script src="/static/workspace.js?v=toast-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

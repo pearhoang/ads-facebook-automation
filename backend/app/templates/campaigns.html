@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=agent-work-2">
+  <link rel="stylesheet" href="/static/workspace.css?v=toast-1">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
   {% set active_nav = "campaigns" %}
@@ -38,7 +38,7 @@
           <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#badge-check"></use></svg></span><div><div class="metric-label">Hoàn tất</div><div class="metric-value" id="completed-count">0</div><div class="metric-meta">Đã dừng tại Review</div></div></article>
         </section>
 
-        <div id="notice" class="notice page-notice" hidden></div>
+        <div id="notice" class="notice page-notice app-toast" data-toast hidden></div>
 
         <section id="work-queue" class="content-section work-queue-section">
           <div class="section-toolbar work-toolbar">
@@ -100,8 +100,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-4" defer></script>
-  <script src="/static/campaigns.js?v=agent-work-2" defer></script>
+  <script src="/static/ui.js?v=toast-1" defer></script>
+  <script src="/static/campaigns.js?v=toast-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

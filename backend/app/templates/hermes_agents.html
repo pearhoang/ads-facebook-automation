@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-7">
+  <link rel="stylesheet" href="/static/workspace.css?v=toast-1">
   <link rel="stylesheet" href="/static/fleet.css?v=meta-light-focus-2">
 </head>
 <body data-csrf-token="{{ csrf_token }}">
@@ -33,7 +33,7 @@
         <div id="permission-warning" class="notice" hidden><strong>Quyền thử nghiệm:</strong> Hermes có thể dùng terminal, file, code execution, browser, computer use và delegation bằng quyền của service trên VPS. Chỉ bật trên node thử nghiệm. Campaign vẫn phải theo DRAFT/approval và không có typed tool tự publish hoặc tăng ngân sách.</div>
         <div class="form-grid"><label>Phạm vi<input value="Ads Copilot" disabled></label><label id="worker-field">Bot VPS<select id="provider-worker" required></select></label></div>
         <p class="inline-help">Endpoint `localhost` chỉ có ý nghĩa trên máy được chọn. Đổi provider sẽ không tự publish hoặc tăng budget quảng cáo.</p>
-        <div id="provider-notice" class="notice" hidden></div>
+        <div id="provider-notice" class="notice page-notice app-toast" data-toast hidden></div>
         <div class="dialog-actions"><button id="test-provider" class="button button-secondary" type="button">Kiểm tra kết nối</button><button class="button button-primary" type="submit">Lưu và đồng bộ Hermes</button></div>
       </form>
       <aside class="settings-panel provider-summary"><h2>Trạng thái hiện tại</h2><dl class="session-facts"><div><dt>Provider</dt><dd id="summary-provider">—</dd></div><div><dt>Model</dt><dd id="summary-model">—</dd></div><div><dt>Thinking</dt><dd id="summary-thinking">—</dd></div><div><dt>Reasoning</dt><dd id="summary-reasoning">—</dd></div><div><dt>Quyền Agent</dt><dd id="summary-permission">—</dd></div><div><dt>Endpoint</dt><dd id="summary-endpoint">—</dd></div><div><dt>API key</dt><dd id="summary-key">—</dd></div><div><dt>Execution</dt><dd id="summary-scope">—</dd></div><div><dt>Kiểm tra</dt><dd id="summary-test">—</dd></div></dl><p class="settings-note">Worker đồng bộ cấu hình mỗi phút. Nếu control-plane tắt, Hermes tiếp tục dùng bản local gần nhất. Session mới hoặc `/reset` sẽ nhận bộ quyền mới.</p></aside>
@@ -86,8 +86,8 @@
     </form>
   </dialog>
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
-  <script src="/static/hermes_agents.js?v=20260804-stored-ssh" defer></script>
+  <script src="/static/ui.js?v=toast-1" defer></script>
+  <script src="/static/hermes_agents.js?v=toast-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

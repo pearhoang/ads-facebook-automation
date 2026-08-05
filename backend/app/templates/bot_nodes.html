@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=meta-light-focus-7">
+  <link rel="stylesheet" href="/static/workspace.css?v=toast-1">
   <link rel="stylesheet" href="/static/fleet.css?v=meta-light-focus-2">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-default-repo-url="{{ default_repo_url }}" data-default-repo-branch="{{ default_repo_branch }}">
@@ -31,7 +31,7 @@
     <div class="safety-banner"><strong>Ranh giới an toàn:</strong> Drain dừng cấp việc mới. Revoke vô hiệu hóa credential nhưng giữ audit và dữ liệu profile. Chỉ gỡ service từ popup sau khi worker đã Drain; browser profile vẫn được giữ.</div>
     <section class="content-section">
       <div class="section-toolbar"><div><h2>Cụm Bot VPS</h2><p>Mỗi node dùng credential riêng; noVNC/CDP vẫn chỉ bind localhost.</p></div><button id="refresh-nodes" class="button button-secondary" type="button">Làm mới</button></div>
-      <div id="fleet-notice" class="notice" hidden></div>
+      <div id="fleet-notice" class="notice page-notice app-toast" data-toast hidden></div>
       <div class="table-wrap"><table><thead><tr><th>Bot VPS</th><th>Kết nối</th><th>Host / Runtime</th><th>Năng lực</th><th>Last seen</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="node-rows"></tbody></table></div>
       <div id="node-empty" class="empty-state" hidden><strong>Chưa có Bot VPS</strong><p>Nhấn Thêm Bot VPS để cài từ xa qua SSH.</p></div>
     </section>
@@ -101,8 +101,8 @@
     <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-operation-delete>Hủy</button><button id="confirm-delete-operation-page" class="button button-danger" type="button">Xóa trang</button></div>
   </dialog>
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
-  <script src="/static/bot_nodes.js?v=20260804-operation-pagination" defer></script>
+  <script src="/static/ui.js?v=toast-1" defer></script>
+  <script src="/static/bot_nodes.js?v=toast-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>
