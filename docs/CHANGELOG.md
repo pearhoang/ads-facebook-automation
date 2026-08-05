@@ -454,5 +454,6 @@
 - Refined: Bỏ vạch trạng thái dày; toast dùng border/shadow trung tính như panel và chỉ giữ icon semantic nhỏ để không cạnh tranh với selected navigation indigo.
 - Refined: Success toast dùng icon circle-check inline và tăng khoảng cách icon–nội dung; không dùng sprite badge-check.
 - Changed: Work detail dialog tách body scroll khỏi header/footer để nội dung không bị che; checkpoint artifact mở bằng lightbox có caption và điều hướng ảnh trước/sau.
+- Fixed: Giới hạn ảnh trong vùng preview để nút mũi tên lightbox không bị ảnh phủ lên.
 - Deploy: Production tại commit `194253a`; source backup `/var/backups/meta-ads-copilot/20260805T021920Z-toast-ui-v2`.
 - Verified: `96 passed`, browser desktop/mobile, nút đóng, auto-hide 4,8 giây và production console không có error.
