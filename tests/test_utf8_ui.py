@@ -188,6 +188,7 @@ def test_agent_work_detail_keeps_canonical_dialog_and_timeline_anatomy():
     assert 'id="work-handoff-link"' in template
     assert ".work-detail-grid" in styles
     assert ".work-detail-body" in styles
+    assert "dialog.artifact-lightbox::backdrop" in styles
     assert ".work-timeline" in styles
     assert ".timeline-marker" in styles
 

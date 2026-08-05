@@ -178,7 +178,7 @@ function renderArtifactLightbox() {
   caption.textContent = artifactLabel(artifact.kind);
   byId("artifact-lightbox-prev").disabled = state.artifactIndex <= 0;
   byId("artifact-lightbox-next").disabled = state.artifactIndex >= state.artifacts.length - 1;
-  lightbox.hidden = false;
+  if (!lightbox.open) lightbox.showModal();
   document.body.classList.add("artifact-lightbox-open");
 }
 
@@ -192,8 +192,8 @@ function openArtifact(index) {
 
 function closeArtifactLightbox() {
   const lightbox = byId("artifact-lightbox");
-  if (!lightbox || lightbox.hidden) return;
-  lightbox.hidden = true;
+  if (!lightbox || !lightbox.open) return;
+  lightbox.close();
   byId("artifact-lightbox-image").removeAttribute("src");
   document.body.classList.remove("artifact-lightbox-open");
   if (state.artifactReturnFocus instanceof HTMLElement) state.artifactReturnFocus.focus();
@@ -267,7 +267,7 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   const lightbox = byId("artifact-lightbox");
-  if (!lightbox || lightbox.hidden) return;
+  if (!lightbox || !lightbox.open) return;
   if (event.key === "Escape") closeArtifactLightbox();
   if (event.key === "ArrowLeft") moveArtifact(-1);
   if (event.key === "ArrowRight") moveArtifact(1);
