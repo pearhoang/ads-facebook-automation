@@ -71,16 +71,7 @@ def ad_accounts_page(request: Request, db: Session = Depends(get_db)):
     principal = resolve_optional_principal(request, db)
     if principal is None:
         return RedirectResponse("/login", status_code=303)
-    settings = request.app.state.settings
-    return templates.TemplateResponse(
-        request=request,
-        name="ad_accounts.html",
-        context={
-            "principal": principal,
-            "csrf_token": request.cookies.get(settings.csrf_cookie_name, ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+    return RedirectResponse("/#ad-accounts", status_code=303, headers={"Cache-Control": "no-store"})
 
 
 @router.get("/reports", response_class=HTMLResponse)
@@ -88,16 +79,7 @@ def reports_page(request: Request, db: Session = Depends(get_db)):
     principal = resolve_optional_principal(request, db)
     if principal is None:
         return RedirectResponse("/login", status_code=303)
-    settings = request.app.state.settings
-    return templates.TemplateResponse(
-        request=request,
-        name="reports.html",
-        context={
-            "principal": principal,
-            "csrf_token": request.cookies.get(settings.csrf_cookie_name, ""),
-        },
-        headers={"Cache-Control": "no-store"},
-    )
+    return RedirectResponse("/campaigns#reporting", status_code=303, headers={"Cache-Control": "no-store"})
 
 
 @router.get("/bot-nodes", response_class=HTMLResponse)

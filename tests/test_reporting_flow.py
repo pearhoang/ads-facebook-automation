@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import date, timedelta
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
 from backend.app.config import Settings
 from backend.app.main import create_app
-from backend.app.models import FacebookAccount, ReportSchedule, TenantMembership, utc_now
+from backend.app.models import FacebookAccount, ReportJob, ReportSchedule, ReportSnapshot, TenantMembership, utc_now
 from backend.app.services import account_sessions, auth
 
 
@@ -221,3 +222,70 @@ def test_daily_schedule_materializes_once_and_can_pause(tmp_path: Path):
         assert paused.status_code == 200
         assert paused.json()["status"] == "paused"
 
+
+def test_report_history_is_paginated_and_deletes_only_safe_rows(tmp_path: Path):
+    with build_client(tmp_path) as client:
+        provision(client, TENANT_A, "owner-a@example.test")
+        headers = login(client, "owner-a@example.test")
+        account, worker = reporting_account(client, headers)
+        with client.app.state.database.session_factory() as db:
+            facebook = db.scalar(
+                select(FacebookAccount).where(
+                    FacebookAccount.tenant_id == TENANT_A,
+                    FacebookAccount.id == account["facebook_account_id"],
+                )
+            )
+            for index in range(12):
+                collected_at = utc_now() - timedelta(hours=index)
+                job = ReportJob(
+                    tenant_id=TENANT_A,
+                    ad_account_id=account["id"],
+                    facebook_account_id=facebook.id,
+                    worker_id=worker["id"],
+                    trigger="manual",
+                    status="succeeded",
+                    range_start=date(2026, 7, 1),
+                    range_end=date(2026, 7, 7),
+                    payload_json={},
+                    result_json={},
+                    delivery_status="not_requested",
+                    requested_at=collected_at,
+                    completed_at=collected_at,
+                )
+                db.add(job)
+                db.flush()
+                db.add(
+                    ReportSnapshot(
+                        tenant_id=TENANT_A,
+                        report_job_id=job.id,
+                        ad_account_id=account["id"],
+                        range_start=date(2026, 7, 1),
+                        range_end=date(2026, 7, 7),
+                        currency="VND",
+                        totals_json={"amount_spent": index},
+                        campaigns_json=[],
+                        metadata_json={},
+                        collected_at=collected_at,
+                    )
+                )
+            db.commit()
+
+        page = client.get(f"/api/report-jobs/page?ad_account_id={account['id']}&page=1&page_size=10")
+        assert page.status_code == 200
+        assert page.json()["total"] == 12
+        assert len(page.json()["items"]) == 10
+
+        deleted = client.delete(
+            f"/api/report-jobs/page?ad_account_id={account['id']}&page=1&page_size=10",
+            headers=headers,
+        )
+        assert deleted.status_code == 200
+        assert deleted.json() == {
+            "deleted": 9,
+            "retained_latest": 1,
+            "skipped_active": 0,
+            "remaining": 3,
+        }
+        snapshots = client.get(f"/api/report-snapshots?ad_account_id={account['id']}").json()
+        assert len(snapshots) == 3
+        assert snapshots[0]["totals_json"]["amount_spent"] == 0

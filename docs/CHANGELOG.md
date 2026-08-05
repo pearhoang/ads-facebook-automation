@@ -460,3 +460,10 @@
 - Verified: `96 passed`, browser desktop/mobile, nút đóng, auto-hide 4,8 giây và production console không có error.
 - Fixed: Nút đóng work detail dialog dùng handler riêng, đóng native dialog và dọn trạng thái lightbox/focus; pagination operation log căn phải sát nút `Xóa trang`.
 - Fixed: Dialog work detail đã đóng không còn bị CSS `display:flex` giữ lại trên màn hình.
+### 2026-08-05 - Gộp setup và vận hành Ads theo vai trò control-plane
+
+- Changed: Gộp Facebook profile/ad account/resource vào `/`; gộp work queue/KPI/lịch/lịch sử report vào `/campaigns`; route cũ redirect về anchor tương ứng.
+- Changed: Bỏ KPI strip khỏi màn thiết lập và đầu trang vận hành; report history phân trang 10 dòng và cho dọn job terminal trong khi giữ job active cùng snapshot mới nhất.
+- Affected: `backend/app/{web.py,api/reports.py,services/reporting.py,schemas.py,templates,static}`, `tests`, `docs`.
+- Verified: targeted Python tests, JavaScript syntax và browser local desktop/mobile; production verification chờ deploy.
+- Risk: Xóa lịch sử là destructive nhưng bị giới hạn role, CSRF, terminal state và bảo vệ latest snapshot.

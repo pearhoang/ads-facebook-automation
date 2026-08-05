@@ -873,6 +873,21 @@ class ReportJobView(ORMModel):
     updated_at: datetime
 
 
+class ReportJobPage(BaseModel):
+    items: list[ReportJobView]
+    page: int
+    page_size: int
+    total: int
+    total_pages: int
+
+
+class ReportJobPageDeletion(BaseModel):
+    deleted: int
+    retained_latest: int
+    skipped_active: int
+    remaining: int
+
+
 class WorkerReportJobItem(ReportJobView):
     profile_key: str
     meta_ad_account_id: str

@@ -1,0 +1,21 @@
+<dialog id="collect-dialog">
+  <form id="collect-form" method="dialog">
+    <div class="dialog-header"><div><h2>Thu thập KPI read-only</h2><p>Worker mở đúng Chrome profile và đọc dữ liệu trong Ads Manager.</p></div><button class="icon-button" type="button" data-close="collect-dialog" aria-label="Đóng">×</button></div>
+    <label>Ad account<select id="collect-account" required></select></label>
+    <label>Số ngày đã hoàn tất<select id="collect-lookback"><option value="1">Hôm qua</option><option value="7" selected>7 ngày</option><option value="30">30 ngày</option></select></label>
+    <label>Telegram chat ID <span class="optional-label">(không bắt buộc)</span><input id="collect-chat-id" maxlength="80" placeholder="Ví dụ: -1001234567890"></label>
+    <label>Xác nhận<input id="collect-confirmation" required autocomplete="off" placeholder="Nhập THU THẬP KPI"></label>
+    <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="collect-dialog">Hủy</button><button class="button button-primary" type="submit">Tạo report job</button></div>
+  </form>
+</dialog>
+
+<dialog id="schedule-dialog">
+  <form id="schedule-form" method="dialog">
+    <div class="dialog-header"><div><h2>Thêm lịch báo cáo</h2><p>Lịch hằng ngày dùng múi giờ đã lưu trên ad account.</p></div><button class="icon-button" type="button" data-close="schedule-dialog" aria-label="Đóng">×</button></div>
+    <label>Ad account<select id="schedule-account" required></select></label>
+    <div class="form-grid"><label>Giờ chạy<input id="schedule-time" type="time" value="08:00" required></label><label>Số ngày dữ liệu<select id="schedule-lookback"><option value="1">1 ngày</option><option value="7" selected>7 ngày</option><option value="30">30 ngày</option></select></label></div>
+    <label>Telegram chat ID <span class="optional-label">(để trống nếu chỉ lưu web)</span><input id="schedule-chat-id" maxlength="80" placeholder="Ví dụ: -1001234567890"></label>
+    <p class="inline-help">Telegram bot token được cấu hình tại Hermes Agent/worker, không nhập lại ở đây.</p>
+    <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="schedule-dialog">Hủy</button><button class="button button-primary" type="submit">Tạo lịch hằng ngày</button></div>
+  </form>
+</dialog>

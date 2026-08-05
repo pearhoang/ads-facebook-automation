@@ -1,3 +1,4 @@
+(function accountProfilesModule() {
 const state = { accounts: [], workers: [], sessions: new Map(), selectedSessionId: null };
 const byId = (id) => document.getElementById(id);
 
@@ -56,10 +57,10 @@ async function loadWorkspace() {
 
 function render() {
   const workerById = new Map(state.workers.map((worker) => [worker.id, worker]));
-  byId("account-count").textContent = state.accounts.length;
-  byId("worker-count").textContent = state.workers.filter((worker) => worker.status === "online").length;
-  byId("verification-count").textContent = [...state.sessions.values()].filter((session) => session?.status === "awaiting_user").length;
-  byId("failure-count").textContent = [...state.sessions.values()].filter((session) => session?.status === "failed").length;
+  if (byId("account-count")) byId("account-count").textContent = state.accounts.length;
+  if (byId("worker-count")) byId("worker-count").textContent = state.workers.filter((worker) => worker.status === "online").length;
+  if (byId("verification-count")) byId("verification-count").textContent = [...state.sessions.values()].filter((session) => session?.status === "awaiting_user").length;
+  if (byId("failure-count")) byId("failure-count").textContent = [...state.sessions.values()].filter((session) => session?.status === "failed").length;
   byId("empty-state").hidden = state.accounts.length > 0;
 
   byId("worker-select").innerHTML = state.workers.length
@@ -178,3 +179,4 @@ setInterval(() => {
 }, 3000);
 
 loadWorkspace();
+})();

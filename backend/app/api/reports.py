@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from ..dependencies import get_current_principal, get_current_tenant_id, get_db, verify_csrf
 from ..schemas import (
     ReportJobCreateRequest,
+    ReportJobPage,
+    ReportJobPageDeletion,
     ReportJobView,
     ReportScheduleCreateRequest,
     ReportScheduleUpdateRequest,
@@ -25,6 +27,43 @@ def list_report_jobs(
     db: Session = Depends(get_db),
 ):
     return reporting.list_jobs(db, tenant_id, limit)
+
+
+@router.get("/report-jobs/page", response_model=ReportJobPage)
+def list_report_jobs_page(
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=5, le=50),
+    ad_account_id: str | None = Query(default=None, max_length=36),
+    tenant_id: str = Depends(get_current_tenant_id),
+    db: Session = Depends(get_db),
+):
+    return reporting.list_jobs_page(
+        db,
+        tenant_id=tenant_id,
+        page=page,
+        page_size=page_size,
+        ad_account_id=ad_account_id,
+    )
+
+
+@router.delete("/report-jobs/page", response_model=ReportJobPageDeletion)
+def delete_report_jobs_page(
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=5, le=50),
+    ad_account_id: str | None = Query(default=None, max_length=36),
+    principal: auth.AuthPrincipal = Depends(get_current_principal),
+    _csrf: None = Depends(verify_csrf),
+    db: Session = Depends(get_db),
+):
+    return reporting.delete_jobs_page(
+        db,
+        tenant_id=principal.tenant_id,
+        user_id=principal.user_id,
+        role=principal.role,
+        page=page,
+        page_size=page_size,
+        ad_account_id=ad_account_id,
+    )
 
 
 @router.post("/report-jobs", response_model=ReportJobView, status_code=status.HTTP_201_CREATED)
@@ -96,4 +135,3 @@ def update_report_schedule(
         schedule_id=schedule_id,
         changes=payload.model_dump(exclude_unset=True),
     )
-

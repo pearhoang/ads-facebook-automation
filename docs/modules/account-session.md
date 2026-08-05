@@ -4,6 +4,7 @@
 
 - Quản lý Facebook account record, persistent Chrome profile và phiên noVNC dùng để login/checkpoint/2FA.
 - Không quản lý campaign automation hoặc KPI reporting.
+- UI setup canonical là `/`, gộp Facebook profile, ad account và Meta resource theo đúng thứ tự định tuyến; `/ad-accounts` chỉ redirect tương thích.
 
 ## Planned Flow
 

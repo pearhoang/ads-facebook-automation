@@ -1,15 +1,23 @@
-const state = { accounts: [], snapshots: [], schedules: [], jobs: [] };
+(function reportingModule() {
+const state = {
+  accounts: [],
+  snapshots: [],
+  schedules: [],
+  jobPage: { items: [], page: 1, page_size: 10, total: 0, total_pages: 1 },
+  page: 1,
+  pageSize: 10,
+};
 const byId = (id) => document.getElementById(id);
 
 const statusMeta = {
   queued: ["Đang chờ", "warning"], claimed: ["Worker đã nhận", "warning"], running: ["Đang thu thập", "warning"],
-  succeeded: ["Đã thu thập", "success"], failed: ["Thất bại", "danger"], enabled: ["Đang bật", "success"], paused: ["Tạm dừng", ""],
-  pending: ["Đang chờ", "warning"], sent: ["Đã gửi", "success"],
-  not_configured: ["Thiếu bot token", "warning"], not_requested: ["Chỉ lưu web", ""],
+  succeeded: ["Đã thu thập", "success"], failed: ["Thất bại", "danger"], cancelled: ["Đã hủy", "danger"],
+  enabled: ["Đang bật", "success"], paused: ["Tạm dừng", ""], pending: ["Đang chờ", "warning"],
+  sent: ["Đã gửi", "success"], not_configured: ["Thiếu bot token", "warning"], not_requested: ["Chỉ lưu web", ""],
 };
 
 function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
+  return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
 }
 
 async function api(path, options = {}) {
@@ -17,10 +25,7 @@ async function api(path, options = {}) {
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
   if (!["GET", "HEAD", "OPTIONS"].includes(method)) headers["X-CSRF-Token"] = document.body.dataset.csrfToken;
   const response = await fetch(path, { ...options, credentials: "same-origin", headers });
-  if (response.status === 401) {
-    window.location.assign("/login");
-    throw new Error("Phiên đăng nhập đã hết hạn.");
-  }
+  if (response.status === 401) { window.location.assign("/login"); throw new Error("Phiên đăng nhập đã hết hạn."); }
   if (!response.ok) {
     let detail = `HTTP ${response.status}`;
     try { detail = (await response.json()).detail || detail; } catch (_) {}
@@ -30,9 +35,7 @@ async function api(path, options = {}) {
 }
 
 function showNotice(message = "", success = false) {
-  const notice = byId("notice");
-  if (message) window.AppToast.show(notice, message, { kind: success ? "success" : "error" });
-  else window.AppToast.hide(notice, true);
+  if (message) window.AppToast.show(byId("notice"), message, { kind: success ? "success" : "error" });
 }
 
 function badge(status) {
@@ -41,9 +44,12 @@ function badge(status) {
 }
 
 function accountById(id) { return state.accounts.find((account) => account.id === id); }
-function selectedAccountId() { return byId("account-filter").value || state.accounts[0]?.id || ""; }
+function selectedAccountId() { return byId("account-filter")?.value || state.accounts[0]?.id || ""; }
 function formatDate(value) { return value ? new Date(value).toLocaleString("vi-VN") : "—"; }
-function formatRange(start, end) { return `${new Date(`${start}T00:00:00`).toLocaleDateString("vi-VN")} – ${new Date(`${end}T00:00:00`).toLocaleDateString("vi-VN")}`; }
+function formatRange(start, end) {
+  if (!start || !end) return "—";
+  return `${new Date(`${start}T00:00:00`).toLocaleDateString("vi-VN")} – ${new Date(`${end}T00:00:00`).toLocaleDateString("vi-VN")}`;
+}
 function formatMetric(value, currency = "") {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return "—";
   const formatted = new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(Number(value));
@@ -55,25 +61,7 @@ function maskChat(value) {
   return text.length <= 6 ? "••••" : `${text.slice(0, 3)}•••${text.slice(-3)}`;
 }
 
-async function loadReports({ quiet = false } = {}) {
-  if (!quiet) showNotice();
-  try {
-    const [accounts, snapshots, schedules, jobs] = await Promise.all([
-      api("/api/ad-accounts"), api("/api/report-snapshots?limit=200"), api("/api/report-schedules"), api("/api/report-jobs?limit=200"),
-    ]);
-    const previous = selectedAccountId();
-    state.accounts = accounts;
-    state.snapshots = snapshots;
-    state.schedules = schedules;
-    state.jobs = jobs;
-    renderAccountSelectors(previous);
-    render();
-  } catch (error) {
-    showNotice(error.message || "Không thể tải dữ liệu báo cáo.");
-  }
-}
-
-function renderAccountSelectors(previous) {
+function renderAccountSelectors(previous = "") {
   const options = state.accounts.length
     ? state.accounts.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(account.label)} · ${escapeHtml(account.meta_ad_account_id)}</option>`).join("")
     : '<option value="">Chưa có ad account</option>';
@@ -83,59 +71,79 @@ function renderAccountSelectors(previous) {
   byId("add-schedule-button").disabled = !state.accounts.length || !["owner", "admin"].includes(document.body.dataset.role);
 }
 
-function render() {
-  const accountId = selectedAccountId();
-  const account = accountById(accountId);
-  const snapshots = state.snapshots.filter((item) => item.ad_account_id === accountId);
-  const latest = snapshots[0];
+function renderLatestSnapshot() {
+  const account = accountById(selectedAccountId());
+  const latest = state.snapshots[0];
   const totals = latest?.totals_json || {};
   byId("kpi-spend").textContent = formatMetric(totals.amount_spent, account?.currency);
   byId("kpi-results").textContent = formatMetric(totals.results);
   byId("kpi-cost").textContent = formatMetric(totals.cost_per_result, account?.currency);
   byId("kpi-collected").textContent = latest ? formatDate(latest.collected_at) : "Chưa có";
+  const campaignCount = latest ? (totals.campaigns ?? latest.campaigns_json?.length ?? 0) : 0;
+  byId("kpi-context").textContent = latest
+    ? `${account?.label || "Ad account"} · ${formatRange(latest.range_start, latest.range_end)} · ${campaignCount} campaign · ${latest.metadata_json?.data_state || "unknown"}`
+    : `${account?.label || "Ad account"} chưa có snapshot KPI.`;
+}
 
-  byId("snapshots-empty").hidden = snapshots.length > 0;
-  byId("snapshots-body").innerHTML = snapshots.map((snapshot) => {
-    const itemTotals = snapshot.totals_json || {};
-    const dataState = snapshot.metadata_json?.data_state || "unknown";
-    return `<tr>
-      <td>${escapeHtml(formatRange(snapshot.range_start, snapshot.range_end))}</td>
-      <td>${escapeHtml(formatMetric(itemTotals.amount_spent, snapshot.currency))}</td>
-      <td>${escapeHtml(formatMetric(itemTotals.results))}</td>
-      <td>${escapeHtml(formatMetric(itemTotals.cost_per_result, snapshot.currency))}</td>
-      <td>${escapeHtml(itemTotals.campaigns ?? snapshot.campaigns_json?.length ?? 0)}</td>
-      <td>${escapeHtml(dataState)}</td>
-      <td>${escapeHtml(formatDate(snapshot.collected_at))}</td>
-    </tr>`;
-  }).join("");
-
+function renderSchedules() {
   byId("schedules-empty").hidden = state.schedules.length > 0;
   byId("schedules-body").innerHTML = state.schedules.map((schedule) => {
-    const scheduleAccount = accountById(schedule.ad_account_id);
+    const account = accountById(schedule.ad_account_id);
     const nextStatus = schedule.status === "enabled" ? "paused" : "enabled";
     const nextLabel = schedule.status === "enabled" ? "Tạm dừng" : "Bật lại";
     return `<tr>
-      <td><strong>${escapeHtml(scheduleAccount?.label || "Ad account")}</strong><small class="cell-meta">${escapeHtml(schedule.timezone_name)}</small></td>
-      <td>${escapeHtml(schedule.local_time)} hằng ngày</td>
-      <td>${escapeHtml(schedule.lookback_days)} ngày</td>
-      <td>${escapeHtml(maskChat(schedule.telegram_chat_id))}</td>
-      <td>${escapeHtml(formatDate(schedule.next_run_at))}</td>
-      <td>${badge(schedule.status)}</td>
-      <td><div class="row-actions"><button class="button button-small button-secondary" data-schedule-id="${escapeHtml(schedule.id)}" data-next-status="${nextStatus}">${nextLabel}</button></div></td>
+      <td><strong>${escapeHtml(account?.label || "Ad account")}</strong><small class="cell-meta">${escapeHtml(schedule.timezone_name)}</small></td>
+      <td>${escapeHtml(schedule.local_time)} hằng ngày</td><td>${escapeHtml(schedule.lookback_days)} ngày</td>
+      <td>${escapeHtml(maskChat(schedule.telegram_chat_id))}</td><td>${escapeHtml(formatDate(schedule.next_run_at))}</td>
+      <td>${badge(schedule.status)}</td><td><button class="button button-small button-secondary" data-schedule-id="${escapeHtml(schedule.id)}" data-next-status="${nextStatus}">${nextLabel}</button></td>
     </tr>`;
   }).join("");
+}
 
-  const jobs = state.jobs.filter((job) => !accountId || job.ad_account_id === accountId);
-  byId("jobs-empty").hidden = jobs.length > 0;
-  byId("jobs-body").innerHTML = jobs.map((job) => `<tr>
-    <td>${escapeHtml(formatDate(job.requested_at))}</td>
-    <td>${escapeHtml(accountById(job.ad_account_id)?.label || "Ad account")}</td>
-    <td>${job.trigger === "scheduled" ? "Theo lịch" : "Thủ công"}</td>
-    <td>${escapeHtml(formatRange(job.range_start, job.range_end))}</td>
-    <td>${badge(job.status)}</td>
-    <td>${badge(job.delivery_status)}</td>
-    <td class="error-cell">${escapeHtml(job.last_error || job.result_json?.delivery?.error || "—")}</td>
-  </tr>`).join("");
+function renderHistory() {
+  const page = state.jobPage;
+  byId("jobs-empty").hidden = page.items.length > 0;
+  byId("jobs-body").innerHTML = page.items.map((job) => {
+    const attention = job.last_error || job.result_json?.delivery?.error || (job.status === "failed" ? "Hermes cần kiểm tra lần chạy này" : "—");
+    return `<tr>
+      <td>${escapeHtml(formatDate(job.requested_at))}</td>
+      <td>${job.trigger === "scheduled" ? "Theo lịch" : "Thủ công"}</td>
+      <td>${escapeHtml(formatRange(job.range_start, job.range_end))}</td>
+      <td>${badge(job.status)}</td><td>${badge(job.delivery_status)}</td>
+      <td class="error-cell">${escapeHtml(attention)}</td>
+    </tr>`;
+  }).join("");
+  byId("history-page-summary").textContent = `${page.total} lần thu thập`;
+  byId("history-page-info").textContent = `${page.page} / ${page.total_pages}`;
+  byId("history-prev").disabled = page.page <= 1;
+  byId("history-next").disabled = page.page >= page.total_pages;
+  byId("delete-history-page").disabled = !page.items.length || !["owner", "admin"].includes(document.body.dataset.role);
+}
+
+async function loadReportData({ reloadBase = false, successMessage = "" } = {}) {
+  try {
+    const previous = selectedAccountId();
+    if (reloadBase || !state.accounts.length) {
+      [state.accounts, state.schedules] = await Promise.all([api("/api/ad-accounts"), api("/api/report-schedules")]);
+      renderAccountSelectors(previous);
+    }
+    const accountId = selectedAccountId();
+    if (!accountId) {
+      state.snapshots = [];
+      state.jobPage = { items: [], page: 1, page_size: state.pageSize, total: 0, total_pages: 1 };
+    } else {
+      const params = new URLSearchParams({ ad_account_id: accountId, page: String(state.page), page_size: String(state.pageSize) });
+      [state.snapshots, state.jobPage] = await Promise.all([
+        api(`/api/report-snapshots?ad_account_id=${encodeURIComponent(accountId)}&limit=1`),
+        api(`/api/report-jobs/page?${params}`),
+      ]);
+      state.page = state.jobPage.page;
+    }
+    renderLatestSnapshot();
+    renderSchedules();
+    renderHistory();
+    if (successMessage) showNotice(successMessage, true);
+  } catch (error) { showNotice(error.message || "Không thể tải dữ liệu vận hành."); }
 }
 
 function openCollectDialog() {
@@ -157,8 +165,8 @@ async function createReportJob(event) {
       confirmation: byId("collect-confirmation").value.trim(),
     }) });
     byId("collect-dialog").close();
-    showNotice("Đã tạo report job read-only. Worker đang chờ nhận job.", true);
-    await loadReports({ quiet: true });
+    state.page = 1;
+    await loadReportData({ reloadBase: true, successMessage: "Đã giao worker thu thập KPI read-only." });
   } catch (error) { showNotice(error.message); }
   finally { submit.disabled = false; }
 }
@@ -175,8 +183,7 @@ async function createSchedule(event) {
       telegram_chat_id: byId("schedule-chat-id").value.trim() || null,
     }) });
     byId("schedule-dialog").close();
-    showNotice("Đã tạo lịch báo cáo hằng ngày.", true);
-    await loadReports({ quiet: true });
+    await loadReportData({ reloadBase: true, successMessage: "Đã tạo lịch báo cáo hằng ngày." });
   } catch (error) { showNotice(error.message); }
   finally { submit.disabled = false; }
 }
@@ -185,9 +192,24 @@ async function toggleSchedule(button) {
   button.disabled = true;
   try {
     await api(`/api/report-schedules/${button.dataset.scheduleId}`, { method: "PATCH", body: JSON.stringify({ status: button.dataset.nextStatus }) });
-    await loadReports({ quiet: true });
+    await loadReportData({ reloadBase: true, successMessage: "Đã cập nhật lịch báo cáo." });
   } catch (error) { showNotice(error.message); }
   finally { button.disabled = false; }
+}
+
+async function deleteHistoryPage() {
+  const page = state.jobPage;
+  if (!page.items.length) return;
+  if (!window.confirm(`Xóa các job đã kết thúc trên trang ${page.page}? Job đang chạy và snapshot mới nhất sẽ được giữ lại.`)) return;
+  const params = new URLSearchParams({ ad_account_id: selectedAccountId(), page: String(page.page), page_size: String(state.pageSize) });
+  try {
+    const result = await api(`/api/report-jobs/page?${params}`, { method: "DELETE" });
+    if (state.page > 1 && result.remaining <= (state.page - 1) * state.pageSize) state.page -= 1;
+    const notes = [`Đã xóa ${result.deleted} mục`];
+    if (result.retained_latest) notes.push(`giữ ${result.retained_latest} snapshot mới nhất`);
+    if (result.skipped_active) notes.push(`bỏ qua ${result.skipped_active} job đang chạy`);
+    await loadReportData({ successMessage: `${notes.join(", ")}.` });
+  } catch (error) { showNotice(error.message); }
 }
 
 document.addEventListener("click", (event) => {
@@ -198,12 +220,17 @@ document.addEventListener("click", (event) => {
 });
 byId("collect-button").addEventListener("click", openCollectDialog);
 byId("add-schedule-button").addEventListener("click", () => { byId("schedule-account").value = selectedAccountId(); byId("schedule-dialog").showModal(); });
-byId("account-filter").addEventListener("change", render);
-byId("refresh-button").addEventListener("click", () => loadReports());
+byId("account-filter").addEventListener("change", () => { state.page = 1; loadReportData(); });
+byId("report-refresh-button").addEventListener("click", () => loadReportData({ reloadBase: true, successMessage: "Đã làm mới KPI và lịch báo cáo." }));
 byId("collect-form").addEventListener("submit", createReportJob);
 byId("schedule-form").addEventListener("submit", createSchedule);
-setInterval(() => {
-  if (state.jobs.some((job) => ["queued", "claimed", "running"].includes(job.status))) loadReports({ quiet: true });
-}, 4000);
+byId("history-prev").addEventListener("click", () => { if (state.page > 1) { state.page -= 1; loadReportData(); } });
+byId("history-next").addEventListener("click", () => { if (state.page < state.jobPage.total_pages) { state.page += 1; loadReportData(); } });
+byId("delete-history-page").addEventListener("click", deleteHistoryPage);
 
-loadReports();
+setInterval(() => {
+  if (state.jobPage.items.some((job) => ["queued", "claimed", "running"].includes(job.status))) loadReportData();
+}, 5000);
+
+loadReportData({ reloadBase: true });
+})();

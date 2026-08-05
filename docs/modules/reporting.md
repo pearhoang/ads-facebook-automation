@@ -8,7 +8,7 @@
 
 ## Entry Points
 
-- User API/UI: `backend/app/api/reports.py`, `backend/app/services/reporting.py`, `/reports`.
+- User API/UI: `backend/app/api/reports.py`, `backend/app/services/reporting.py`, `/campaigns#reporting`; `/reports` chỉ là redirect tương thích.
 - Worker API: `/api/workers/{worker_id}/report-jobs/poll|sync`.
 - Browser runtime: `workers/agent/reporting.py`.
 - Schema: `report_schedules`, `report_jobs`, `report_snapshots`; migration `20260801_0005`.
@@ -21,10 +21,11 @@
 - Snapshot chỉ tạo khi worker trả safety proof `ad_mutated=false` và `published=false`.
 - Một ad account tối đa một report job `queued|claimed|running`; browser session và execution job cùng profile luôn loại trừ report job.
 - `TELEGRAM_BOT_TOKEN` chỉ ở worker env; database/UI chỉ giữ chat ID. Thiếu token không làm mất snapshot.
+- Lịch sử report job phân trang server theo 10 dòng; xóa trang chỉ áp dụng job terminal và luôn giữ snapshot mới nhất của từng ad account.
 
 ## Current Production State
 
-- Phase 8 đã deploy tại `https://ads.lushmedia.net/reports`.
+- Reporting được tích hợp vào surface vận hành tại `https://ads.lushmedia.net/campaigns#reporting`.
 - Alembic `20260801_0005` ở `head`; web/worker active.
 - Manual smoke job `1dcdcabb-adeb-4359-8549-a93dee4af385` tạo snapshot thành công cho ad account `2321387601366948`; dữ liệu hiện bằng 0 vì chưa chạy quảng cáo.
 - Telegram token chưa cấu hình nên production hiện chỉ lưu báo cáo trên web.
@@ -37,5 +38,4 @@
 
 ## Related Decisions
 
-- `DEC-001`, `DEC-002`, `DEC-003`, `DEC-018`.
-
+- `DEC-001`, `DEC-002`, `DEC-003`, `DEC-018`, `DEC-030`.

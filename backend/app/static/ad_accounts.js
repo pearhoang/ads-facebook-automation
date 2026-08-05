@@ -1,3 +1,4 @@
+(function accountRoutingModule() {
 const csrfToken = document.body.dataset.csrfToken;
 const byId = (id) => document.getElementById(id);
 const state = { facebookAccounts: [], adAccounts: [], resources: [], editingId: null, verifyingId: null };
@@ -19,10 +20,10 @@ function facebookLabel(id) { return state.facebookAccounts.find((item) => item.i
 function accountLabel(id) { return state.adAccounts.find((item) => item.id === id)?.label || "—"; }
 
 function render() {
-  byId("ad-account-count").textContent = state.adAccounts.length;
-  byId("resource-count").textContent = state.resources.length;
-  byId("verified-count").textContent = state.resources.filter((item) => item.status === "verified").length;
-  byId("unverified-count").textContent = state.resources.filter((item) => item.status !== "verified").length;
+  if (byId("ad-account-count")) byId("ad-account-count").textContent = state.adAccounts.length;
+  if (byId("resource-count")) byId("resource-count").textContent = state.resources.length;
+  if (byId("verified-count")) byId("verified-count").textContent = state.resources.filter((item) => item.status === "verified").length;
+  if (byId("unverified-count")) byId("unverified-count").textContent = state.resources.filter((item) => item.status !== "verified").length;
   byId("ad-accounts-empty").hidden = state.adAccounts.length > 0;
   byId("resources-empty").hidden = state.resources.length > 0;
   byId("ad-accounts-body").innerHTML = state.adAccounts.map((item) => `
@@ -110,5 +111,6 @@ document.addEventListener("click", (event) => {
 byId("ad-account-form").addEventListener("submit", saveAdAccount);
 byId("resource-form").addEventListener("submit", saveResource);
 byId("confirm-resource-verify-button").addEventListener("click", verifyResource);
-byId("refresh-button").addEventListener("click", () => loadPage("Đã làm mới account và resource."));
+byId("ad-account-refresh-button").addEventListener("click", () => loadPage("Đã làm mới account và resource."));
 loadPage();
+})();

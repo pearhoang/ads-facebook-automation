@@ -86,7 +86,7 @@ def test_primary_navigation_uses_native_hermes_dashboard():
     assert "Mở Hermes Dashboard" in hermes_agents
 
 
-def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
+def test_canonical_app_keeps_topbar_and_limits_kpi_to_reporting():
     active_templates = (
         Path("backend/app/templates/workspace.html"),
         Path("backend/app/templates/campaigns.html"),
@@ -100,9 +100,11 @@ def test_canonical_app_keeps_prototype_topbar_and_kpi_anatomy():
         assert '{% include "_topbar_tools.html" %}' in text
         assert 'class="content-pane"' in text
 
-    for path in active_templates[:4]:
-        text = path.read_text(encoding="utf-8")
-        assert 'class="metric-icon"' in text
+    assert 'class="summary"' not in active_templates[0].read_text(encoding="utf-8")
+    assert 'class="summary"' not in active_templates[1].read_text(encoding="utf-8")
+    reporting = Path("backend/app/templates/_reporting_operations.html").read_text(encoding="utf-8")
+    assert 'class="latest-kpi-line"' in reporting
+    assert 'id="kpi-spend"' in reporting
 
     tools = Path("backend/app/templates/_topbar_tools.html").read_text(encoding="utf-8")
     sidebar = Path("backend/app/templates/_sidebar.html").read_text(encoding="utf-8")

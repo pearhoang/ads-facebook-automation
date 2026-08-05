@@ -215,3 +215,12 @@
 - noVNC chỉ dùng cho login, 2FA hoặc Meta challenge. Tiến độ bình thường đi qua `AdAutomationRequest`, event timeline, artifact và Telegram fail-soft delivery.
 - Lỗi worker được retry đúng một lần từ checkpoint. Recovery thành công được lưu thành verified workflow learning; đề xuất chưa kiểm chứng không được tự sửa/kích hoạt production source.
 - `Experimental Full Access` cho phép Hermes dùng terminal/file/code/browser/delegation để điều tra và tạo artifact/skill, nhưng không được đi vòng tenant, typed-tool, approval hoặc publish boundary.
+
+## DEC-030 — Control-plane dùng hai surface chính thay vì chia theo bảng dữ liệu
+
+- Sidebar chỉ giữ `Thiết lập tài khoản` và `Vận hành quảng cáo` cho luồng Ads; không tách Facebook profile/ad account hoặc work queue/reporting thành các trang độc lập.
+- `/` là setup surface theo thứ tự Facebook profile → ad account → Meta resource. `/ad-accounts` chỉ chuyển hướng về `/#ad-accounts` để giữ bookmark cũ.
+- `/campaigns` là surface vận hành gồm hàng công việc, KPI mới nhất, lịch báo cáo và lịch sử thu thập. `/reports` chuyển hướng về `/campaigns#reporting`.
+- KPI chỉ xuất hiện trong khối reporting; các màn thiết lập và quản trị không thêm KPI strip chỉ để lấp khoảng trắng.
+- Lịch sử report job phân trang server 10 dòng. Owner/admin được xóa job terminal trên trang hiện tại; job active và snapshot mới nhất của từng ad account luôn được giữ lại.
+- Telegram/Hermes vẫn là nơi ra lệnh, phân tích và xử lý chính; web chỉ setup định tuyến, theo dõi tiến độ, KPI và ngoại lệ cần người dùng.

@@ -1,3 +1,4 @@
+(function workQueueModule() {
 const csrfToken = document.body.dataset.csrfToken;
 const byId = (id) => document.getElementById(id);
 
@@ -125,10 +126,7 @@ function progressSteps(item) {
 }
 
 function renderSummary() {
-  byId("active-count").textContent = state.requests.filter((item) => activeStatuses.has(item.status)).length;
-  byId("handoff-count").textContent = state.requests.filter((item) => item.status === "awaiting_user").length;
-  byId("recovery-count").textContent = state.requests.filter((item) => item.status === "recovering" || item.recovery_count > 0).length;
-  byId("completed-count").textContent = state.requests.filter((item) => item.status === "completed").length;
+  // Trạng thái đã hiển thị trực tiếp trong bộ lọc hàng công việc.
 }
 
 function renderTable() {
@@ -286,10 +284,11 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") moveArtifact(1);
 });
 
-byId("refresh-button").addEventListener("click", () => loadPage("Đã đồng bộ tiến độ mới nhất."));
+byId("work-refresh-button").addEventListener("click", () => loadPage("Đã đồng bộ tiến độ mới nhất."));
 byId("queue-refresh-button").addEventListener("click", () => loadPage("Đã đồng bộ tiến độ mới nhất."));
 
 loadPage();
 setInterval(() => {
   if (state.requests.some((item) => activeStatuses.has(item.status) || item.status === "recovering")) loadPage();
 }, 8000);
+})();

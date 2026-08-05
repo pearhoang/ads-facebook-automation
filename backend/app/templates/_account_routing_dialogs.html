@@ -1,0 +1,31 @@
+<dialog id="ad-account-dialog">
+  <form id="ad-account-form">
+    <div class="dialog-header"><div><h2 id="ad-account-dialog-title">Thêm ad account</h2><p>Thông tin định tuyến nội bộ, chưa thao tác Meta.</p></div><button class="icon-button" type="button" data-close="ad-account-dialog" aria-label="Đóng">×</button></div>
+    <label>Facebook profile<select id="facebook-account-select" required></select></label>
+    <label>Meta ad account ID<input id="meta-ad-account-id" required maxlength="80" placeholder="Ví dụ: 123456789 hoặc act_123456789"></label>
+    <label>Tên gợi nhớ<input id="ad-account-label" required maxlength="160" placeholder="Ví dụ: Bán hàng Việt Nam"></label>
+    <div class="form-grid"><label>Tiền tệ<select id="ad-account-currency" required><option value="VND">VND</option><option value="USD">USD</option></select></label><label>Múi giờ<input id="ad-account-timezone" required maxlength="80" value="Asia/Ho_Chi_Minh"></label></div>
+    <div id="ad-account-edit-warning" class="approval-warning" hidden>Khi account đã có dependency, chỉ đổi được tên gợi nhớ để giữ đúng snapshot và history.</div>
+    <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="ad-account-dialog">Hủy</button><button class="button button-primary" type="submit">Lưu ad account</button></div>
+  </form>
+</dialog>
+
+<dialog id="resource-dialog">
+  <form id="resource-form">
+    <div class="dialog-header"><div><h2>Thêm Meta resource</h2><p>Nhập đúng tên/ID như Ads Manager đang hiển thị.</p></div><button class="icon-button" type="button" data-close="resource-dialog" aria-label="Đóng">×</button></div>
+    <label>Ad account<select id="resource-ad-account" required></select></label>
+    <label>Loại<select id="resource-kind" required><option value="page">Facebook Page</option><option value="instagram_account">Instagram account</option><option value="dataset">Pixel/Dataset</option><option value="instant_form">Instant Form</option><option value="app">Ứng dụng</option></select></label>
+    <label>Tên exact-match<input id="resource-label" required maxlength="200" placeholder="Đúng như hiển thị trong Meta"></label>
+    <label>External ID<input id="resource-external-id" maxlength="160" placeholder="Nên nhập nếu Meta hiển thị ID"></label>
+    <div class="approval-warning">Resource mới cần được đối chiếu một lần trước khi Hermes dùng cho execution.</div>
+    <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="resource-dialog">Hủy</button><button class="button button-primary" type="submit">Lưu resource</button></div>
+  </form>
+</dialog>
+
+<dialog id="resource-verify-dialog">
+  <div class="session-dialog">
+    <div class="dialog-header"><div><h2>Xác minh resource</h2><p id="resource-verify-summary"></p></div><button class="icon-button" type="button" data-close="resource-verify-dialog" aria-label="Đóng">×</button></div>
+    <label>Xác nhận<input id="resource-verify-confirmation" autocomplete="off" placeholder="Nhập: ĐÃ XÁC MINH TRÊN META"></label>
+    <div class="dialog-actions"><button class="button button-secondary" type="button" data-close="resource-verify-dialog">Hủy</button><button id="confirm-resource-verify-button" class="button button-primary" type="button">Đánh dấu đã xác minh</button></div>
+  </div>
+</dialog>

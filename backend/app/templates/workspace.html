@@ -3,47 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ads Meta Master — Tài khoản Facebook</title>
+  <title>Ads Meta Master — Thiết lập tài khoản</title>
   <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/workspace.css?v=toast-5">
 </head>
-<body data-csrf-token="{{ csrf_token }}">
+<body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
   {% set active_nav = "accounts" %}
   {% include "_sidebar.html" %}
 
   <main class="main">
     <header class="topbar">
       <div class="page-identity">
-        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#users"></use></svg><span>Tài khoản Facebook</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Account sessions</span></div>
-        <h1>Tài khoản Facebook</h1>
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#users"></use></svg><span>Thiết lập</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Tài khoản &amp; tài nguyên</span></div>
+        <h1>Thiết lập tài khoản</h1>
       </div>
       <div class="topbar-actions">
-        {% set global_search_placeholder = "Tìm tài khoản, worker…" %}
+        {% set global_search_placeholder = "Tìm profile, ad account, Page…" %}
         {% include "_topbar_tools.html" %}
-        <button id="add-account-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thêm tài khoản</button>
+        <button id="add-ad-account-button" class="button button-secondary" type="button">Thêm ad account</button>
+        <button id="add-account-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#plus"></use></svg>Thêm Facebook</button>
       </div>
     </header>
 
     <div class="content-pane">
       <div class="content">
 
-    <section class="summary" aria-label="Tổng quan">
-      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#users"></use></svg></span><div><div class="metric-label">Tài khoản</div><div class="metric-value" id="account-count">0</div><div class="metric-meta">Chrome profile đã tạo</div></div></article>
-      <article class="metric"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#server"></use></svg></span><div><div class="metric-label">Worker online</div><div class="metric-value" id="worker-count">0</div><div class="metric-meta">Sẵn sàng mở phiên</div></div></article>
-      <article class="metric" data-notification-label="tài khoản chờ xác minh" data-notification-tone="warning"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#shield-alert"></use></svg></span><div><div class="metric-label">Chờ xác minh</div><div class="metric-value" id="verification-count">0</div><div class="metric-meta">Cần kiểm tra đăng nhập</div></div></article>
-      <article class="metric" data-notification-label="phiên đăng nhập lỗi" data-notification-tone="danger"><span class="metric-icon"><svg aria-hidden="true"><use href="/static/ui-icons.svg#circle-alert"></use></svg></span><div><div class="metric-label">Phiên lỗi</div><div class="metric-value" id="failure-count">0</div><div class="metric-meta">Cần xử lý</div></div></article>
-    </section>
-
     <section class="content-section">
       <div class="section-toolbar">
         <div>
-          <h2>Danh sách tài khoản</h2>
-          <p>Mỗi tài khoản dùng một Chrome profile riêng và giữ lại cookie sau khi đóng phiên.</p>
+          <h2>Facebook profiles</h2>
+          <p>Chỉ dùng để giữ phiên đăng nhập, cookie và xử lý login/2FA khi Meta yêu cầu.</p>
         </div>
-        <button id="refresh-button" class="button button-secondary" type="button">Làm mới</button>
+        <button id="refresh-button" class="button button-secondary" type="button">Làm mới profiles</button>
       </div>
 
       <div id="notice" class="notice page-notice app-toast" data-toast hidden></div>
@@ -67,6 +61,7 @@
         </div>
       </div>
     </section>
+    {% include "_account_routing_sections.html" %}
       </div>
     </div>
   </main>
@@ -85,6 +80,8 @@
       </div>
     </form>
   </dialog>
+
+  {% include "_account_routing_dialogs.html" %}
 
   <dialog id="session-dialog" class="session-dialog">
     <div class="dialog-header">
@@ -108,7 +105,8 @@
 
   {% include "_password_dialog.html" %}
   <script src="/static/ui.js?v=toast-3" defer></script>
-  <script src="/static/workspace.js?v=toast-1" defer></script>
+  <script src="/static/workspace.js?v=account-setup-1" defer></script>
+  <script src="/static/ad_accounts.js?v=account-setup-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

@@ -16,7 +16,7 @@
 
 ## Shared Patterns
 
-- KPI strip chỉ hiển thị số có ý nghĩa vận hành.
+- KPI chỉ xuất hiện trong khối reporting của trang vận hành; màn thiết lập/quản trị không dùng KPI strip để lấp khoảng trắng.
 - Tables/lists hỗ trợ search, filter, status badge và row action rõ ràng.
 - Action có rủi ro dùng review drawer/modal trước khi confirm.
 - Browser session có state panel riêng; không nhúng URL noVNC vào DOM trước khi được cấp quyền.
@@ -24,7 +24,7 @@
 - Feedback cấp trang dùng toast cố định ở góc phải, không chiếm layout; có nút đóng và tự ẩn sau khoảng 5 giây. Cảnh báo cần đọc hoặc thao tác lâu bên trong form/dialog vẫn giữ inline.
 - Auth dùng một form gọn, error inline và recovery path rõ; không biến login thành dashboard.
 - Workspace header hiển thị user/tenant hiện tại và action đăng xuất.
-- `/ad-accounts` là setup surface cho ad account và Meta resource; `/campaigns` là work queue/timeline do Telegram/Hermes tạo, không phải trình dựng campaign thay Ads Manager.
+- `/` là setup surface gộp Facebook profile, ad account và Meta resource; `/campaigns` gộp work queue/timeline với reporting nhưng không phải trình dựng campaign thay Ads Manager.
 - Ad account row có action sửa dùng chung dialog create/edit; structural fields phải hiện cảnh báo khóa khi account đã có dependency, còn label vẫn sửa được.
 - Chi tiết work hiển thị request gốc, account/resource đã resolve, plan, timeline, recovery, artifact và handoff; không yêu cầu user bấm tiếp từng phase trên web.
 - Execution jobs dùng table/history và detail dialog; artifact mở ở tab riêng, không nhúng ảnh lớn vào table.
@@ -32,11 +32,11 @@
 - Sáu objective vẫn dùng adapter/catalog nội bộ để resolve required field, conversion location và performance goal trước khi worker thao tác Ads Manager.
 - Draft builder detail hiển thị phase dừng, số lần chạy, current URL, blockers và checkpoint `Campaign`, `Ad Set`, `Ad`, `Review`.
 - Phase 6 hiển thị `field_results` bằng bảng nhỏ trong job detail: stage, field path, trạng thái áp dụng/xác minh và chi tiết lỗi; không giấu field chưa có control.
-- `/ad-accounts` hiển thị Meta resource registry; resource mới phải có trạng thái `Chưa xác minh` và chỉ được dùng khi exact ownership đã rõ.
+- Khối Meta resource trên `/` hiển thị registry; resource mới phải có trạng thái `Chưa xác minh` và chỉ được dùng khi exact ownership đã rõ.
 - Creative asset không có thư viện nhập tay trong primary UI. Worker ingest media từ Telegram/Hermes, lưu digest và gắn asset ID vào internal snapshot.
 - Job `Cần người dùng` có action `Mở noVNC xử lý` tại exact Ads Manager URL do worker trả về; action này không retry hoặc publish job.
 - Không dùng persistent safety banner trên page hoặc form dialog. Ý nghĩa an toàn phải nằm trong tên action và workflow cụ thể như `Tạo bản nháp`, `Dừng ở Review`; confirm publish/budget thật vẫn phải hiển thị account, campaign và số tiền trước khi thực thi.
-- Trang Báo cáo dùng table-first layout: ad account filter, bốn KPI gần nhất, snapshot history, schedule và report job history.
+- Khối reporting trên `/campaigns` chỉ giữ bốn KPI mới nhất, lịch chạy và report job history 10 dòng/trang; không render toàn bộ snapshot thành một panel dài.
 - Manual report dialog luôn yêu cầu `THU THẬP KPI`; schedule nói rõ timezone, lookback và Telegram token không được nhập trên UI.
 - Report job tách trạng thái thu thập khỏi trạng thái Telegram để lỗi gửi tin không làm mất snapshot.
 - Trang `Bot VPS` dùng một table duy nhất; mỗi worker có action `Sửa`, `Drain/Kích hoạt`, `Gỡ khỏi VPS`, `Xóa kết nối`, và action rủi ro luôn mở popup xác nhận.
@@ -82,7 +82,7 @@
 - Typography canonical dùng `Inter` cho body/navigation/data và `Be Vietnam Pro` cho display headings/values; topbar breadcrumb là `12px`, page title `20px/1.25`, search input `13px`, button label `12px/650`, còn section heading `15px/1.45`.
 - Brand và footer sidebar dùng nền trắng trung tính để navigation là vùng điều hướng chính. Custom loop mark đứng độc lập, không có tile; footer dùng cùng mark với màu indigo dịu, không tạo thêm mảng màu cạnh tranh với selected navigation.
 - Workspace của `Meta Light Focus` không giới hạn `max-width`; panel giãn theo toàn bộ main column với gutter `20px` ở desktop/tablet và `12px` ở mobile để dữ liệu lớn, rõ và sát mép hơn.
-- `Ad accounts` là route setup riêng `/ad-accounts`; `Công việc quảng cáo` là route monitoring `/campaigns`. Cả hai dùng cùng app shell, KPI strip, section/table anatomy và visual tokens canonical.
+- Sidebar Ads chỉ có `Thiết lập tài khoản` tại `/` và `Vận hành quảng cáo` tại `/campaigns`; route `/ad-accounts` và `/reports` redirect về anchor tương ứng để giữ bookmark cũ.
 - Filter đầu trang nằm trong content gutter chuẩn và có khoảng cách đáy riêng trước KPI/panel; không dùng margin ngang hoặc margin-top lặp lại làm lệch nhịp topbar.
 - Main shell giữ `height: 100vh` với topbar cố định và `.content-pane` cuộn độc lập; nhờ vậy scrollbar không làm co sidebar/topbar và gutter/panel width giữ đúng prototype. Account table dùng layout cố định theo tỷ lệ canonical `19% / 25.3% / 8.45% / 17.41% / 17.12% / 12.72%` để empty state không làm trôi cột.
 - `Meta Light Focus` tách vai trò màu để tăng scanability: logo/ad-account dùng Meta blue `#0866FF`; primary CTA và selected navigation dùng indigo đậm `#4F46E5` với hover `#4338CA`; campaign draft dùng indigo; pending dùng amber; approved/resource dùng green. Inactive sidebar text dùng slate `#344054`; brand/footer trung tính để selected row là điểm neo duy nhất trong sidebar.
@@ -93,6 +93,6 @@
 - Topbar production phải bám đúng anatomy prototype: breadcrumb + page title ở trái, search trong trang, notification bell có popover và primary CTA ở phải. Search lọc các table row hiện có, hỗ trợ phím `/` nhưng không hiện shortcut keycap; notification lấy số cảnh báo thật từ KPI/page state, không dùng dữ liệu minh họa giả.
 - Breadcrumb dùng hai icon cùng box `13px` (bao gồm chevron `>`), khoảng cách `6px`; sidebar giữ icon Lucide `17px`, gap `11px`, nav row `42px` và padding ngang `12px` để vị trí icon không lệch giữa các route.
 - Topbar action group dùng gap `18px`; search icon là `16px`, notification `17px`, action icon `15px`, tất cả stroke `2px`. Section header icon dùng box `18px`, stroke `2px`; active nav giữ `border-left: 1px` để content bắt đầu tại cùng x-position với prototype. Loop mark production dùng inline SVG với visual box `38×26px` ở brand và `28×19px` ở footer, không scale kín asset ngoài.
-- Dialog dùng header phẳng với border phân tách mảnh, không có accent line hoặc icon tile. `/ad-accounts` giữ dialog setup resource; `/campaigns` chỉ có detail timeline của agent work. Single-select giữ mật độ gần native select: popover cách trigger `4px`, bo `10px`, option cao `31px` dạng hàng chữ không checkbox. Dialog body và menu dài vẫn dùng scrollbar mảnh bo tròn nằm gọn trong surface. Danger/destructive giữ `#B83A3A`.
+- Dialog dùng header phẳng với border phân tách mảnh, không có accent line hoặc icon tile. `/` giữ dialog setup profile/account/resource; `/campaigns` có detail timeline và dialog lịch/thu thập read-only. Single-select giữ mật độ gần native select: popover cách trigger `4px`, bo `10px`, option cao `31px` dạng hàng chữ không checkbox. Dialog body và menu dài vẫn dùng scrollbar mảnh bo tròn nằm gọn trong surface. Danger/destructive giữ `#B83A3A`.
 - Jinja templates, shared CSS và interaction layer của app chính phải dùng bộ token, layout và component anatomy này. Prototype chỉ còn là reference snapshot; source production là `backend/app/templates/**` và `backend/app/static/**`.
 - Prototype không gọi API, không dùng production data và không nhúng password mẫu; danger/destructive giữ `#B83A3A` ở cả ba hướng.

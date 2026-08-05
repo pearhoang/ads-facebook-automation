@@ -4,7 +4,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -27,6 +27,7 @@ ACTIVE_STATES = {"queued", "claimed", "running"}
 ACTIVE_BROWSER_STATES = {"requested", "starting", "awaiting_user", "ready", "closing"}
 LEASE_MINUTES = 10
 SCHEDULE_ROLES = {"owner", "admin"}
+TERMINAL_JOB_STATES = {"succeeded", "failed", "cancelled"}
 
 
 def _audit(
@@ -215,6 +216,123 @@ def list_jobs(db: Session, tenant_id: str, limit: int = 100) -> list[ReportJob]:
             .limit(limit)
         )
     )
+
+
+def _jobs_query(tenant_id: str, ad_account_id: str | None = None):
+    query = select(ReportJob).where(ReportJob.tenant_id == tenant_id)
+    if ad_account_id:
+        query = query.where(ReportJob.ad_account_id == ad_account_id)
+    return query
+
+
+def list_jobs_page(
+    db: Session,
+    *,
+    tenant_id: str,
+    page: int,
+    page_size: int,
+    ad_account_id: str | None,
+) -> dict:
+    query = _jobs_query(tenant_id, ad_account_id)
+    total = db.scalar(select(func.count()).select_from(query.subquery())) or 0
+    total_pages = max(1, (total + page_size - 1) // page_size)
+    page = min(page, total_pages)
+    items = list(
+        db.scalars(
+            query.order_by(ReportJob.requested_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+    )
+    return {
+        "items": items,
+        "page": page,
+        "page_size": page_size,
+        "total": total,
+        "total_pages": total_pages,
+    }
+
+
+def delete_jobs_page(
+    db: Session,
+    *,
+    tenant_id: str,
+    user_id: str,
+    role: str,
+    page: int,
+    page_size: int,
+    ad_account_id: str | None,
+) -> dict:
+    if role not in SCHEDULE_ROLES:
+        raise HTTPException(status_code=403, detail="Bạn không có quyền xóa lịch sử báo cáo.")
+    page_data = list_jobs_page(
+        db,
+        tenant_id=tenant_id,
+        page=page,
+        page_size=page_size,
+        ad_account_id=ad_account_id,
+    )
+    items = page_data["items"]
+    account_ids = {item.ad_account_id for item in items}
+    retained_job_ids: set[str] = set()
+    for account_id in account_ids:
+        latest_snapshot = db.scalar(
+            select(ReportSnapshot)
+            .where(
+                ReportSnapshot.tenant_id == tenant_id,
+                ReportSnapshot.ad_account_id == account_id,
+            )
+            .order_by(ReportSnapshot.collected_at.desc())
+            .limit(1)
+        )
+        if latest_snapshot is not None:
+            retained_job_ids.add(latest_snapshot.report_job_id)
+
+    deleted = 0
+    retained_latest = 0
+    skipped_active = 0
+    deleted_ids: list[str] = []
+    for job in items:
+        if job.id in retained_job_ids:
+            retained_latest += 1
+            continue
+        if job.status not in TERMINAL_JOB_STATES:
+            skipped_active += 1
+            continue
+        snapshots = list(
+            db.scalars(
+                select(ReportSnapshot).where(
+                    ReportSnapshot.tenant_id == tenant_id,
+                    ReportSnapshot.report_job_id == job.id,
+                )
+            )
+        )
+        for snapshot in snapshots:
+            db.delete(snapshot)
+        deleted_ids.append(job.id)
+        db.delete(job)
+        deleted += 1
+
+    if deleted_ids:
+        _audit(
+            db,
+            tenant_id=tenant_id,
+            actor_user_id=user_id,
+            actor_type="user",
+            action="report_job.history_deleted",
+            entity_id=deleted_ids[0],
+            payload={"deleted_ids": deleted_ids, "page": page, "page_size": page_size},
+        )
+    db.commit()
+    remaining = db.scalar(
+        select(func.count()).select_from(_jobs_query(tenant_id, ad_account_id).subquery())
+    ) or 0
+    return {
+        "deleted": deleted,
+        "retained_latest": retained_latest,
+        "skipped_active": skipped_active,
+        "remaining": remaining,
+    }
 
 
 def list_snapshots(
@@ -528,4 +646,3 @@ def sync_worker_job(
     db.commit()
     db.refresh(job)
     return job
-
