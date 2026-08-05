@@ -465,5 +465,5 @@
 - Changed: Gộp Facebook profile/ad account/resource vào `/`; gộp work queue/KPI/lịch/lịch sử report vào `/campaigns`; route cũ redirect về anchor tương ứng.
 - Changed: Bỏ KPI strip khỏi màn thiết lập và đầu trang vận hành; report history phân trang 10 dòng và cho dọn job terminal trong khi giữ job active cùng snapshot mới nhất.
 - Affected: `backend/app/{web.py,api/reports.py,services/reporting.py,schemas.py,templates,static}`, `tests`, `docs`.
-- Verified: targeted Python tests, JavaScript syntax và browser local desktop/mobile; production verification chờ deploy.
+- Verified: `98 passed`, JavaScript syntax, browser local desktop/mobile; production web/worker active, health `ok`, dữ liệu thật render đúng và không có console error.
 - Risk: Xóa lịch sử là destructive nhưng bị giới hạn role, CSRF, terminal state và bảo vệ latest snapshot.

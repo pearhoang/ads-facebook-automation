@@ -26,4 +26,11 @@
 - [x] Gộp màn hình thiết lập tài khoản.
 - [x] Gộp màn hình vận hành và báo cáo.
 - [x] Thêm phân trang/xóa lịch sử an toàn.
-- [ ] Kiểm thử và triển khai production.
+- [x] Kiểm thử và triển khai production.
+
+## Kết quả
+
+- Commit triển khai: `42172c5`.
+- `98 passed`; JavaScript syntax hợp lệ.
+- Production web/worker active, health `ok`.
+- Browser production xác nhận đúng thứ tự setup, dữ liệu vận hành thật, không có console error.
