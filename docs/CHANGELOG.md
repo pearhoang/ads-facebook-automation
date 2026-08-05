@@ -451,3 +451,4 @@
 - Changed: Thông báo thành công/lỗi trên các trang chính dùng toast cố định góc phải, không đẩy giãn KPI hoặc panel; có nút đóng, `aria-live` theo mức độ và tự ẩn sau 4,8 giây.
 - Kept: Cảnh báo Full Access, trạng thái device login Codex và lỗi trong dialog vẫn hiển thị inline để không mất thông tin đang thao tác.
 - Visual: Toast dùng token Meta Light Focus, border semantic và surface trắng; responsive không tạo horizontal overflow.
+- Refined: Bỏ vạch trạng thái dày; toast dùng border/shadow trung tính như panel và chỉ giữ icon semantic nhỏ để không cạnh tranh với selected navigation indigo.

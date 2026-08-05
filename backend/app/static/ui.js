@@ -20,8 +20,15 @@
   }
 
   function ensureToastStructure(toast) {
+    let icon = toast.querySelector(".toast-icon");
     let message = toast.querySelector(".toast-message");
     let close = toast.querySelector(".toast-close");
+    if (!icon) {
+      icon = document.createElement("span");
+      icon.className = "toast-icon";
+      icon.setAttribute("aria-hidden", "true");
+      toast.append(icon);
+    }
     if (!message) {
       message = document.createElement("span");
       message.className = "toast-message";
@@ -36,7 +43,7 @@
       close.addEventListener("click", () => hideToast(toast));
       toast.append(close);
     }
-    return message;
+    return { icon, message };
   }
 
   function hideToast(target, immediate = false) {
@@ -64,8 +71,9 @@
     }
     clearToastTimers(toast);
     const kind = ["success", "warning", "error"].includes(options.kind) ? options.kind : "error";
-    const messageNode = ensureToastStructure(toast);
-    messageNode.textContent = message;
+    const toastContent = ensureToastStructure(toast);
+    toastContent.icon.replaceChildren(spriteIcon(kind === "success" ? "badge-check" : kind === "warning" ? "clock" : "circle-alert"));
+    toastContent.message.textContent = message;
     toast.classList.remove("notice-success", "notice-warning", "notice-error", "is-leaving");
     toast.classList.add(`notice-${kind}`);
     toast.setAttribute("role", kind === "error" ? "alert" : "status");
