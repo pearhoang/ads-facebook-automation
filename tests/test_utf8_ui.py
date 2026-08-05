@@ -142,7 +142,7 @@ def test_page_feedback_uses_transient_non_layout_toasts():
         text = path.read_text(encoding="utf-8")
         assert "data-toast" in text
         assert "/static/ui.js?v=toast-3" in text
-        assert "/static/workspace.css?v=toast-5" in text
+            assert "/static/workspace.css?v=spacing-1" in text
 
     script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
     styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
