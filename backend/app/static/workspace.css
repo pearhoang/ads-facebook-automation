@@ -430,11 +430,11 @@ tbody tr:hover { background: color-mix(in srgb, var(--meta-blue) 3.5%, var(--sur
   width: min(380px, calc(100vw - 40px));
   max-height: min(180px, calc(100dvh - 112px));
   display: grid;
-  grid-template-columns: 18px minmax(0, 1fr) 30px;
+  grid-template-columns: 20px minmax(0, 1fr) 30px;
   align-items: start;
-  gap: 8px;
+  gap: 10px;
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 12px;
   overflow: auto;
   border-color: var(--border-strong);
   border-radius: 10px;
@@ -449,7 +449,7 @@ tbody tr:hover { background: color-mix(in srgb, var(--meta-blue) 3.5%, var(--sur
 .app-toast.notice-success,
 .app-toast.notice-warning,
 .app-toast.notice-error { border-color: var(--border-strong); background: var(--surface); color: var(--text); }
-.toast-icon { width: 18px; height: 18px; margin: 11px 0 0 12px; color: var(--accent); }
+.toast-icon { width: 18px; height: 18px; margin: 11px 0 0; color: var(--accent); }
 .toast-icon svg { width: 18px; height: 18px; display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .app-toast.notice-success .toast-icon { color: var(--success); }
 .app-toast.notice-warning .toast-icon { color: var(--warning); }

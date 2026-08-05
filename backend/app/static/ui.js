@@ -19,6 +19,20 @@
     toastExitTimers.delete(toast);
   }
 
+  function circleCheckIcon() {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 20 20");
+    svg.setAttribute("aria-hidden", "true");
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", "10");
+    circle.setAttribute("cy", "10");
+    circle.setAttribute("r", "7.25");
+    const check = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    check.setAttribute("d", "m6.4 10.1 2.2 2.2 4.9-4.9");
+    svg.append(circle, check);
+    return svg;
+  }
+
   function ensureToastStructure(toast) {
     let icon = toast.querySelector(".toast-icon");
     let message = toast.querySelector(".toast-message");
@@ -72,7 +86,8 @@
     clearToastTimers(toast);
     const kind = ["success", "warning", "error"].includes(options.kind) ? options.kind : "error";
     const toastContent = ensureToastStructure(toast);
-    toastContent.icon.replaceChildren(spriteIcon(kind === "success" ? "badge-check" : kind === "warning" ? "clock" : "circle-alert"));
+    const icon = kind === "success" ? circleCheckIcon() : spriteIcon(kind === "warning" ? "clock" : "circle-alert");
+    toastContent.icon.replaceChildren(icon);
     toastContent.message.textContent = message;
     toast.classList.remove("notice-success", "notice-warning", "notice-error", "is-leaving");
     toast.classList.add(`notice-${kind}`);

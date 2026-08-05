@@ -139,7 +139,7 @@ def test_page_feedback_uses_transient_non_layout_toasts():
     for path in templates:
         text = path.read_text(encoding="utf-8")
         assert "data-toast" in text
-        assert "/static/ui.js?v=toast-2" in text
+        assert "/static/ui.js?v=toast-3" in text
 
     script = Path("backend/app/static/ui.js").read_text(encoding="utf-8")
     styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
@@ -150,6 +150,8 @@ def test_page_feedback_uses_transient_non_layout_toasts():
     assert "position: fixed" in styles
     assert ".app-toast[hidden] { display: none; }" in styles
     assert ".toast-icon" in styles
+    assert "function circleCheckIcon()" in script
+    assert 'setAttribute("viewBox", "0 0 20 20")' in script
     toast_block = styles.split(".app-toast {", 1)[1].split("}\n", 1)[0]
     assert "border-left" not in toast_block
     assert ".toast-close" in styles
