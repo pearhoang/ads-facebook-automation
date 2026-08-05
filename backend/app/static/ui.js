@@ -65,6 +65,7 @@
     else if (normalized.includes("asset")) { iconName = "image"; tone = "green"; }
     else if (normalized.includes("duyet") || normalized.includes("lich")) { iconName = "clock"; tone = "amber"; }
     else if (normalized.includes("job") || normalized.includes("audit") || normalized.includes("kpi") || normalized.includes("thao tac")) { iconName = "activity"; tone = "purple"; }
+    else if (normalized.includes("cong viec")) { iconName = "layout"; tone = "purple"; }
     else if (normalized.includes("provider") || normalized.includes("hermes")) iconName = "bot";
     else if (normalized.includes("bot") || normalized.includes("node")) iconName = "server";
     else if (normalized.includes("campaign")) { iconName = "layout"; tone = "purple"; }

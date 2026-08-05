@@ -1,7 +1,7 @@
 const csrfToken = document.body.dataset.csrfToken;
 const byId = (id) => document.getElementById(id);
 
-const state = { requests: [], adAccounts: [], selectedId: null };
+const state = { requests: [], adAccounts: [], selectedId: null, statusFilter: "" };
 const activeStatuses = new Set(["planning", "awaiting_approval", "queued", "running"]);
 
 const statusLabels = {
@@ -41,11 +41,17 @@ function money(value, currency = "VND") {
   return new Intl.NumberFormat("vi-VN", { style: "currency", currency, maximumFractionDigits: 0 }).format(Number(value));
 }
 
-function statusClass(status) {
+function statusTone(status) {
   if (status === "completed") return "success";
-  if (status === "failed" || status === "cancelled") return "error";
+  if (status === "failed" || status === "cancelled") return "danger";
   if (status === "awaiting_user" || status === "recovering") return "warning";
   return "neutral";
+}
+
+function statusBadge(status) {
+  const tone = statusTone(status);
+  const icon = { neutral: "activity", success: "badge-check", warning: "clock", danger: "circle-alert" }[tone];
+  return `<span class="status work-status ${tone}">${icon ? `<svg aria-hidden="true"><use href="/static/ui-icons.svg#${icon}"></use></svg>` : ""}${escapeHtml(statusLabels[status] || status)}</span>`;
 }
 
 async function api(path, options = {}) {
@@ -72,10 +78,45 @@ function accountLabel(id) {
 }
 
 function filteredRequests() {
-  const filter = byId("status-filter").value;
+  const filter = state.statusFilter;
   if (!filter) return state.requests;
   if (filter === "active") return state.requests.filter((item) => activeStatuses.has(item.status) || item.status === "recovering");
   return state.requests.filter((item) => item.status === filter);
+}
+
+function filterCount(filter) {
+  if (!filter) return state.requests.length;
+  if (filter === "active") return state.requests.filter((item) => activeStatuses.has(item.status) || item.status === "recovering").length;
+  return state.requests.filter((item) => item.status === filter).length;
+}
+
+function renderFilters() {
+  document.querySelectorAll("[data-filter-count]").forEach((node) => {
+    const filter = node.dataset.filterCount === "all" ? "" : node.dataset.filterCount;
+    node.textContent = filterCount(filter);
+  });
+  document.querySelectorAll("[data-work-filter]").forEach((button) => {
+    const selected = button.dataset.workFilter === state.statusFilter;
+    button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+}
+
+function progressIndex(item) {
+  if (item.status === "completed") return 3;
+  if (["draft_build", "preflight", "recovery", "handoff"].includes(item.stage) || item.status === "awaiting_user") return 2;
+  if (item.stage === "approval" || item.status === "awaiting_approval") return 1;
+  return 0;
+}
+
+function progressSteps(item) {
+  const labels = ["Yêu cầu", "Kế hoạch", "Thực thi", "Review"];
+  const current = progressIndex(item);
+  const isTerminal = ["completed", "failed", "cancelled"].includes(item.status);
+  return `<div class="work-progress" aria-label="Tiến trình: ${escapeHtml(stageLabels[item.stage] || item.stage)}">${labels.map((label, index) => {
+    const stateName = index < current || item.status === "completed" ? "is-complete" : index === current && !isTerminal ? "is-current" : "";
+    return `<span class="work-progress-step ${stateName}"><i aria-hidden="true"></i><b>${label}</b></span>`;
+  }).join("<span class=\"work-progress-line\" aria-hidden=\"true\"></span>")}</div>`;
 }
 
 function renderSummary() {
@@ -87,14 +128,15 @@ function renderSummary() {
 
 function renderTable() {
   const items = filteredRequests();
+  renderFilters();
   byId("work-requests-empty").hidden = items.length > 0;
   byId("work-requests-body").innerHTML = items.map((item) => `
     <tr>
-      <td><strong>${escapeHtml(item.title)}</strong><span class="cell-subtext">${escapeHtml(item.request_text.slice(0, 92))}${item.request_text.length > 92 ? "…" : ""}</span></td>
+      <td><strong class="work-request-title">${escapeHtml(item.title)}</strong><span class="cell-subtext">${escapeHtml(item.request_text.slice(0, 76))}${item.request_text.length > 76 ? "…" : ""}</span></td>
       <td><span class="source-label">${escapeHtml(item.source === "telegram" ? "Telegram" : "Hermes")}</span></td>
       <td>${escapeHtml(accountLabel(item.ad_account_id))}</td>
-      <td><strong>${escapeHtml(stageLabels[item.stage] || item.stage)}</strong><span class="cell-subtext">${escapeHtml(item.progress_message)}</span></td>
-      <td><span class="status-pill status-${statusClass(item.status)}">${escapeHtml(statusLabels[item.status] || item.status)}</span></td>
+      <td><strong class="work-stage-title">${escapeHtml(stageLabels[item.stage] || item.stage)}</strong>${progressSteps(item)}</td>
+      <td>${statusBadge(item.status)}</td>
       <td>${escapeHtml(formatDate(item.updated_at))}</td>
       <td class="actions-cell"><button class="row-button" type="button" data-view-work="${escapeHtml(item.id)}" aria-label="Xem tiến độ"><svg aria-hidden="true"><use href="/static/ui-icons.svg#arrow-up-right"></use></svg></button></td>
     </tr>`).join("");
@@ -123,7 +165,7 @@ async function openDetail(requestId) {
     byId("work-detail-eyebrow").textContent = `${item.source === "telegram" ? "Telegram" : "Hermes"} · ${formatDate(item.requested_at)}`;
     byId("work-detail-title").textContent = item.title;
     byId("work-detail-progress").textContent = item.progress_message;
-    byId("work-detail-status").innerHTML = `<span class="status-pill status-${statusClass(item.status)}">${escapeHtml(statusLabels[item.status] || item.status)}</span><span>${escapeHtml(stageLabels[item.stage] || item.stage)} · ${item.attempt_count} lần chạy · ${item.recovery_count} lần recovery</span>`;
+    byId("work-detail-status").innerHTML = `${statusBadge(item.status)}<span>${escapeHtml(stageLabels[item.stage] || item.stage)} · ${item.attempt_count} lần chạy · ${item.recovery_count} lần recovery</span>`;
     byId("work-detail-request").textContent = item.request_text;
     const resolution = item.resolution_json || {};
     byId("work-detail-resolution").innerHTML = factsHtml([
@@ -159,12 +201,17 @@ async function loadPage(successMessage = "") {
 document.addEventListener("click", (event) => {
   const view = event.target.closest("[data-view-work]");
   if (view) openDetail(view.dataset.viewWork);
+  const filter = event.target.closest("[data-work-filter]");
+  if (filter) {
+    state.statusFilter = filter.dataset.workFilter;
+    renderTable();
+  }
   const close = event.target.closest("[data-close]");
   if (close) byId(close.dataset.close).close();
 });
 
-byId("status-filter").addEventListener("change", renderTable);
 byId("refresh-button").addEventListener("click", () => loadPage("Đã đồng bộ tiến độ mới nhất."));
+byId("queue-refresh-button").addEventListener("click", () => loadPage("Đã đồng bộ tiến độ mới nhất."));
 
 loadPage();
 setInterval(() => {

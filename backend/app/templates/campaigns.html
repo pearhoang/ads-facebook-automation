@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/workspace.css?v=agent-work-1">
+  <link rel="stylesheet" href="/static/workspace.css?v=agent-work-2">
 </head>
 <body data-csrf-token="{{ csrf_token }}" data-role="{{ principal.role }}">
   {% set active_nav = "campaigns" %}
@@ -40,22 +40,24 @@
 
         <div id="notice" class="notice page-notice" hidden></div>
 
-        <section class="content-section work-queue-section">
+        <section id="work-queue" class="content-section work-queue-section">
           <div class="section-toolbar work-toolbar">
             <div><h2>Hàng công việc</h2><p>Mỗi hàng là một yêu cầu xuyên suốt từ hội thoại đến checkpoint cuối.</p></div>
-            <label class="compact-field">Trạng thái
-              <select id="status-filter">
-                <option value="">Tất cả</option>
-                <option value="active">Đang xử lý</option>
-                <option value="awaiting_user">Cần bạn xử lý</option>
-                <option value="completed">Hoàn tất</option>
-                <option value="failed">Lỗi</option>
-              </select>
-            </label>
+          </div>
+          <div class="work-filterbar" aria-label="Bộ lọc hàng công việc">
+            <div class="work-filter-group" role="group" aria-label="Lọc theo trạng thái">
+              <span class="work-filter-label">Trạng thái</span>
+              <button class="work-filter-chip is-active" type="button" data-work-filter="" aria-pressed="true">Tất cả <span data-filter-count="all">0</span></button>
+              <button class="work-filter-chip" type="button" data-work-filter="active" aria-pressed="false">Đang xử lý <span data-filter-count="active">0</span></button>
+              <button class="work-filter-chip" type="button" data-work-filter="awaiting_user" aria-pressed="false">Cần xử lý <span data-filter-count="awaiting_user">0</span></button>
+              <button class="work-filter-chip" type="button" data-work-filter="completed" aria-pressed="false">Hoàn tất <span data-filter-count="completed">0</span></button>
+            </div>
+            <button id="queue-refresh-button" class="button button-secondary button-small" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg>Mới cập nhật</button>
           </div>
           <div class="table-wrap">
-            <table>
-              <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Ad account</th><th>Tiến độ</th><th>Trạng thái</th><th>Cập nhật</th><th class="actions-heading">Chi tiết</th></tr></thead>
+            <table id="work-requests-table">
+              <colgroup><col class="work-col-request"><col class="work-col-source"><col class="work-col-account"><col class="work-col-progress"><col class="work-col-status"><col class="work-col-updated"><col class="work-col-action"></colgroup>
+              <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Ad account</th><th>Tiến trình</th><th>Trạng thái</th><th>Cập nhật</th><th class="actions-heading">Thao tác</th></tr></thead>
               <tbody id="work-requests-body"></tbody>
             </table>
             <div id="work-requests-empty" class="empty-state" hidden>
@@ -98,8 +100,8 @@
   </dialog>
 
   {% include "_password_dialog.html" %}
-  <script src="/static/ui.js?v=meta-light-focus-3" defer></script>
-  <script src="/static/campaigns.js?v=agent-work-1" defer></script>
+  <script src="/static/ui.js?v=meta-light-focus-4" defer></script>
+  <script src="/static/campaigns.js?v=agent-work-2" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

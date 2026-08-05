@@ -440,3 +440,8 @@
 - Visual: Giữ nguyên shell Meta Light Focus từ `meta-dark-sidebar-glass.html`; dùng canonical sidebar, topbar, KPI strip, panel, table, dialog và row action.
 - Deploy: `main` tại `8e62792`, Alembic `20260804_0011 (head)`, backup `/var/backups/meta-ads-copilot/20260804T112158Z-agent-first-ui` đã verify bằng `pg_restore`.
 - Verified: `95 passed`, migration check không drift, bốn service active, health `ok`, worker polling `200`; live `/campaigns` và `/ad-accounts` không có console error.
+### 2026-08-05 - Đồng bộ Hàng công việc với Campaign drafts
+
+- Changed: Tách Hàng công việc khỏi KPI strip bằng gutter `18px`; thay select đơn bằng filter chips có số lượng theo trạng thái và action làm mới ngay trong toolbar.
+- Visual: Giữ table-first anatomy của Campaign drafts với header/filter row riêng, cột cố định, badge trạng thái có icon semantic và stepper `Yêu cầu → Kế hoạch → Thực thi → Review` trong cột tiến trình.
+- Safety: Chỉ thay presentation và client-side filtering; không đổi API, job state machine hoặc worker contract.
