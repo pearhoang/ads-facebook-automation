@@ -170,6 +170,7 @@ h2 { font-size: 15px; line-height: 1.4; }
   display: flex;
   flex-direction: column;
 }
+.content > .content-section:first-of-type { margin-top: 0; }
 #ad-accounts { order: 2; }
 #campaign-list { order: 3; }
 #meta-resources { order: 4; }
@@ -747,6 +748,7 @@ dialog.artifact-lightbox::backdrop { background: rgba(15, 23, 42, .68); }
   .summary > .metric:nth-child(2) { border-right: 0; }
   .summary > .metric:nth-child(-n+2) { border-bottom: 1px solid #d7dee8; }
   .content-section { margin: 16px; }
+  .content > .content-section:first-of-type { margin-top: 12px; }
   .safety-banner, .page-notice:not(.app-toast) { margin-right: 16px; margin-left: 16px; }
   .app-toast { top: 12px; right: 12px; width: min(380px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); }
   .form-grid, .form-grid-three { grid-template-columns: 1fr; gap: 0; }
@@ -765,6 +767,7 @@ dialog.artifact-lightbox::backdrop { background: rgba(15, 23, 42, .68); }
   .topbar-actions .button { min-height: 34px; padding-inline: 10px; }
   .summary { margin: 12px; }
   .content-section { margin: 12px; }
+  .content > .content-section:first-of-type { margin-top: 8px; }
   .section-toolbar { align-items: flex-start; flex-direction: column; }
   .section-toolbar .button { align-self: stretch; }
   .work-filterbar { padding: 10px 12px; }
