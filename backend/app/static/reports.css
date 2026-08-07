@@ -2,7 +2,8 @@
 .cell-meta { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
 .error-cell { max-width: 360px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
 
-.reporting-section { margin-bottom: 18px; }
+.reporting-section { margin-bottom: 0; }
+.reporting-section + .reporting-section { margin-top: 12px; }
 .reporting-history-section { margin-bottom: 36px; }
 .reporting-toolbar { align-items: flex-end; }
 .reporting-actions { display: flex; align-items: flex-end; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
