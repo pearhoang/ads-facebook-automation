@@ -222,6 +222,7 @@ byId("collect-button").addEventListener("click", openCollectDialog);
 byId("add-schedule-button").addEventListener("click", () => { byId("schedule-account").value = selectedAccountId(); byId("schedule-dialog").showModal(); });
 byId("account-filter").addEventListener("change", () => { state.page = 1; loadReportData(); });
 byId("report-refresh-button").addEventListener("click", () => loadReportData({ reloadBase: true, successMessage: "Đã làm mới KPI và lịch báo cáo." }));
+byId("report-page-refresh-button")?.addEventListener("click", () => loadReportData({ reloadBase: true, successMessage: "Đã làm mới KPI và lịch báo cáo." }));
 byId("collect-form").addEventListener("submit", createReportJob);
 byId("schedule-form").addEventListener("submit", createSchedule);
 byId("history-prev").addEventListener("click", () => { if (state.page > 1) { state.page -= 1; loadReportData(); } });

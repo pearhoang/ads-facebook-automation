@@ -8,7 +8,6 @@ UI_FILES = (
     Path("backend/app/templates/_topbar_tools.html"),
     Path("backend/app/templates/login.html"),
     Path("backend/app/templates/campaigns.html"),
-    Path("backend/app/static/campaigns.js"),
     Path("backend/app/templates/ad_accounts.html"),
     Path("backend/app/static/ad_accounts.js"),
     Path("backend/app/static/ui.js"),
@@ -160,11 +159,11 @@ def test_page_feedback_uses_transient_non_layout_toasts():
     assert ".toast-close" in styles
 
 
-def test_ad_account_setup_is_separate_from_agent_work_monitoring():
+def test_ad_account_setup_is_separate_from_agent_runtime_and_reporting_stays_compact():
     setup_template = Path("backend/app/templates/ad_accounts.html").read_text(encoding="utf-8")
     setup_script = Path("backend/app/static/ad_accounts.js").read_text(encoding="utf-8")
-    work_template = Path("backend/app/templates/campaigns.html").read_text(encoding="utf-8")
-    work_script = Path("backend/app/static/campaigns.js").read_text(encoding="utf-8")
+    reporting_template = Path("backend/app/templates/_reporting_operations.html").read_text(encoding="utf-8")
+    operations_template = Path("backend/app/templates/campaigns.html").read_text(encoding="utf-8")
     icons = Path("backend/app/static/ui-icons.svg").read_text(encoding="utf-8")
 
     assert 'byId("ad-accounts-empty").hidden = state.adAccounts.length > 0' in setup_script
@@ -172,42 +171,25 @@ def test_ad_account_setup_is_separate_from_agent_work_monitoring():
     assert 'class="row-button"' in setup_script
     assert 'id="ad-account-dialog"' in setup_template
     assert 'id="resource-dialog"' in setup_template
-    assert 'id="work-requests-body"' in work_template
-    assert 'api("/api/ad-automation-requests")' in work_script
-    assert 'id="campaign-form"' not in work_template
-    assert "openCampaignDialog" not in work_script
+    assert 'id="work-requests-body"' not in operations_template
+    assert 'id="work-detail-dialog"' not in operations_template
+    assert 'id="campaign-form"' not in operations_template
+    assert '/static/campaigns.js' not in operations_template
+    assert reporting_template.count('class="content-section reporting-section') == 3
+    assert 'id="schedules-body"' in reporting_template
+    assert 'id="jobs-body"' in reporting_template
     assert 'id="pencil"' in icons
     assert 'id="arrow-up-right"' in icons
 
 
-def test_agent_work_detail_keeps_canonical_dialog_and_timeline_anatomy():
-    template = Path("backend/app/templates/campaigns.html").read_text(encoding="utf-8")
+def test_report_history_keeps_pagination_without_work_queue_chrome():
+    template = Path("backend/app/templates/_reporting_operations.html").read_text(encoding="utf-8")
     styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
 
-    assert 'id="work-detail-dialog" class="wide-dialog work-detail-dialog"' in template
-    assert 'class="work-detail-body"' in template
-    assert 'id="work-detail-timeline" class="work-timeline"' in template
-    assert 'id="artifact-lightbox" class="artifact-lightbox"' in template
-    assert 'data-artifact-prev aria-label="Ảnh trước"' in template
-    assert 'data-artifact-next aria-label="Ảnh tiếp theo"' in template
-    assert 'data-close-work-detail' in template
-    assert 'id="work-handoff-link"' in template
-    assert ".work-detail-grid" in styles
-    assert ".work-detail-body" in styles
-    assert ".work-detail-dialog:not([open]) { display: none; }" in styles
-    assert "dialog.artifact-lightbox::backdrop" in styles
-    assert ".work-timeline" in styles
-    assert ".timeline-marker" in styles
-
-
-def test_campaign_work_detail_close_and_operation_pagination_alignment():
-    template = Path("backend/app/templates/campaigns.html").read_text(encoding="utf-8")
-    script = Path("backend/app/static/campaigns.js").read_text(encoding="utf-8")
-    styles = Path("backend/app/static/workspace.css").read_text(encoding="utf-8")
-
-    assert 'function closeWorkDetailDialog()' in script
-    assert 'event.target.closest("[data-close-work-detail]")' in script
-    assert 'event.stopPropagation();' in script
+    assert 'reporting-overview-section' in template
+    assert 'reporting-schedules-section' in template
+    assert 'reporting-history-section' in template
+    assert 'work-queue' not in template
     assert ".table-pagination" in styles
     pagination_block = styles.split(".table-pagination {", 1)[1].split("}\n", 1)[0]
     assert "justify-content: flex-end" in pagination_block

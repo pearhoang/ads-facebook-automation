@@ -1,11 +1,11 @@
-<section id="reporting" class="content-section reporting-section">
+<section id="reporting" class="content-section reporting-section reporting-overview-section">
   <div class="section-toolbar reporting-toolbar">
-    <div><h2>KPI &amp; báo cáo tự động</h2><p>Hermes đọc và phân tích dữ liệu; tại đây chỉ giữ trạng thái mới nhất, lịch chạy và lịch sử vận hành gọn.</p></div>
+    <div><h2>KPI mới nhất</h2><p>Hermes đọc và phân tích dữ liệu; phần này chỉ tóm tắt ad account đang chọn.</p></div>
     <div class="reporting-actions">
       <label class="compact-select"><span>Ad account</span><select id="account-filter"></select></label>
       <button id="report-refresh-button" class="button button-secondary" type="button">Làm mới KPI</button>
       <button id="collect-button" class="button button-secondary" type="button">Thu thập ngay</button>
-      <button id="add-schedule-button" class="button button-primary" type="button">Thêm lịch</button>
+      <button id="add-schedule-button" class="button button-primary" type="button">Thêm lịch báo cáo</button>
     </div>
   </div>
 
@@ -17,16 +17,22 @@
   </div>
   <p id="kpi-context" class="reporting-context">Chọn ad account để xem snapshot mới nhất.</p>
 
-  <div class="reporting-subsection">
-    <div class="subsection-heading"><div><h3>Lịch báo cáo</h3><p>Chỉ hiển thị cấu hình đang dùng; kết quả sẽ được Hermes gửi qua Telegram nếu đã cấu hình.</p></div></div>
-    <div class="table-wrap compact-table-wrap">
-      <table><thead><tr><th>Ad account</th><th>Giờ chạy</th><th>Kỳ dữ liệu</th><th>Telegram</th><th>Lần kế tiếp</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="schedules-body"></tbody></table>
-      <div id="schedules-empty" class="empty-state compact-empty" hidden><strong>Chưa có lịch báo cáo</strong><p>Thêm lịch nếu muốn Hermes tự nhận KPI định kỳ.</p></div>
-    </div>
-  </div>
+</section>
 
-  <div class="reporting-subsection history-subsection">
-    <div class="subsection-heading"><div><h3>Lịch sử thu thập</h3><p>10 dòng mỗi trang. Job đang chạy và snapshot mới nhất được bảo vệ khi dọn lịch sử.</p></div></div>
+<section class="content-section reporting-section reporting-schedules-section">
+  <div class="section-toolbar reporting-section-heading">
+    <div><h2>Lịch báo cáo</h2><p>Chỉ giữ cấu hình đang dùng. Hermes sẽ gửi kết quả qua Telegram khi lịch chạy.</p></div>
+  </div>
+  <div class="table-wrap compact-table-wrap">
+    <table><thead><tr><th>Ad account</th><th>Giờ chạy</th><th>Kỳ dữ liệu</th><th>Telegram</th><th>Lần kế tiếp</th><th>Trạng thái</th><th class="actions-heading">Thao tác</th></tr></thead><tbody id="schedules-body"></tbody></table>
+    <div id="schedules-empty" class="empty-state compact-empty" hidden><strong>Chưa có lịch báo cáo</strong><p>Thêm lịch nếu muốn Hermes tự nhận KPI định kỳ.</p></div>
+  </div>
+</section>
+
+<section class="content-section reporting-section reporting-history-section">
+  <div class="section-toolbar reporting-section-heading">
+    <div><h2>Lịch sử thu thập</h2><p>10 lần mỗi trang. Job đang chạy và snapshot mới nhất được giữ lại khi dọn lịch sử.</p></div>
+  </div>
     <div class="table-wrap compact-table-wrap">
       <table><thead><tr><th>Yêu cầu lúc</th><th>Nguồn</th><th>Khoảng dữ liệu</th><th>Thu thập</th><th>Telegram</th><th>Thông tin cần chú ý</th></tr></thead><tbody id="jobs-body"></tbody></table>
       <div id="jobs-empty" class="empty-state compact-empty" hidden><strong>Chưa có lần thu thập</strong><p>Hermes sẽ tạo lịch sử khi đọc KPI thủ công hoặc theo lịch.</p></div>
@@ -40,5 +46,4 @@
         </div>
       </div>
     </div>
-  </div>
 </section>

@@ -12,7 +12,7 @@
 - User API: `backend/app/api/execution.py`.
 - Worker control-plane client: `workers/agent/control_plane.py`.
 - Runtime/state machine: `workers/agent/execution.py`.
-- UI: `backend/app/templates/campaigns.html`, `backend/app/static/campaigns.js`, `backend/app/static/app.css`.
+- User không review checkpoint trong control-plane; worker gửi progress/artifact cần thiết qua Telegram hoặc Hermes Dashboard. `/campaigns` chỉ giữ reporting; artifact vẫn lưu internal để recovery/audit.
 
 ## Flow
 

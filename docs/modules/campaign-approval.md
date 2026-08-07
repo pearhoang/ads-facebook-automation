@@ -11,7 +11,7 @@
 - Models: `backend/app/models.py` (`AdAccount`, `CampaignDraft`, `ApprovalRequest`, `AuditEvent`).
 - Service/state machine: `backend/app/services/campaigns.py`.
 - API: `backend/app/api/campaigns.py`.
-- UI: `/campaigns` chỉ hiển thị `AdAutomationRequest` work queue/timeline; không author/approve campaign thủ công trong primary UX.
+- UI: `/campaigns` chỉ là reporting surface; `AdAutomationRequest` work/timeline giữ internal cho automation. Không author/approve campaign thủ công trong primary UX.
 - Migration: `20260731_0002_campaign_approval.py`.
 
 ## State Machine

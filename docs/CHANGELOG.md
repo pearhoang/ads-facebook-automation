@@ -474,3 +474,9 @@
 - Safety: Profile chỉ được gỡ khi không có browser session/ad account active; control-plane dùng SSH credential mã hóa của worker để xóa đúng profile directory trước khi loại record khỏi routing.
 - Safety: Ad account được soft-remove để giữ snapshot/audit, dừng lịch report enabled và bị chặn khi có work đang chạy; resource bị chặn khi execution/automation đang active.
 - Verified: Full test suite pass; có coverage cho profile cleanup callback, ad-account removal và resource deletion.
+
+### 2026-08-07 - Giảm control-plane về reporting surface
+
+- Changed: Bỏ hoàn toàn Hàng công việc, timeline chi tiết và artifact/lightbox khỏi UI `/campaigns`; bỏ client polling `AdAutomationRequest` và giữ các record đó internal cho Hermes retry/audit.
+- Changed: Đổi nhãn navigation thành `Báo cáo quảng cáo`; tách KPI mới nhất, Lịch báo cáo và Lịch sử thu thập thành ba panel độc lập để không dồn hai loại lịch vào cùng một bảng.
+- Kept: `/campaigns` và API/runtime contract vẫn giữ để bookmark, reporting, Telegram/Hermes và worker không bị ảnh hưởng.

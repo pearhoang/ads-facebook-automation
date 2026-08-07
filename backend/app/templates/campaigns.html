@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ads Meta Master — Vận hành quảng cáo</title>
+  <title>Ads Meta Master — Báo cáo quảng cáo</title>
   <link rel="icon" type="image/svg+xml" href="/static/ads-meta-master.svg?v=meta-light-focus-3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,103 +18,29 @@
   <main class="main">
     <header class="topbar">
       <div class="page-identity">
-        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#layout"></use></svg><span>Automation</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Vận hành quảng cáo</span></div>
-        <h1>Vận hành quảng cáo</h1>
+        <div class="breadcrumb"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg><span>Automation</span><svg aria-hidden="true"><use href="/static/ui-icons.svg#chevron-right"></use></svg><span>Báo cáo quảng cáo</span></div>
+        <h1>Báo cáo quảng cáo</h1>
       </div>
       <div class="topbar-actions">
-        {% set global_search_placeholder = "Tìm yêu cầu, ad account…" %}
+        {% set global_search_placeholder = "Tìm ad account, lịch báo cáo…" %}
         {% include "_topbar_tools.html" %}
-        <button id="work-refresh-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg>Làm mới tiến độ</button>
+        <button id="report-page-refresh-button" class="button button-primary" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg>Làm mới báo cáo</button>
       </div>
     </header>
 
     <div class="content-pane">
       <div class="content">
-        <div class="safety-banner"><strong>Telegram/Hermes là nơi ra lệnh.</strong> Agent tự phân giải account và resource, worker thao tác Ads Manager. Trang này chỉ theo dõi; noVNC chỉ mở khi Meta yêu cầu login, 2FA hoặc challenge.</div>
-
         <div id="notice" class="notice page-notice app-toast" data-toast hidden></div>
-
-        <section id="work-queue" class="content-section work-queue-section">
-          <div class="section-toolbar work-toolbar">
-            <div><h2>Hàng công việc</h2><p>Mỗi hàng là một yêu cầu xuyên suốt từ hội thoại đến checkpoint cuối.</p></div>
-          </div>
-          <div class="work-filterbar" aria-label="Bộ lọc hàng công việc">
-            <div class="work-filter-group" role="group" aria-label="Lọc theo trạng thái">
-              <span class="work-filter-label">Trạng thái</span>
-              <button class="work-filter-chip is-active" type="button" data-work-filter="" aria-pressed="true">Tất cả <span data-filter-count="all">0</span></button>
-              <button class="work-filter-chip" type="button" data-work-filter="active" aria-pressed="false">Đang xử lý <span data-filter-count="active">0</span></button>
-              <button class="work-filter-chip" type="button" data-work-filter="awaiting_user" aria-pressed="false">Cần xử lý <span data-filter-count="awaiting_user">0</span></button>
-              <button class="work-filter-chip" type="button" data-work-filter="completed" aria-pressed="false">Hoàn tất <span data-filter-count="completed">0</span></button>
-            </div>
-            <button id="queue-refresh-button" class="button button-secondary button-small" type="button"><svg aria-hidden="true"><use href="/static/ui-icons.svg#activity"></use></svg>Mới cập nhật</button>
-          </div>
-          <div class="table-wrap">
-            <table id="work-requests-table">
-              <colgroup><col class="work-col-request"><col class="work-col-source"><col class="work-col-account"><col class="work-col-progress"><col class="work-col-status"><col class="work-col-updated"><col class="work-col-action"></colgroup>
-              <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Ad account</th><th>Tiến trình</th><th>Trạng thái</th><th>Cập nhật</th><th class="actions-heading">Thao tác</th></tr></thead>
-              <tbody id="work-requests-body"></tbody>
-            </table>
-            <div id="work-requests-empty" class="empty-state" hidden>
-              <strong>Chưa có công việc từ Hermes</strong>
-              <p>Hãy gửi một yêu cầu trên Telegram, ví dụ “Tạo camp bán sản phẩm X, dùng ảnh này, ngân sách 500k/ngày”.</p>
-              <a class="button button-secondary" href="/ai-copilot" target="_blank" rel="noopener">Mở Hermes Dashboard</a>
-            </div>
-          </div>
-        </section>
         {% include "_reporting_operations.html" %}
       </div>
     </div>
   </main>
 
-  <dialog id="work-detail-dialog" class="wide-dialog work-detail-dialog">
-    <div class="dialog-header">
-      <div><p id="work-detail-eyebrow" class="dialog-eyebrow">Công việc quảng cáo</p><h2 id="work-detail-title">Chi tiết công việc</h2><p id="work-detail-progress"></p></div>
-      <button class="icon-button" type="button" data-close-work-detail aria-label="Đóng">×</button>
-    </div>
-    <div class="work-detail-body">
-      <div id="work-detail-status" class="work-detail-status"></div>
-      <div class="work-detail-grid">
-        <section>
-          <h3>Yêu cầu gốc</h3>
-          <p id="work-detail-request" class="request-quote"></p>
-          <h3>Account đã phân giải</h3>
-          <dl id="work-detail-resolution" class="session-facts"></dl>
-          <h3>Kế hoạch</h3>
-          <dl id="work-detail-plan" class="session-facts"></dl>
-        </section>
-        <section>
-          <h3>Timeline</h3>
-          <ol id="work-detail-timeline" class="work-timeline"></ol>
-          <div id="work-detail-error" class="execution-blockers" hidden></div>
-          <div id="work-detail-artifacts" class="artifact-links"></div>
-        </section>
-      </div>
-    </div>
-    <div class="dialog-actions">
-      <a id="work-handoff-link" class="button button-secondary" href="/" hidden>Mở tài khoản để xử lý login/2FA</a>
-      <button class="button button-primary" type="button" data-close-work-detail>Đóng</button>
-    </div>
-  </dialog>
-
   {% include "_reporting_dialogs.html" %}
-
-  <dialog id="artifact-lightbox" class="artifact-lightbox" aria-labelledby="artifact-lightbox-caption">
-    <div class="artifact-lightbox-backdrop" data-artifact-close></div>
-    <div class="artifact-lightbox-panel">
-      <figure class="artifact-lightbox-figure">
-        <img id="artifact-lightbox-image" class="artifact-lightbox-image" alt="">
-        <figcaption id="artifact-lightbox-caption" class="artifact-lightbox-caption"></figcaption>
-        <button id="artifact-lightbox-prev" class="artifact-lightbox-nav" type="button" data-artifact-prev aria-label="Ảnh trước">‹</button>
-        <button id="artifact-lightbox-next" class="artifact-lightbox-nav" type="button" data-artifact-next aria-label="Ảnh tiếp theo">›</button>
-      </figure>
-      <button id="artifact-lightbox-close" class="artifact-lightbox-close" type="button" data-artifact-close aria-label="Đóng ảnh">×</button>
-    </div>
-  </dialog>
 
   {% include "_password_dialog.html" %}
   <script src="/static/ui.js?v=toast-3" defer></script>
-  <script src="/static/campaigns.js?v=operations-1" defer></script>
-  <script src="/static/reports.js?v=operations-1" defer></script>
+  <script src="/static/reports.js?v=reports-only-1" defer></script>
   <script src="/static/account_settings.js" defer></script>
 </body>
 </html>

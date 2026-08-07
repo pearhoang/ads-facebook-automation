@@ -13,7 +13,7 @@
 - Agent API: `/api/worker/agent/*` trong `backend/app/api/worker.py`.
 - Typed tools: `workers/agent/control_plane_mcp.py`.
 - Telegram progress: `workers/agent/execution.py`.
-- Monitoring UI: `/campaigns`, `backend/app/templates/campaigns.html`, `backend/app/static/campaigns.js`.
+- User nhận progress/artifact qua Telegram hoặc Hermes Dashboard; control-plane chỉ giữ record nội bộ cho retry/audit. `/campaigns` chỉ là reporting surface.
 
 ## State Flow
 

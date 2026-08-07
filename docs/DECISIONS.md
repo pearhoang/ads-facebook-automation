@@ -209,21 +209,21 @@
 ## DEC-029 — Agent-orchestrated ad work; control-plane chỉ setup và theo dõi
 
 - Luồng chính là `Telegram/Hermes + media → intent/plan → control-plane resolve account/resource → worker Ads Manager → Telegram/timeline result`.
-- `/ad-accounts` là setup surface cho Facebook profile mapping, ad account, Page, Instagram, Pixel/Dataset, Instant Form và App. `/campaigns` chỉ là work queue/timeline; không còn form campaign, asset upload, approval panel hay nút execution thủ công trong primary UX.
+- `/ad-accounts` là setup surface cho Facebook profile mapping, ad account, Page, Instagram, Pixel/Dataset, Instant Form và App. `/campaigns` chỉ là reporting surface; không còn form campaign, asset upload, approval panel hay nút execution thủ công trong primary UX.
 - `CampaignDraft`, `ApprovalRequest`, `CreativeAsset` và `ExecutionJob` vẫn là internal source of truth. Agent tự ingest media Telegram vào registry, tạo snapshot và hỏi xác nhận trong hội thoại; user không phải mở web để tiếp tục.
 - Sau conversational approval, control-plane tự nối preflight sang draft builder. Worker dừng tại Review và `allow_publish=false`; action publish/chi tiêu thật vẫn cần explicit confirmation riêng.
-- noVNC chỉ dùng cho login, 2FA hoặc Meta challenge. Tiến độ bình thường đi qua `AdAutomationRequest`, event timeline, artifact và Telegram fail-soft delivery.
+- noVNC chỉ dùng cho login, 2FA hoặc Meta challenge. Tiến độ và artifact đi qua Telegram/Hermes; `AdAutomationRequest` và event timeline là record internal cho retry/audit.
 - Lỗi worker được retry đúng một lần từ checkpoint. Recovery thành công được lưu thành verified workflow learning; đề xuất chưa kiểm chứng không được tự sửa/kích hoạt production source.
 - `Experimental Full Access` cho phép Hermes dùng terminal/file/code/browser/delegation để điều tra và tạo artifact/skill, nhưng không được đi vòng tenant, typed-tool, approval hoặc publish boundary.
 
 ## DEC-030 — Control-plane dùng hai surface chính thay vì chia theo bảng dữ liệu
 
-- Sidebar chỉ giữ `Thiết lập tài khoản` và `Vận hành quảng cáo` cho luồng Ads; không tách Facebook profile/ad account hoặc work queue/reporting thành các trang độc lập.
+- Sidebar chỉ giữ `Thiết lập tài khoản` và `Báo cáo quảng cáo` cho luồng Ads; không tách Facebook profile/ad account hoặc reporting thành các trang độc lập.
 - `/` là setup surface theo thứ tự Facebook profile → ad account → Meta resource. `/ad-accounts` chỉ chuyển hướng về `/#ad-accounts` để giữ bookmark cũ.
-- `/campaigns` là surface vận hành gồm hàng công việc, KPI mới nhất, lịch báo cáo và lịch sử thu thập. `/reports` chuyển hướng về `/campaigns#reporting`.
+- `/campaigns` là reporting surface gồm KPI mới nhất, lịch báo cáo và lịch sử thu thập. `/reports` chuyển hướng về `/campaigns#reporting`.
 - KPI chỉ xuất hiện trong khối reporting; các màn thiết lập và quản trị không thêm KPI strip chỉ để lấp khoảng trắng.
 - Lịch sử report job phân trang server 10 dòng. Owner/admin được xóa job terminal trên trang hiện tại; job active và snapshot mới nhất của từng ad account luôn được giữ lại.
-- Telegram/Hermes vẫn là nơi ra lệnh, phân tích và xử lý chính; web chỉ setup định tuyến, theo dõi tiến độ, KPI và ngoại lệ cần người dùng.
+- Telegram/Hermes vẫn là nơi ra lệnh, phân tích, xử lý và nhận tiến độ chính; web chỉ setup định tuyến và xem KPI/lịch báo cáo gọn.
 
 ## DEC-031 — Gỡ setup dùng deactivation có kiểm soát và cleanup profile từ xa
 
@@ -231,3 +231,9 @@
 - Control-plane dùng SSH password mã hóa theo worker để dọn đúng `<BROWSER_SESSION_PROFILE_ROOT>/<profile_key>`; key và resolved path đều được kiểm tra trước khi `rmtree`. Nếu không dọn được remote profile thì không gỡ record local.
 - Gỡ ad account chuyển trạng thái `removed`, dừng report schedule enabled và giữ campaign/report/audit snapshot để xem lịch sử. Ad account có work runtime active không thể gỡ.
 - Meta resource xóa trực tiếp khỏi registry sau khi kiểm tra không thuộc execution/automation active; history snapshot vẫn độc lập với registry hiện hành.
+
+## DEC-032 — Control-plane không hiển thị work queue hoặc review artifact cho người dùng
+
+- User ra lệnh, nhận tiến độ và kết quả qua Telegram hoặc Hermes Dashboard. Agent gửi ảnh chụp/artifact cần thiết cùng kết quả thay vì buộc user kiểm tra lại checkpoint trong control-plane.
+- `/campaigns` giữ route cũ để không vỡ bookmark nhưng chỉ là surface `Báo cáo quảng cáo`: KPI mới nhất, lịch gửi Telegram và lịch sử thu thập phân trang.
+- `AdAutomationRequest`, event timeline, artifact và execution job vẫn là dữ liệu nội bộ cho agent retry, audit và recovery; API/worker contract không bị xóa hoặc thay đổi.
